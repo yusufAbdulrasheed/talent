@@ -1,0 +1,21 @@
+@use 'sass:map';
+
+// Breakpoint scale. Mobile-first: every mixin below is a min-width query.
+$breakpoints: (
+  sm: 480px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+@mixin from($name) {
+  $width: map.get($breakpoints, $name);
+
+  @if $width == null {
+    @error 'Unknown breakpoint `#{$name}`. Expected one of: #{map.keys($breakpoints)}.';
+  }
+
+  @media (min-width: $width) {
+    @content;
+  }
+}

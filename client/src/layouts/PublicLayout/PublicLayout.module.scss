@@ -1,0 +1,146 @@
+.skipLink {
+  position: absolute;
+  left: var(--space-2);
+  top: -4rem;
+  z-index: var(--z-modal);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  transition: top var(--transition-fast);
+
+  &:focus {
+    top: var(--space-2);
+  }
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerInner {
+  @include container;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.menuToggle {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+
+  @include from(lg) {
+    display: none;
+  }
+}
+
+.nav {
+  display: none;
+  width: 100%;
+  padding-bottom: var(--space-4);
+
+  @include from(lg) {
+    display: flex;
+    width: auto;
+    align-items: center;
+    gap: var(--space-5);
+    padding-bottom: 0;
+  }
+}
+
+.navOpen {
+  display: block;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  @include from(lg) {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-4);
+  }
+}
+
+.navLink {
+  display: block;
+  padding: var(--space-2) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+
+  &:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+.navLinkActive {
+  color: var(--color-accent);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+
+  @include from(lg) {
+    margin-top: 0;
+  }
+}
+
+.main {
+  flex: 1;
+}
+
+.footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  padding-block: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.footerInner {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  @include from(md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}

@@ -1,0 +1,134 @@
+.shell {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  background: var(--color-surface-raised);
+}
+
+.skipLink {
+  position: absolute;
+  left: var(--space-2);
+  top: -4rem;
+  z-index: var(--z-modal);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  transition: top var(--transition-fast);
+
+  &:focus {
+    top: var(--space-2);
+  }
+}
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+  padding-inline: var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  text-align: right;
+  line-height: 1.25;
+}
+
+.role {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  @include from(md) {
+    flex-direction: row;
+  }
+}
+
+.sidebar {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+
+  @include from(md) {
+    flex: none;
+    width: 15rem;
+    border-bottom: 0;
+    border-right: 1px solid var(--color-border);
+  }
+}
+
+.navList {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+
+  @include from(md) {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+}
+
+.navLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+.navLinkActive {
+  background: var(--color-brand-50);
+  color: var(--color-accent);
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+  min-width: 0;
+
+  @include from(lg) {
+    padding: var(--space-6);
+  }
+}

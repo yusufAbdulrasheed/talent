@@ -1,0 +1,7 @@
+.wrapper {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  min-height: 60vh;
+  padding: var(--space-7);
+}
