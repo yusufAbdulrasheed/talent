@@ -33,7 +33,10 @@ function RegisterPage() {
     email: '',
     password: '',
     role: initialRole,
+    companyName: '',
   });
+
+  const isRecruiter = form.role === USER_ROLES.RECRUITER;
 
   const registerMutation = useMutation({
     mutationFn: signUp,
@@ -47,7 +50,10 @@ function RegisterPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    registerMutation.mutate(form);
+
+    const { companyName, ...account } = form;
+    // The API rejects unknown keys, so companyName is only sent for recruiters.
+    registerMutation.mutate(isRecruiter ? { ...account, companyName } : account);
   };
 
   return (
@@ -102,6 +108,18 @@ function RegisterPage() {
             onChange={handleChange}
           />
         </div>
+
+        {isRecruiter ? (
+          <TextField
+            label="Company name"
+            name="companyName"
+            autoComplete="organization"
+            required
+            hint="You can add your CAC number and other company details after signing in."
+            value={form.companyName}
+            onChange={handleChange}
+          />
+        ) : null}
 
         <TextField
           label="Email address"

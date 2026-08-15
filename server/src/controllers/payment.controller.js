@@ -1,9 +1,11 @@
 import crypto from 'node:crypto';
-import Candidate from '../models/candidate.model.js';
 import Payment from '../models/payment.model.js';
 import { CANDIDATE_STATUSES } from '../constants/statuses.js';
 import { AppError } from '../utils/app-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
+import { sendSuccess } from '../utils/api-response.js';
+import { getCandidateForUser, isProfileComplete } from '../services/candidate.service.js';
+import { sendPaymentReceiptEmail } from '../services/notification.service.js';
 import {
   getTrainingFeeInKobo,
   initializePaystackTransaction,
@@ -11,15 +13,11 @@ import {
   verifyPaystackTransaction,
 } from '../services/paystack.service.js';
 
-async function getCandidateForUser(userId) {
-  const candidate = await Candidate.findOne({ user: userId });
-
-  if (!candidate) {
-    throw new AppError('Candidate profile not found.', 404);
-  }
-
-  return candidate;
-}
+const PAID_STATUSES = [
+  CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
+  CANDIDATE_STATUSES.UNDER_REVIEW,
+  CANDIDATE_STATUSES.APPROVED,
+];
 
 export const initializeTrainingPayment = asyncHandler(async (request, response) => {
   if (!request.user.isEmailVerified) {
@@ -28,23 +26,11 @@ export const initializeTrainingPayment = asyncHandler(async (request, response) 
 
   const candidate = await getCandidateForUser(request.user.id);
 
-  const missingProfileFields = [
-    candidate.phoneNumber,
-    candidate.gender,
-    candidate.dateOfBirth,
-    candidate.location,
-    candidate.education,
-    candidate.skills.length > 0,
-    candidate.workExperience,
-    candidate.availability,
-    candidate.experienceLevel,
-  ].some((value) => !value);
-
-  if (missingProfileFields) {
+  if (!isProfileComplete(candidate)) {
     throw new AppError('Complete your profile before making payment.', 422);
   }
 
-  if ([CANDIDATE_STATUSES.PAYMENT_CONFIRMED, CANDIDATE_STATUSES.UNDER_REVIEW, CANDIDATE_STATUSES.APPROVED].includes(candidate.status)) {
+  if (PAID_STATUSES.includes(candidate.status)) {
     throw new AppError('Your training payment has already been confirmed.', 409);
   }
 
@@ -67,16 +53,49 @@ export const initializeTrainingPayment = asyncHandler(async (request, response) 
   candidate.status = CANDIDATE_STATUSES.PAYMENT_PENDING;
   await candidate.save();
 
-  response.status(201).json({
-    success: true,
+  sendSuccess(response, {
+    status: 201,
     data: { authorizationUrl: transaction.authorization_url, reference: payment.reference },
   });
 });
 
 export const getMyPayments = asyncHandler(async (request, response) => {
   const candidate = await getCandidateForUser(request.user.id);
-  const payments = await Payment.find({ candidate: candidate.id }).sort({ createdAt: -1 });
-  response.status(200).json({ success: true, data: { payments } });
+  const payments = await Payment.find({ candidate: candidate.id })
+    .select('-providerPayload')
+    .sort({ createdAt: -1 });
+
+  sendSuccess(response, { data: { payments } });
+});
+
+/**
+ * Lets the Paystack return page show an accurate result without trusting the
+ * redirect: the status reported here is whatever the webhook already verified
+ * and stored.
+ */
+export const getPaymentStatus = asyncHandler(async (request, response) => {
+  const candidate = await getCandidateForUser(request.user.id);
+  const payment = await Payment.findOne({
+    reference: request.params.reference,
+    candidate: candidate.id,
+  }).select('-providerPayload');
+
+  if (!payment) {
+    throw new AppError('Payment not found.', 404);
+  }
+
+  sendSuccess(response, {
+    data: {
+      payment: {
+        reference: payment.reference,
+        amount: payment.amount,
+        currency: payment.currency,
+        status: payment.status,
+        paidAt: payment.paidAt,
+      },
+      candidateStatus: candidate.status,
+    },
+  });
 });
 
 export const paystackWebhook = asyncHandler(async (request, response) => {
@@ -89,15 +108,19 @@ export const paystackWebhook = asyncHandler(async (request, response) => {
   const event = JSON.parse(request.body.toString('utf8'));
 
   if (event.event !== 'charge.success') {
-    response.status(200).json({ success: true });
+    sendSuccess(response);
     return;
   }
 
   const reference = event.data?.reference;
-  const payment = await Payment.findOne({ reference }).populate('candidate');
+  const payment = await Payment.findOne({ reference }).populate({
+    path: 'candidate',
+    populate: { path: 'user', select: 'email firstName' },
+  });
 
+  // Unknown references are acknowledged rather than retried: they are not ours.
   if (!payment) {
-    response.status(200).json({ success: true });
+    sendSuccess(response);
     return;
   }
 
@@ -105,13 +128,20 @@ export const paystackWebhook = asyncHandler(async (request, response) => {
     throw new AppError('Candidate profile not found for this payment.', 404);
   }
 
+  // The webhook payload is only a trigger. The amount, currency, and status are
+  // read back from Paystack directly before anything is trusted.
   const verifiedTransaction = await verifyPaystackTransaction(reference);
   const expectedAmountInKobo = Math.round(payment.amount * 100);
 
-  if (verifiedTransaction.status !== 'success' || verifiedTransaction.amount !== expectedAmountInKobo || verifiedTransaction.currency !== payment.currency) {
+  if (
+    verifiedTransaction.status !== 'success'
+    || verifiedTransaction.amount !== expectedAmountInKobo
+    || verifiedTransaction.currency !== payment.currency
+  ) {
     throw new AppError('Paystack transaction verification failed.', 400);
   }
 
+  // Paystack retries webhooks, so this must stay idempotent.
   if (payment.status !== 'success') {
     payment.status = 'success';
     payment.paidAt = new Date(verifiedTransaction.paid_at);
@@ -120,7 +150,15 @@ export const paystackWebhook = asyncHandler(async (request, response) => {
 
     payment.candidate.status = CANDIDATE_STATUSES.PAYMENT_CONFIRMED;
     await payment.candidate.save();
+
+    // A failed receipt must not fail the webhook, or Paystack would retry a
+    // payment that has already been recorded.
+    try {
+      await sendPaymentReceiptEmail(payment);
+    } catch (error) {
+      console.error('Unable to send payment receipt:', error);
+    }
   }
 
-  response.status(200).json({ success: true });
+  sendSuccess(response);
 });

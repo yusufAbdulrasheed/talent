@@ -46,6 +46,10 @@ function LoginPage() {
       }
     >
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        {location.state?.passwordReset ? (
+          <Alert variant="success">Your password has been updated. Sign in with your new password.</Alert>
+        ) : null}
+
         {loginMutation.isError ? (
           <Alert variant="error">{getErrorMessage(loginMutation.error, 'Unable to sign in.')}</Alert>
         ) : null}

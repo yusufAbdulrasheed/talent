@@ -7,8 +7,9 @@ const environmentSchema = z.object({
   MONGODB_URI: z.string().min(1).default('mongodb://127.0.0.1:27017/tms'),
   JWT_ACCESS_SECRET: z.string().min(32).optional(),
   JWT_REFRESH_SECRET: z.string().min(32).optional(),
+  // Paystack signs webhooks with the secret key itself, so there is no
+  // separate webhook secret to configure.
   PAYSTACK_SECRET_KEY: z.string().optional(),
-  PAYSTACK_WEBHOOK_SECRET: z.string().optional(),
   PAYSTACK_CALLBACK_URL: z.string().url().default('http://localhost:5173/talent/payment/callback'),
   TRAINING_FEE_NGN: z.coerce.number().positive().optional(),
   SMTP_HOST: z.string().optional(),

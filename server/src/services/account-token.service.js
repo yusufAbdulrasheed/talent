@@ -5,14 +5,19 @@ import RefreshToken from '../models/refresh-token.model.js';
 import User from '../models/user.model.js';
 import { AppError } from '../utils/app-error.js';
 import { sendEmail } from './email.service.js';
+import { passwordResetEmail, verificationEmail } from './email-templates.js';
 
 const TOKEN_DURATION_MS = 60 * 60 * 1000;
+const PASSWORD_SALT_ROUNDS = 12;
 
+// Only the hash is stored, so a database leak cannot be replayed as a
+// working verification or reset link.
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function issueToken(user, type) {
+  // Issuing a new token invalidates any earlier one of the same type.
   await AccountToken.deleteMany({ user: user.id, type });
 
   const token = crypto.randomBytes(32).toString('base64url');
@@ -45,11 +50,9 @@ export async function sendVerificationEmail(userId) {
   }
 
   const token = await issueToken(user, 'email_verification');
-  await sendEmail({
-    to: user.email,
-    subject: 'Verify your TMS email address',
-    text: `Use this verification token to verify your email address: ${token}`,
-  });
+  const message = verificationEmail({ firstName: user.firstName, token });
+
+  await sendEmail({ to: user.email, ...message });
 }
 
 export async function verifyEmail(token) {
@@ -61,21 +64,27 @@ export async function verifyEmail(token) {
 export async function sendPasswordResetEmail(email) {
   const user = await User.findOne({ email: email.toLowerCase() });
 
+  // Silent return for unknown or disabled accounts: the caller always reports
+  // the same result, so this cannot be used to enumerate addresses.
   if (!user || !user.isActive) {
     return;
   }
 
   const token = await issueToken(user, 'password_reset');
-  await sendEmail({
-    to: user.email,
-    subject: 'Reset your TMS password',
-    text: `Use this password reset token to set a new password: ${token}`,
-  });
+  const message = passwordResetEmail({ firstName: user.firstName, token });
+
+  await sendEmail({ to: user.email, ...message });
 }
 
 export async function resetPassword(token, password) {
   const user = await consumeToken(token, 'password_reset');
-  user.passwordHash = await bcrypt.hash(password, 12);
+  user.passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   await user.save();
-  await RefreshToken.updateMany({ user: user.id, revokedAt: null }, { $set: { revokedAt: new Date() } });
+
+  // Every existing session is dropped, so a stolen session cannot outlive
+  // the password it was created with.
+  await RefreshToken.updateMany(
+    { user: user.id, revokedAt: null },
+    { $set: { revokedAt: new Date() } },
+  );
 }

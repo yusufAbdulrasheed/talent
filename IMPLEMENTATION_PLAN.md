@@ -56,11 +56,11 @@
 - [x] Configure Express using JavaScript ES modules and a modular folder structure.
 - [x] Connect MongoDB and implement Mongoose models.
 - [x] Create core data models: User, Candidate, RecruiterCompany, TrainerAssignment, Program/Batch, Payment, PlacementRequest, Notification, and PublicContent.
-- [-] Implement validation, standardized API responses, centralized error handling, request logging, and API versioning.
+- [x] Implement validation, standardized API responses, centralized error handling, request logging, and API versioning.
 - [x] Implement bcrypt password hashing, JWT access/refresh token flow, secure refresh-token handling, and logout.
 - [x] Implement RBAC middleware for Talent, Recruiter, Trainer, and Admin routes.
 - [-] Add rate limiting, CORS policy, security headers, file-upload validation, and authorization checks.
-- [ ] Seed an initial Admin account and reference data.
+- [-] Seed an initial Admin account and reference data. Admin seeding is done (`npm run seed:admin --workspace=server`); training-program reference data is still pending the client's programme list.
 
 **Exit condition:** protected API foundation is tested and role boundaries are enforced.
 
@@ -70,8 +70,8 @@
 - [x] Configure React Router, TanStack Query provider, reusable API client, query keys, mutation/error handling, and authenticated-session handling.
 - [x] Establish SCSS Module conventions, global design tokens, responsive layout primitives, and accessible shared components.
 - [-] Build public pages: Home, About, Services, Training Programs, Gallery, Events, Testimonials, FAQ, and Contact. Routes and layout exist; Home is drafted, the rest are placeholders pending branding and copy.
-- [-] Build registration, login, email verification, forgot-password, reset-password, and logout screens. Login, registration, and logout are built; the remaining three are placeholders.
-- [-] Implement corresponding authentication APIs and transactional email templates.
+- [x] Build registration, login, email verification, forgot-password, reset-password, and logout screens.
+- [x] Implement corresponding authentication APIs and transactional email templates.
 - [x] Create role-based frontend route guards and post-login routing.
 
 **Exit condition:** a visitor can browse the site, register, verify an account, sign in, reset a password, and reach only their authorized portal.
@@ -85,7 +85,7 @@
 - [x] Implement server-side Paystack payment initialization for the training fee.
 - [ ] Build the Paystack checkout handoff and return-state UI.
 - [x] Implement an authenticated Paystack webhook endpoint, signature verification, idempotency, and server-side transaction verification.
-- [-] Store payment transactions and issue an email receipt.
+- [x] Store payment transactions and issue an email receipt.
 - [x] Automatically update candidate status after verified successful payment; never trust only the client redirect.
 
 **Exit condition:** a Talent can complete onboarding, pay through Paystack, receive confirmation, and have a verified payment recorded.
@@ -153,6 +153,10 @@
 - [x] Backend authentication, email-verification, password-reset, talent-profile, and Paystack-payment API foundations implemented.
 - [x] Frontend foundation implemented: API client with 401 refresh-and-retry, in-memory access token, auth context with session bootstrap, role-based route guards, public and portal layouts, SCSS design tokens, and shared accessible components.
 - [x] Full MVP route table registered, with unbuilt pages rendering a labelled placeholder tied to its milestone.
+- [x] Admin seed script added; recruiter sign-up now creates the company record; candidate references are sequential (`TAL-2026-00021`).
+- [x] Request validation moved to middleware with field-level error details, and all responses use a shared success envelope.
+- [x] Transactional email templates (HTML and plain text) for verification, password reset, and payment receipt.
+- [x] Milestone 1 and Milestone 2 are complete except for file-upload validation and the public marketing pages.
 
 ## Open decisions blocking further work
 

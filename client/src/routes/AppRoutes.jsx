@@ -6,6 +6,9 @@ import GuestRoute from './GuestRoute.jsx';
 import HomePage from '../pages/public/HomePage/HomePage.jsx';
 import LoginPage from '../pages/auth/LoginPage/LoginPage.jsx';
 import RegisterPage from '../pages/auth/RegisterPage/RegisterPage.jsx';
+import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage/ForgotPasswordPage.jsx';
+import ResetPasswordPage from '../pages/auth/ResetPasswordPage/ResetPasswordPage.jsx';
+import VerifyEmailPage from '../pages/auth/VerifyEmailPage/VerifyEmailPage.jsx';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage.jsx';
 import PlaceholderPage from '../pages/PlaceholderPage/PlaceholderPage.jsx';
 import { USER_ROLES } from '../auth/roles.js';
@@ -38,11 +41,13 @@ function AppRoutes() {
         <Route element={<GuestRoute />}>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="forgot-password" element={stub('Reset your password', 'Request a password reset link.', M2)} />
-          <Route path="reset-password" element={stub('Choose a new password', 'Set a new password using your reset link.', M2)} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
-        <Route path="verify-email" element={stub('Verify your email address', 'Confirm the address on your account.', M2)} />
+        {/* Outside the guest guard: a signed-in but unverified user still
+            needs to be able to open their verification link. */}
+        <Route path="verify-email" element={<VerifyEmailPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.TALENT]} />}>

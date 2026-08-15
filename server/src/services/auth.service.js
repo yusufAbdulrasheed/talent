@@ -1,11 +1,14 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import Candidate from '../models/candidate.model.js';
+import RecruiterCompany from '../models/recruiter-company.model.js';
 import { USER_ROLES } from '../constants/user-roles.js';
 import { AppError } from '../utils/app-error.js';
 import { createAccessToken, createRefreshToken } from '../utils/auth-tokens.js';
+import { generateCandidateReference } from './reference-number.service.js';
 
 const PUBLIC_REGISTRATION_ROLES = [USER_ROLES.TALENT, USER_ROLES.RECRUITER];
+const PASSWORD_SALT_ROUNDS = 12;
 
 export function serializeUser(user) {
   return {
@@ -20,7 +23,7 @@ export function serializeUser(user) {
   };
 }
 
-export async function registerUser({ firstName, lastName, email, password, role }) {
+export async function registerUser({ firstName, lastName, email, password, role, companyName }) {
   if (!PUBLIC_REGISTRATION_ROLES.includes(role)) {
     throw new AppError('Only Talent and Recruiter accounts can be registered publicly.', 403);
   }
@@ -30,35 +33,37 @@ export async function registerUser({ firstName, lastName, email, password, role 
     throw new AppError('An account already exists for this email address.', 409);
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   const user = await User.create({ firstName, lastName, email, passwordHash, role });
 
-  if (role === USER_ROLES.TALENT) {
-    try {
-      await createCandidateRecord(user.id);
-    } catch (error) {
-      await User.deleteOne({ _id: user.id });
-      throw error;
-    }
+  // Every role gets its own profile record up front, so no part of the system
+  // has to cope with a user that has no matching profile. If that second write
+  // fails the user is removed rather than left half-registered.
+  try {
+    await createRoleProfile(user, { companyName });
+  } catch (error) {
+    await User.deleteOne({ _id: user.id });
+    throw error;
   }
 
   return createSession(user);
 }
 
-async function createCandidateRecord(userId) {
-  const year = new Date().getFullYear();
+async function createRoleProfile(user, { companyName }) {
+  if (user.role === USER_ROLES.TALENT) {
+    await Candidate.create({ user: user.id, referenceNumber: await generateCandidateReference() });
+    return;
+  }
 
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const referenceNumber = `TAL-${year}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
-
-    try {
-      await Candidate.create({ user: userId, referenceNumber });
-      return;
-    } catch (error) {
-      if (error.code !== 11000 || attempt === 4) {
-        throw error;
-      }
-    }
+  if (user.role === USER_ROLES.RECRUITER) {
+    await RecruiterCompany.create({
+      user: user.id,
+      companyName,
+      // Seeded from the sign-up address; the recruiter can change it later on
+      // their company profile.
+      companyEmail: user.email,
+      contactPerson: `${user.firstName} ${user.lastName}`,
+    });
   }
 }
 
