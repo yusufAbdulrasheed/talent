@@ -5,7 +5,7 @@ import RefreshToken from '../models/refresh-token.model.js';
 import User from '../models/user.model.js';
 import { AppError } from '../utils/app-error.js';
 import { sendEmail } from './email.service.js';
-import { passwordResetEmail, verificationEmail } from './email-templates.js';
+import { passwordResetEmail, trainerInviteEmail, verificationEmail } from './email-templates.js';
 
 const TOKEN_DURATION_MS = 60 * 60 * 1000;
 const PASSWORD_SALT_ROUNDS = 12;
@@ -72,6 +72,23 @@ export async function sendPasswordResetEmail(email) {
 
   const token = await issueToken(user, 'password_reset');
   const message = passwordResetEmail({ firstName: user.firstName, token });
+
+  await sendEmail({ to: user.email, ...message });
+}
+
+/**
+ * Invites a newly created trainer to set their first password. Reuses the
+ * password-reset token type, so the same consume-and-revoke path applies.
+ */
+export async function sendTrainerInvite(userId) {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return;
+  }
+
+  const token = await issueToken(user, 'password_reset');
+  const message = trainerInviteEmail({ firstName: user.firstName, token });
 
   await sendEmail({ to: user.email, ...message });
 }

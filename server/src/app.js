@@ -9,6 +9,8 @@ import healthRouter from './routes/health.routes.js';
 import authRouter from './routes/auth.routes.js';
 import talentRouter from './routes/talent.routes.js';
 import recruiterRouter from './routes/recruiter.routes.js';
+import trainerRouter from './routes/trainer.routes.js';
+import adminRouter from './routes/admin.routes.js';
 import paymentRouter from './routes/payment.routes.js';
 import { paystackWebhook } from './controllers/payment.controller.js';
 
@@ -25,6 +27,8 @@ app.use('/api/v1/health', healthRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/talent', talentRouter);
 app.use('/api/v1/recruiter', recruiterRouter);
+app.use('/api/v1/trainer', trainerRouter);
+app.use('/api/v1/admin', adminRouter);
 app.use('/api/v1/payments', paymentRouter);
 
 app.use(notFoundHandler);

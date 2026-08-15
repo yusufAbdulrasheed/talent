@@ -20,6 +20,18 @@ import CandidateProfilePage from "../pages/recruiter/CandidateProfilePage/Candid
 import PlacementRequestFormPage from "../pages/recruiter/PlacementRequestFormPage/PlacementRequestFormPage.jsx";
 import PlacementRequestsPage from "../pages/recruiter/PlacementRequestsPage/PlacementRequestsPage.jsx";
 import PlacementRequestDetailPage from "../pages/recruiter/PlacementRequestDetailPage/PlacementRequestDetailPage.jsx";
+import TrainerOverviewPage from "../pages/trainer/TrainerOverviewPage/TrainerOverviewPage.jsx";
+import TrainerAssignmentsPage from "../pages/trainer/TrainerAssignmentsPage/TrainerAssignmentsPage.jsx";
+import AdminOverviewPage from "../pages/admin/AdminOverviewPage/AdminOverviewPage.jsx";
+import AdminCandidatesPage from "../pages/admin/AdminCandidatesPage/AdminCandidatesPage.jsx";
+import AdminCandidateDetailPage from "../pages/admin/AdminCandidateDetailPage/AdminCandidateDetailPage.jsx";
+import AdminRecruitersPage from "../pages/admin/AdminRecruitersPage/AdminRecruitersPage.jsx";
+import AdminTrainersPage from "../pages/admin/AdminTrainersPage/AdminTrainersPage.jsx";
+import AdminProgramsPage from "../pages/admin/AdminProgramsPage/AdminProgramsPage.jsx";
+import AdminPaymentsPage from "../pages/admin/AdminPaymentsPage/AdminPaymentsPage.jsx";
+import AdminPlacementRequestsPage from "../pages/admin/AdminPlacementRequestsPage/AdminPlacementRequestsPage.jsx";
+import AdminPlacementRequestDetailPage from "../pages/admin/AdminPlacementRequestDetailPage/AdminPlacementRequestDetailPage.jsx";
+import AdminContentPage from "../pages/admin/AdminContentPage/AdminContentPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage.jsx";
 import PlaceholderPage from "../pages/PlaceholderPage/PlaceholderPage.jsx";
 import { USER_ROLES } from "../auth/roles.js";
@@ -139,83 +151,26 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.TRAINER]} />}>
         <Route path="trainer" element={<PortalLayout />}>
-          <Route
-            index
-            element={stub(
-              "Trainer overview",
-              "Your account status and announcements.",
-              M5,
-            )}
-          />
-          <Route
-            path="assignments"
-            element={stub(
-              "My assignments",
-              "Programmes and batches assigned to you.",
-              M5,
-            )}
-          />
+          <Route index element={<TrainerOverviewPage />} />
+          <Route path="assignments" element={<TrainerAssignmentsPage />} />
         </Route>
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.ADMIN]} />}>
         <Route path="admin" element={<PortalLayout />}>
+          <Route index element={<AdminOverviewPage />} />
+          <Route path="candidates" element={<AdminCandidatesPage />} />
+          <Route path="candidates/:id" element={<AdminCandidateDetailPage />} />
+          <Route path="recruiters" element={<AdminRecruitersPage />} />
+          <Route path="trainers" element={<AdminTrainersPage />} />
+          <Route path="programs" element={<AdminProgramsPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
+          <Route path="placement-requests" element={<AdminPlacementRequestsPage />} />
           <Route
-            index
-            element={stub(
-              "Admin overview",
-              "Operational counts across the platform.",
-              M5,
-            )}
+            path="placement-requests/:id"
+            element={<AdminPlacementRequestDetailPage />}
           />
-          <Route
-            path="candidates"
-            element={stub(
-              "Candidates",
-              "Review, approve, and publish candidates.",
-              M5,
-            )}
-          />
-          <Route
-            path="recruiters"
-            element={stub(
-              "Recruiters",
-              "Manage registered recruiting companies.",
-              M5,
-            )}
-          />
-          <Route
-            path="trainers"
-            element={stub("Trainers", "Manage trainer accounts.", M5)}
-          />
-          <Route
-            path="programs"
-            element={stub(
-              "Programs and batches",
-              "Manage programmes and trainer assignments.",
-              M5,
-            )}
-          />
-          <Route
-            path="payments"
-            element={stub(
-              "Payments",
-              "Look up and review payment records.",
-              M5,
-            )}
-          />
-          <Route
-            path="placement-requests"
-            element={stub(
-              "Placement requests",
-              "Review and progress recruiter requests.",
-              M5,
-            )}
-          />
-          <Route
-            path="content"
-            element={stub("Website content", "Manage public site content.", M5)}
-          />
+          <Route path="content" element={<AdminContentPage />} />
         </Route>
       </Route>
 

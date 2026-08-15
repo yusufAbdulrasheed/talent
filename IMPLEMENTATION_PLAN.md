@@ -105,15 +105,15 @@
 
 ## Milestone 5 - Admin and basic Trainer portal
 
-- [ ] Build Admin dashboard with operational counts for candidates, recruiters, paid candidates, approved talents, and placement requests.
-- [ ] Build candidate review, document review, status-change, approval/rejection, and talent-pool publishing controls.
-- [ ] Build recruiter, trainer, program/batch, and assignment management.
-- [ ] Build payment record lookup and payment-status review.
-- [ ] Build placement-request review and status management.
-- [ ] Build basic public-content management needed for the marketing website.
-- [ ] Build the read-only Trainer dashboard: profile, assigned programs/batches, candidate counts, and announcements.
-- [ ] Ensure trainers cannot change attendance, assessments, materials, grades, or certificates in this MVP.
-- [ ] Send email notifications for account events, payment confirmation, candidate approval/rejection, and placement-request status changes.
+- [x] Build Admin dashboard with operational counts for candidates, recruiters, paid candidates, approved talents, and placement requests.
+- [-] Build candidate review, document review, status-change, approval/rejection, and talent-pool publishing controls. Document review is pending the upload feature.
+- [x] Build recruiter, trainer, program/batch, and assignment management.
+- [x] Build payment record lookup and payment-status review.
+- [x] Build placement-request review and status management.
+- [x] Build basic public-content management needed for the marketing website.
+- [x] Build the read-only Trainer dashboard: profile, assigned programs/batches, candidate counts, and announcements.
+- [x] Ensure trainers cannot change attendance, assessments, materials, grades, or certificates in this MVP.
+- [x] Send email notifications for account events, payment confirmation, candidate approval/rejection, and placement-request status changes.
 
 **Exit condition:** Admin can operate all MVP workflows, and Trainers have accurate read-only assignment visibility.
 
@@ -163,6 +163,10 @@
 - [x] Recruiter Portal built: company profile, dashboard summary, talent-pool search with filters and pagination, anonymous candidate profile, placement-request form, and request history/detail.
 - [x] Anonymous talent pool enforced at two layers: a Mongo field projection and an explicit whitelist serializer. `workExperience` is deliberately withheld because free text often names the candidate or their employer.
 - [x] Milestone 4 is complete.
+- [x] Admin Portal built: dashboard, candidate review and approval, recruiter management, trainer accounts, programmes and batch assignments, payment lookup, placement-request review, and public-content management.
+- [x] Read-only Trainer Portal built. The trainer router registers a single GET route and no mutating verbs at all, so the read-only boundary is structural rather than a UI convention.
+- [x] Administrators can only set `under_review`, `approved`, or `rejected`; the earlier lifecycle states stay system-driven so a payment cannot be faked from the admin UI. Rejection requires a reviewer note.
+- [x] Milestone 5 is complete except candidate document review, which depends on the upload feature.
 
 ## Open decisions blocking further work
 

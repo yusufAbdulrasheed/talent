@@ -30,4 +30,22 @@ export const queryKeys = {
     request: (id) => ['recruiter', 'request', id],
     summary: ['recruiter', 'summary'],
   },
+  trainer: {
+    all: ['trainer'],
+    dashboard: ['trainer', 'dashboard'],
+  },
+  admin: {
+    all: ['admin'],
+    dashboard: ['admin', 'dashboard'],
+    candidates: (params) => ['admin', 'candidates', params],
+    candidate: (id) => ['admin', 'candidate', id],
+    recruiters: (params) => ['admin', 'recruiters', params],
+    trainers: (params) => ['admin', 'trainers', params],
+    programs: (params) => ['admin', 'programs', params],
+    assignments: (params) => ['admin', 'assignments', params],
+    payments: (params) => ['admin', 'payments', params],
+    placementRequests: (params) => ['admin', 'placement-requests', params],
+    placementRequest: (id) => ['admin', 'placement-request', id],
+    content: (params) => ['admin', 'content', params],
+  },
 };

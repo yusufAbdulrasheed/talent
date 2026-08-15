@@ -1,0 +1,18 @@
+.createForm {
+  display: grid;
+  gap: var(--space-4);
+  align-items: end;
+
+  @include from(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include from(lg) {
+    grid-template-columns: repeat(3, 1fr) auto;
+  }
+}
+
+.createAction {
+  display: flex;
+  align-items: flex-end;
+}

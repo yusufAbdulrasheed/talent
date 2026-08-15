@@ -1,0 +1,19 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+
+  @include from(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.action {
+  display: flex;
+  justify-content: flex-end;
+}
