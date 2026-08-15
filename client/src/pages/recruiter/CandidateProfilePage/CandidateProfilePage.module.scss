@@ -1,0 +1,23 @@
+.summary {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+
+  @include from(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+}
+
+.muted {
+  color: var(--color-text-muted);
+}

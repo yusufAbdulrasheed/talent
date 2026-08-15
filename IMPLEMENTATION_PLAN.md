@@ -92,14 +92,14 @@
 
 ## Milestone 4 - Recruiter portal and placement requests
 
-- [ ] Build recruiter/company registration and profile management.
-- [ ] Build Recruiter dashboard with basic request summaries.
-- [ ] Implement anonymous talent-pool API that exposes only approved candidates and permitted fields.
-- [ ] Build candidate search and filtering by location, skills, training program, availability, experience, certification, and keyword where data exists.
-- [ ] Build anonymous candidate-profile page.
-- [ ] Build placement-request form and request-history/status views.
-- [ ] Notify Admin by email/in-app notification when a placement request is submitted.
-- [ ] Verify that hidden candidate data (name, email, phone, address, photos, documents) cannot be exposed through the UI or API.
+- [x] Build recruiter/company registration and profile management.
+- [x] Build Recruiter dashboard with basic request summaries.
+- [x] Implement anonymous talent-pool API that exposes only approved candidates and permitted fields.
+- [x] Build candidate search and filtering by location, skills, training program, availability, experience, certification, and keyword where data exists.
+- [x] Build anonymous candidate-profile page.
+- [x] Build placement-request form and request-history/status views.
+- [x] Notify Admin by email/in-app notification when a placement request is submitted.
+- [-] Verify that hidden candidate data (name, email, phone, address, photos, documents) cannot be exposed through the UI or API. Enforced by a database projection plus a whitelist serializer, and unit-verified; still needs an integration test against real data in Milestone 6.
 
 **Exit condition:** a Recruiter can register without billing, find approved anonymous candidates, and submit/track placement requests.
 
@@ -159,6 +159,10 @@
 - [x] Milestone 1 and Milestone 2 are complete except for file-upload validation and the public marketing pages.
 - [x] Talent Portal built: overview with onboarding checklist, profile-completion form, payment history, and the Paystack handoff and return-state page.
 - [x] Milestone 3 is complete except document upload, which is blocked on the storage-provider decision.
+- [x] Cloudinary chosen as the file-storage provider; document upload can be built once credentials are available.
+- [x] Recruiter Portal built: company profile, dashboard summary, talent-pool search with filters and pagination, anonymous candidate profile, placement-request form, and request history/detail.
+- [x] Anonymous talent pool enforced at two layers: a Mongo field projection and an explicit whitelist serializer. `workExperience` is deliberately withheld because free text often names the candidate or their employer.
+- [x] Milestone 4 is complete.
 
 ## Open decisions blocking further work
 

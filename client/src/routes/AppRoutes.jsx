@@ -13,6 +13,13 @@ import TalentOverviewPage from "../pages/talent/TalentOverviewPage/TalentOvervie
 import TalentProfilePage from "../pages/talent/TalentProfilePage/TalentProfilePage.jsx";
 import TalentPaymentsPage from "../pages/talent/TalentPaymentsPage/TalentPaymentsPage.jsx";
 import PaymentCallbackPage from "../pages/talent/PaymentCallbackPage/PaymentCallbackPage.jsx";
+import RecruiterOverviewPage from "../pages/recruiter/RecruiterOverviewPage/RecruiterOverviewPage.jsx";
+import RecruiterCompanyPage from "../pages/recruiter/RecruiterCompanyPage/RecruiterCompanyPage.jsx";
+import TalentPoolPage from "../pages/recruiter/TalentPoolPage/TalentPoolPage.jsx";
+import CandidateProfilePage from "../pages/recruiter/CandidateProfilePage/CandidateProfilePage.jsx";
+import PlacementRequestFormPage from "../pages/recruiter/PlacementRequestFormPage/PlacementRequestFormPage.jsx";
+import PlacementRequestsPage from "../pages/recruiter/PlacementRequestsPage/PlacementRequestsPage.jsx";
+import PlacementRequestDetailPage from "../pages/recruiter/PlacementRequestDetailPage/PlacementRequestDetailPage.jsx";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage.jsx";
 import PlaceholderPage from "../pages/PlaceholderPage/PlaceholderPage.jsx";
 import { USER_ROLES } from "../auth/roles.js";
@@ -117,38 +124,16 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute allowedRoles={[USER_ROLES.RECRUITER]} />}>
         <Route path="recruiter" element={<PortalLayout />}>
+          <Route index element={<RecruiterOverviewPage />} />
+          <Route path="company" element={<RecruiterCompanyPage />} />
+          <Route path="talent-pool" element={<TalentPoolPage />} />
+          <Route path="talent-pool/:reference" element={<CandidateProfilePage />} />
           <Route
-            index
-            element={stub(
-              "Recruiter overview",
-              "A summary of your placement requests.",
-              M4,
-            )}
+            path="talent-pool/:reference/request"
+            element={<PlacementRequestFormPage />}
           />
-          <Route
-            path="company"
-            element={stub(
-              "Company profile",
-              "Your company registration details.",
-              M4,
-            )}
-          />
-          <Route
-            path="talent-pool"
-            element={stub(
-              "Find talent",
-              "Search approved, anonymous candidate profiles.",
-              M4,
-            )}
-          />
-          <Route
-            path="requests"
-            element={stub(
-              "Placement requests",
-              "Submit and track placement requests.",
-              M4,
-            )}
-          />
+          <Route path="requests" element={<PlacementRequestsPage />} />
+          <Route path="requests/:id" element={<PlacementRequestDetailPage />} />
         </Route>
       </Route>
 

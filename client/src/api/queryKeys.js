@@ -21,4 +21,13 @@ export const queryKeys = {
     mine: ['payments', 'mine'],
     status: (reference) => ['payments', 'status', reference],
   },
+  recruiter: {
+    all: ['recruiter'],
+    company: ['recruiter', 'company'],
+    talentPool: (filters) => ['recruiter', 'talent-pool', filters],
+    candidate: (reference) => ['recruiter', 'candidate', reference],
+    requests: (params) => ['recruiter', 'requests', params],
+    request: (id) => ['recruiter', 'request', id],
+    summary: ['recruiter', 'summary'],
+  },
 };

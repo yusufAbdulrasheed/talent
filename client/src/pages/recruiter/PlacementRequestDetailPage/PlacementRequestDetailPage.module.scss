@@ -1,0 +1,32 @@
+.details {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+
+  @include from(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include from(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+}
+
+.reference {
+  font-family: var(--font-mono);
+}
+
+// Preserves the line breaks the recruiter typed into the textarea.
+.body {
+  white-space: pre-wrap;
+}

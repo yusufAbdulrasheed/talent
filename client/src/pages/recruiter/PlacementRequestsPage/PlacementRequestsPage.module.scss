@@ -1,0 +1,47 @@
+.statusFilter {
+  max-width: 20rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.itemMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.itemTitle {
+  font-size: var(--text-lg);
+}
+
+.itemMeta {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.itemDate {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.reference {
+  font-family: var(--font-mono);
+}

@@ -67,6 +67,102 @@ export function passwordResetEmail({ firstName, token }) {
   };
 }
 
+export function candidateApprovedEmail({ firstName, referenceNumber }) {
+  const link = new URL('/talent', environment.CLIENT_URL).toString();
+
+  return {
+    subject: 'Your application has been approved',
+    text: `Hello ${firstName},\n\nGood news — your application (${referenceNumber}) has been approved. Your anonymous profile is now visible to recruiters in our talent pool.\n\nView your dashboard: ${link}`,
+    html: layout({
+      heading: `Hello ${firstName},`,
+      bodyHtml: `<p style="margin:0 0 12px;">Good news — your application <strong>${escapeHtml(referenceNumber)}</strong> has been approved.</p>
+      <p style="margin:0;">Your anonymous profile is now visible to recruiters in our talent pool. Your name and contact details stay private until a placement is agreed.</p>${button(link, 'View your dashboard')}`,
+    }),
+  };
+}
+
+export function candidateRejectedEmail({ firstName, referenceNumber, note }) {
+  const link = new URL('/talent', environment.CLIENT_URL).toString();
+  const noteHtml = note
+    ? `<p style="margin:16px 0 0;padding:12px;background:#f1f5f9;border-radius:8px;"><strong>Reviewer note:</strong><br>${escapeHtml(note)}</p>`
+    : '';
+
+  return {
+    subject: 'An update on your application',
+    text: `Hello ${firstName},\n\nWe have reviewed your application (${referenceNumber}) and it was not approved at this time.${note ? `\n\nReviewer note: ${note}` : ''}\n\nView your dashboard: ${link}`,
+    html: layout({
+      heading: `Hello ${firstName},`,
+      bodyHtml: `<p style="margin:0;">We have reviewed your application <strong>${escapeHtml(referenceNumber)}</strong> and it was not approved at this time.</p>${noteHtml}${button(link, 'View your dashboard')}`,
+    }),
+  };
+}
+
+export function placementRequestStatusEmail({ contactPerson, jobTitle, candidateReference, status, note }) {
+  const link = new URL('/recruiter/requests', environment.CLIENT_URL).toString();
+  const readableStatus = status.replaceAll('_', ' ');
+  const noteHtml = note
+    ? `<p style="margin:16px 0 0;padding:12px;background:#f1f5f9;border-radius:8px;"><strong>Note from our team:</strong><br>${escapeHtml(note)}</p>`
+    : '';
+
+  return {
+    subject: `Your placement request is now ${readableStatus}`,
+    text: `Hello ${contactPerson},\n\nYour placement request for ${jobTitle} (candidate ${candidateReference}) is now "${readableStatus}".${note ? `\n\nNote: ${note}` : ''}\n\nView your requests: ${link}`,
+    html: layout({
+      heading: `Hello ${escapeHtml(contactPerson)},`,
+      bodyHtml: `<p style="margin:0;">Your placement request for <strong>${escapeHtml(jobTitle)}</strong> (candidate ${escapeHtml(candidateReference)}) is now <strong>${escapeHtml(readableStatus)}</strong>.</p>${noteHtml}${button(link, 'View your requests')}`,
+    }),
+  };
+}
+
+export function trainerInviteEmail({ firstName, token }) {
+  const link = buildLink('/reset-password', token);
+
+  return {
+    subject: 'Your trainer account is ready',
+    text: `Hello ${firstName},\n\nAn administrator has created a trainer account for you. Set your password to sign in:\n${link}\n\nThis link expires in one hour. If it expires, use "Forgot password" on the sign-in page.`,
+    html: layout({
+      heading: `Hello ${firstName},`,
+      bodyHtml: `<p style="margin:0;">An administrator has created a trainer account for you. Set your password to sign in.</p>${button(link, 'Set your password')}<p style="margin:16px 0 0;font-size:13px;color:#64748b;">This link expires in one hour. If it expires, use “Forgot password” on the sign-in page.</p>`,
+    }),
+  };
+}
+
+export function placementRequestEmail({
+  companyName,
+  candidateReference,
+  jobTitle,
+  employmentType,
+  location,
+  numberRequired,
+}) {
+  const link = new URL('/admin/placement-requests', environment.CLIENT_URL).toString();
+  const rows = [
+    ['Company', companyName],
+    ['Candidate reference', candidateReference],
+    ['Job title', jobTitle],
+    ['Employment type', employmentType.replaceAll('_', ' ')],
+    ['Location', location],
+    ['Number required', String(numberRequired)],
+  ];
+
+  return {
+    subject: `New placement request from ${companyName}`,
+    text: `A recruiter has submitted a placement request.\n\n${rows.map(([key, value]) => `${key}: ${value}`).join('\n')}\n\nReview it here: ${link}`,
+    html: layout({
+      heading: 'New placement request',
+      bodyHtml: `<p style="margin:0 0 16px;">A recruiter has submitted a placement request.</p>
+      <dl style="margin:0;font-size:14px;">
+        ${rows
+          .map(
+            ([key, value]) =>
+              `<div style="display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #e2e8f0;"><dt style="color:#64748b;">${escapeHtml(key)}</dt><dd style="margin:0;font-weight:600;">${escapeHtml(value)}</dd></div>`,
+          )
+          .join('')}
+      </dl>${button(link, 'Review placement requests')}`,
+    }),
+  };
+}
+
 export function paymentReceiptEmail({ firstName, referenceNumber, reference, amount, currency, paidAt }) {
   const formattedAmount = new Intl.NumberFormat('en-NG', {
     style: 'currency',
