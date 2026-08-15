@@ -1,0 +1,42 @@
+.blockers {
+  list-style: disc;
+  padding-left: var(--space-5);
+}
+
+// Wide tables scroll inside their own container rather than the page.
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+
+  th,
+  td {
+    padding: var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  th {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+.caption {
+  @include visually-hidden;
+}
+
+.reference {
+  font-family: var(--font-mono);
+}

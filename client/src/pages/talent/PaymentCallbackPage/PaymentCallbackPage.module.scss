@@ -1,0 +1,33 @@
+.pending {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding-top: var(--space-2);
+
+  @include from(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}

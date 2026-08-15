@@ -78,12 +78,12 @@
 
 ## Milestone 3 - Talent onboarding and Paystack payments
 
-- [-] Build the Talent Portal overview and profile-completion flow.
+- [x] Build the Talent Portal overview and profile-completion flow.
 - [x] Capture personal and professional information; generate a unique candidate reference number.
-- [ ] Implement secure document upload, storage, retrieval authorization, and document-status display.
-- [ ] Build Talent status and payment-history views.
+- [!] Implement secure document upload, storage, retrieval authorization, and document-status display. Blocked: needs the cloud file-storage decision (Cloudinary or S3).
+- [x] Build Talent status and payment-history views.
 - [x] Implement server-side Paystack payment initialization for the training fee.
-- [ ] Build the Paystack checkout handoff and return-state UI.
+- [x] Build the Paystack checkout handoff and return-state UI.
 - [x] Implement an authenticated Paystack webhook endpoint, signature verification, idempotency, and server-side transaction verification.
 - [x] Store payment transactions and issue an email receipt.
 - [x] Automatically update candidate status after verified successful payment; never trust only the client redirect.
@@ -157,6 +157,8 @@
 - [x] Request validation moved to middleware with field-level error details, and all responses use a shared success envelope.
 - [x] Transactional email templates (HTML and plain text) for verification, password reset, and payment receipt.
 - [x] Milestone 1 and Milestone 2 are complete except for file-upload validation and the public marketing pages.
+- [x] Talent Portal built: overview with onboarding checklist, profile-completion form, payment history, and the Paystack handoff and return-state page.
+- [x] Milestone 3 is complete except document upload, which is blocked on the storage-provider decision.
 
 ## Open decisions blocking further work
 

@@ -15,6 +15,10 @@ export const queryKeys = {
   talent: {
     all: ['talent'],
     profile: ['talent', 'profile'],
-    payments: ['talent', 'payments'],
+  },
+  payments: {
+    all: ['payments'],
+    mine: ['payments', 'mine'],
+    status: (reference) => ['payments', 'status', reference],
   },
 };
