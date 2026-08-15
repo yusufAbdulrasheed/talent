@@ -7,6 +7,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "seed:admin": "node src/scripts/seed-admin.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -26,6 +28,9 @@
   "devDependencies": {
     "eslint": "^9.22.0",
     "globals": "^15.15.0",
-    "nodemon": "^3.1.9"
+    "mongodb-memory-server": "^11.2.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
   }
 }

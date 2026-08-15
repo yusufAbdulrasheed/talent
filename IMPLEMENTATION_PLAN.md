@@ -119,13 +119,13 @@
 
 ## Milestone 6 - Quality assurance, deployment, and handover
 
-- [ ] Add unit tests for validation, authentication, RBAC, candidate approval, anonymous-profile protection, and Paystack webhook handling.
-- [ ] Add API integration tests for all critical user journeys.
-- [ ] Test responsive behavior, modern browser compatibility, accessibility basics, error states, loading states, and empty states.
-- [ ] Run security review: authorization, protected uploads, payment verification, secrets, rate limits, and input validation.
-- [ ] Configure production environments, domain, HTTPS, email, file storage, MongoDB backups, monitoring, and error reporting.
-- [ ] Deploy frontend and backend, run production smoke tests, and verify Paystack webhook delivery.
-- [ ] Prepare administrator guide, deployment notes, environment documentation, and user handover/training.
+- [x] Add unit tests for validation, authentication, RBAC, candidate approval, anonymous-profile protection, and Paystack webhook handling.
+- [x] Add API integration tests for all critical user journeys.
+- [-] Test responsive behavior, modern browser compatibility, accessibility basics, error states, loading states, and empty states. Loading, error, and empty states are implemented throughout and unit-tested on the session guards; responsive and cross-browser checks still need a manual pass on real devices.
+- [x] Run security review: authorization, protected uploads, payment verification, secrets, rate limits, and input validation. See `docs/SECURITY-REVIEW.md`.
+- [!] Configure production environments, domain, HTTPS, email, file storage, MongoDB backups, monitoring, and error reporting. Documented in `docs/DEPLOYMENT.md`; blocked on client-owned accounts and credentials.
+- [!] Deploy frontend and backend, run production smoke tests, and verify Paystack webhook delivery. Smoke-test checklist prepared; blocked on hosting accounts.
+- [x] Prepare administrator guide, deployment notes, environment documentation, and user handover/training. See `docs/ADMIN-GUIDE.md` and `docs/DEPLOYMENT.md`.
 
 **Exit condition:** production deployment has passed acceptance testing and handover is complete.
 
@@ -167,6 +167,12 @@
 - [x] Read-only Trainer Portal built. The trainer router registers a single GET route and no mutating verbs at all, so the read-only boundary is structural rather than a UI convention.
 - [x] Administrators can only set `under_review`, `approved`, or `rejected`; the earlier lifecycle states stay system-driven so a payment cannot be faked from the admin UI. Rejection requires a reviewer note.
 - [x] Milestone 5 is complete except candidate document review, which depends on the upload feature.
+- [x] Automated test suite added: 75 tests (71 server, 4 client) covering RBAC, auth and session lifecycle, talent-pool anonymity, the Paystack webhook, and the candidate approval pipeline. Run with `npm test`.
+- [x] Security review completed and documented, with seven items flagged as must-fix before launch.
+- [x] Administrator guide and deployment/operations documentation written.
+- [x] Fixed: rate limiting keyed on the proxy IP behind a reverse proxy, which would have collapsed all users into one bucket in production. Now configurable via `TRUST_PROXY_HOPS`.
+- [x] Fixed: a failed verification email aborted registration after the account had already been created.
+- [x] Fixed: the session bootstrap left guarded routes spinning forever under React StrictMode.
 
 ## Open decisions blocking further work
 
