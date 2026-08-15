@@ -32,7 +32,17 @@ function sendSession(response, session, status) {
 
 export const register = asyncHandler(async (request, response) => {
   const session = await registerUser(request.validated);
-  await sendVerificationEmail(session.user.id);
+
+  // Best effort: the account and session already exist, so a mail failure must
+  // not turn a successful registration into a 500 and strand the user with an
+  // account they cannot be told about. They can request a new link from the
+  // verify-email page.
+  try {
+    await sendVerificationEmail(session.user.id);
+  } catch (error) {
+    console.error('Unable to send the verification email:', error);
+  }
+
   sendSession(response, session, 201);
 });
 

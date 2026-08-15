@@ -21,6 +21,12 @@ export default defineConfig({
       },
     },
   },
+  test: {
+    environment: 'jsdom',
+    globals: false,
+    setupFiles: ['./src/test/setup.js'],
+    include: ['src/**/*.test.{js,jsx}'],
+  },
   server: {
     port: 5173,
     // Proxying keeps the browser same-origin in development, so the httpOnly

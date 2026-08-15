@@ -14,7 +14,7 @@ function AuthProvider({ children }) {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState(SESSION_STATUS.LOADING);
-  const hasBootstrapped = useRef(false);
+  const bootstrapRequest = useRef(null);
 
   const clearSession = useCallback(() => {
     setAccessToken(null);
@@ -31,17 +31,19 @@ function AuthProvider({ children }) {
   }, [clearSession]);
 
   // On a cold load the access token is gone but the refresh cookie may not be.
-  // The ref guard keeps StrictMode's double-mount from rotating the refresh
-  // token twice and invalidating the session it just restored.
+  //
+  // The request is started once and cached in a ref, so StrictMode's double
+  // mount cannot rotate the refresh token twice and invalidate the session it
+  // just restored. Handlers are attached on *every* mount: guarding the effect
+  // body with the ref instead would leave the second mount with no handlers at
+  // all, and the first mount's `isActive` already false, so the status would
+  // never leave `loading` and every guarded route would spin forever.
   useEffect(() => {
-    if (hasBootstrapped.current) {
-      return;
-    }
-
-    hasBootstrapped.current = true;
     let isActive = true;
 
-    refreshSession()
+    bootstrapRequest.current ??= refreshSession();
+
+    bootstrapRequest.current
       .then((restoredUser) => {
         if (isActive) {
           setUser(restoredUser);
