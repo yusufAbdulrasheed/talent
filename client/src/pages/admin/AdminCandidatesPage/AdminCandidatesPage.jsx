@@ -25,14 +25,30 @@ const STATUS_OPTIONS = Object.entries(CANDIDATE_STATUS_DETAILS).map(([value, { l
   label,
 }));
 
+function getInitials(name) {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+}
+
 function AdminCandidatesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const status = searchParams.get('status') ?? '';
   const search = searchParams.get('search') ?? '';
+  const jobTitle = searchParams.get('jobTitle') ?? '';
   const page = Number(searchParams.get('page') ?? 1);
   const [searchInput, setSearchInput] = useState(search);
+  const [jobTitleInput, setJobTitleInput] = useState(jobTitle);
 
-  const params = { page, ...(status ? { status } : {}), ...(search ? { search } : {}) };
+  const params = {
+    page,
+    ...(status ? { status } : {}),
+    ...(search ? { search } : {}),
+    ...(jobTitle ? { jobTitle } : {}),
+  };
   const candidatesQuery = useQuery({
     queryKey: queryKeys.admin.candidates(params),
     queryFn: () => listCandidates(params),
@@ -40,11 +56,12 @@ function AdminCandidatesPage() {
   });
 
   const updateSearch = (next) => {
-    const merged = { status, search, page: 1, ...next };
+    const merged = { status, search, jobTitle, page: 1, ...next };
     const clean = {};
 
     if (merged.status) clean.status = merged.status;
     if (merged.search) clean.search = merged.search;
+    if (merged.jobTitle) clean.jobTitle = merged.jobTitle;
     if (merged.page > 1) clean.page = String(merged.page);
 
     setSearchParams(clean);
@@ -60,8 +77,20 @@ function AdminCandidatesPage() {
         </Link>
       ),
     },
-    { key: 'fullName', header: 'Name' },
+    {
+      key: 'fullName',
+      header: 'Name',
+      render: (row) => (
+        <span className={styles.nameCell}>
+          <span className={styles.avatar} aria-hidden="true">
+            {getInitials(row.fullName)}
+          </span>
+          {row.fullName ?? '—'}
+        </span>
+      ),
+    },
     { key: 'email', header: 'Email' },
+    { key: 'jobTitle', header: 'Job title', render: (row) => row.jobTitle || '—' },
     { key: 'location', header: 'Location' },
     {
       key: 'status',
@@ -103,12 +132,31 @@ function AdminCandidatesPage() {
             <TextField
               label="Search"
               name="search"
-              hint="Matches reference, location, and skills."
+              hint="Matches reference, job title, location, and skills."
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
             />
             <Button type="submit" isLoading={candidatesQuery.isFetching}>
               Search
+            </Button>
+          </form>
+
+          <form
+            className={styles.searchForm}
+            onSubmit={(event) => {
+              event.preventDefault();
+              updateSearch({ jobTitle: jobTitleInput.trim() });
+            }}
+          >
+            <TextField
+              label="Job title"
+              name="jobTitle"
+              hint="Filter candidates by job title alone."
+              value={jobTitleInput}
+              onChange={(event) => setJobTitleInput(event.target.value)}
+            />
+            <Button type="submit" variant="secondary" isLoading={candidatesQuery.isFetching}>
+              Filter
             </Button>
           </form>
 
@@ -135,6 +183,7 @@ function AdminCandidatesPage() {
                   variant="secondary"
                   onClick={() => {
                     setSearchInput('');
+                    setJobTitleInput('');
                     setSearchParams({});
                   }}
                 >

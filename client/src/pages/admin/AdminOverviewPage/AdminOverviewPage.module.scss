@@ -1,32 +1,121 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.015em;
+}
+
+.sectionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+
+  &:hover {
+    color: var(--color-accent-hover);
+    text-decoration: none;
+  }
+}
+
 .stats {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--space-4);
   grid-template-columns: repeat(2, 1fr);
 
-  @include from(lg) {
+  @include from(xl) {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-.stat {
+// Sections with only two headline numbers (payments) get wider tiles.
+.statsWide {
+  @include from(xl) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ---- Bottom activity row: recent requests + quick links --------------------
+
+.activityGrid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: 1fr;
+
+  @include from(lg) {
+    grid-template-columns: 1fr 22rem;
+    align-items: start;
+  }
+}
+
+.sideColumn {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-4);
+  gap: var(--space-5);
+}
+
+.tableLink {
+  font-weight: var(--weight-semibold);
+}
+
+.quickLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.quickLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+
+  &:hover {
+    background: var(--color-surface-raised);
+    border-color: var(--color-border-strong);
+    text-decoration: none;
+  }
 }
 
-.statValue {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-bold);
-  line-height: 1.1;
+.quickLinkIcon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--gradient-soft);
+  color: var(--color-accent);
 }
 
-.statLabel {
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
+.quickLinkArrow {
+  margin-left: auto;
+  color: var(--color-text-subtle);
 }

@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { Briefcase, CalendarClock, FileSearch, Hash, ListFilter, MapPin, Users } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import Button from '../../../components/ui/Button/Button.jsx';
@@ -49,10 +50,22 @@ function PlacementRequestsPage() {
       <PageHeader
         title="Placement requests"
         description="Every request you have submitted, and where each one stands."
-        actions={<Button to="/recruiter/talent-pool">Find talent</Button>}
+        actions={
+          <Button to="/recruiter/talent-pool">
+            <Users size={16} aria-hidden="true" />
+            Find talent
+          </Button>
+        }
       />
 
-      <Card title="Filter">
+      <Card
+        title={
+          <span className={styles.titleWithIcon}>
+            <ListFilter size={18} aria-hidden="true" />
+            Filter
+          </span>
+        }
+      >
         <SelectField
           label="Status"
           name="status"
@@ -68,6 +81,7 @@ function PlacementRequestsPage() {
         {({ placementRequests, pagination }) =>
           placementRequests.length === 0 ? (
             <EmptyState
+              icon={FileSearch}
               title={status ? 'No requests with this status' : 'No placement requests yet'}
               description={
                 status
@@ -95,18 +109,26 @@ function PlacementRequestsPage() {
                   return (
                     <li key={request.id}>
                       <article className={styles.item}>
+                        <span className={styles.itemIcon} aria-hidden="true">
+                          <Briefcase size={18} strokeWidth={2} />
+                        </span>
                         <div className={styles.itemMain}>
                           <h2 className={styles.itemTitle}>
                             <Link to={`/recruiter/requests/${request.id}`}>{request.jobTitle}</Link>
                           </h2>
                           <p className={styles.itemMeta}>
-                            <span className={styles.reference}>{request.candidateReference}</span>
-                            {' · '}
-                            {getEmploymentTypeLabel(request.employmentType)}
-                            {' · '}
-                            {request.location}
+                            <span className={`${styles.metaChip} ${styles.reference}`}>
+                              <Hash size={12} aria-hidden="true" />
+                              {request.candidateReference}
+                            </span>
+                            <span className={styles.metaChip}>
+                              <MapPin size={12} aria-hidden="true" />
+                              {request.location}
+                            </span>
+                            <span className={styles.metaChip}>{getEmploymentTypeLabel(request.employmentType)}</span>
                           </p>
                           <p className={styles.itemDate}>
+                            <CalendarClock size={12} aria-hidden="true" />
                             Submitted {formatDate(request.createdAt)}
                           </p>
                         </div>

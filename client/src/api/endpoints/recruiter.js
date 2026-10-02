@@ -20,6 +20,21 @@ export async function getPoolCandidate(reference) {
   return data.data.candidate;
 }
 
+export async function getMySubscription() {
+  const { data } = await http.get('/recruiter/subscription');
+  return data.data.subscription;
+}
+
+export async function initializeSubscriptionCheckout(payload) {
+  const { data } = await http.post('/recruiter/subscription/checkout', payload);
+  return data.data;
+}
+
+export async function getSubscriptionCheckoutStatus(reference) {
+  const { data } = await http.get(`/recruiter/subscription/checkout/${encodeURIComponent(reference)}/status`);
+  return data.data;
+}
+
 export async function getRequestSummary() {
   const { data } = await http.get('/recruiter/placement-requests/summary');
   return data.data.summary;
@@ -38,4 +53,10 @@ export async function getPlacementRequest(id) {
 export async function createPlacementRequest(payload) {
   const { data } = await http.post('/recruiter/placement-requests', payload);
   return data.data.placementRequest;
+}
+
+/** One role, several talents selected together; returns `{ groupId, placementRequests }`. */
+export async function createGroupPlacementRequest(payload) {
+  const { data } = await http.post('/recruiter/placement-requests/group', payload);
+  return data.data;
 }

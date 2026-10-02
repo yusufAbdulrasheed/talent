@@ -1,0 +1,258 @@
+/**
+ * Demo placement requests for `npm run seed:demo`.
+ *
+ * A placement request is how a recruiter asks for a specific talent, so this
+ * is the recruiter-side information that fills the admin's "Placement
+ * requests" screens and dashboard tiles. Sixteen requests cover every status:
+ * 5 submitted, 3 under review, 4 in progress, 2 fulfilled, 2 closed.
+ *
+ * The app only lets a recruiter request a candidate who is APPROVED and whose
+ * experience level their plan unlocks, and the seeder re-checks both against
+ * the database before writing — so an edit here that breaks the rule fails
+ * loudly instead of seeding a state the product cannot reach.
+ *
+ * `recruiter` is a recruiter `slug`; `candidate` is a talent's full name.
+ * `submittedDaysAgo` is kept inside the recruiter's paid window, and at least 3
+ * for anything past "submitted" so its last-updated date is not in the future.
+ */
+export const DEMO_PLACEMENT_REQUESTS = Object.freeze([
+  {
+    recruiter: 'paystride',
+    candidate: 'Ifeoma Nwankwo',
+    jobTitle: 'Head of Platform Engineering',
+    jobDescription:
+      'Own the technical roadmap for our payments platform, lead four squads of engineers and set architecture standards for services handling several million transactions a month. Reports to the CTO and sits on the engineering leadership team.',
+    employmentType: 'full_time',
+    salaryRange: '₦2,000,000 – ₦2,800,000 per month',
+    location: 'Victoria Island, Lagos',
+    startInDays: 60,
+    numberRequired: 1,
+    additionalNotes: 'Hybrid: three days a week at our Victoria Island office.',
+    status: 'submitted',
+    submittedDaysAgo: 3,
+  },
+  {
+    recruiter: 'paystride',
+    candidate: 'Yusuf Danjuma',
+    jobTitle: 'Senior Backend Engineer',
+    jobDescription:
+      'Design and run the services behind our settlement and reconciliation pipeline in Node.js and PostgreSQL. You will own reliability targets, review pull requests and mentor two mid-level engineers.',
+    employmentType: 'full_time',
+    salaryRange: '₦1,200,000 – ₦1,600,000 per month',
+    location: 'Lagos (hybrid)',
+    startInDays: 45,
+    numberRequired: 1,
+    status: 'in_progress',
+    adminNote: 'Shared the profile with the client; the interview panel is being scheduled for next week.',
+    submittedDaysAgo: 8,
+  },
+  {
+    recruiter: 'kestrelcapital',
+    candidate: 'Mohammed Abdullahi',
+    jobTitle: 'Head of Treasury',
+    jobDescription:
+      "Lead treasury operations, liquidity and funding strategy for the bank's retail division, reporting to the Chief Financial Officer and the board's risk committee.",
+    employmentType: 'full_time',
+    salaryRange: '₦3,000,000 – ₦4,000,000 per month',
+    location: 'Lagos Island, Lagos',
+    startInDays: 90,
+    numberRequired: 1,
+    status: 'under_review',
+    adminNote: 'Reviewing fit against the brief; will confirm the candidate\'s notice period before sharing further.',
+    submittedDaysAgo: 8,
+  },
+  {
+    recruiter: 'kestrelcapital',
+    candidate: 'Temitope Ogunleye',
+    jobTitle: 'Financial Controller',
+    jobDescription:
+      'Run the monthly close and statutory reporting for the retail banking division, own the annual budget cycle and partner with the external auditors.',
+    employmentType: 'full_time',
+    salaryRange: '₦1,400,000 – ₦1,800,000 per month',
+    location: 'Lagos Island, Lagos',
+    startInDays: 14,
+    numberRequired: 1,
+    status: 'fulfilled',
+    adminNote: 'Offer accepted. Start date confirmed with both parties.',
+    submittedDaysAgo: 17,
+  },
+  {
+    recruiter: 'meridianenergy',
+    candidate: 'Nnamdi Chukwu',
+    jobTitle: 'Maintenance Planner',
+    jobDescription:
+      'Plan and schedule preventive maintenance for our marine and terminal equipment, coordinate shutdown windows with operations and keep the maintenance system up to date.',
+    employmentType: 'contract',
+    salaryRange: '₦900,000 – ₦1,200,000 per month',
+    location: 'Port Harcourt, Rivers',
+    startInDays: 30,
+    numberRequired: 1,
+    additionalNotes: '12-month renewable contract on a rotation-based schedule.',
+    status: 'in_progress',
+    adminNote: 'The candidate is currently employed and has asked for the offer terms in writing; following up.',
+    submittedDaysAgo: 3,
+  },
+  {
+    recruiter: 'meridianenergy',
+    candidate: 'Olumide Fashola',
+    jobTitle: 'Projects Director, Terminals',
+    jobDescription:
+      'Direct delivery of our terminal expansion programme, including contractor procurement, FIDIC contract administration and cost control across four active sites.',
+    employmentType: 'full_time',
+    salaryRange: '₦3,500,000 – ₦4,500,000 per month',
+    location: 'Port Harcourt, Rivers',
+    startInDays: 75,
+    numberRequired: 1,
+    status: 'submitted',
+    submittedDaysAgo: 2,
+  },
+  {
+    recruiter: 'stratusadvisory',
+    candidate: 'Adebayo Ogunbanjo',
+    jobTitle: 'Engagement Partner, Operations Practice',
+    jobDescription:
+      'Lead client engagements in supply chain and operations improvement, grow the practice and mentor a team of consultants. Client-facing role with regular travel.',
+    employmentType: 'full_time',
+    salaryRange: '₦3,200,000 – ₦4,200,000 per month',
+    location: 'Maitama, Abuja',
+    startInDays: 60,
+    numberRequired: 1,
+    additionalNotes: 'Roughly 30% travel across Nigeria and West Africa.',
+    status: 'under_review',
+    adminNote: 'Comparing against two other profiles; a decision is expected this week.',
+    submittedDaysAgo: 6,
+  },
+  {
+    recruiter: 'stratusadvisory',
+    candidate: 'Amaka Onyeama',
+    jobTitle: 'Head of Marketing & Communications',
+    jobDescription:
+      'Build our thought-leadership and business-development marketing function from scratch, covering brand, events and digital channels.',
+    employmentType: 'full_time',
+    salaryRange: '₦1,500,000 – ₦1,900,000 per month',
+    location: 'Maitama, Abuja',
+    startInDays: 45,
+    numberRequired: 1,
+    status: 'closed',
+    adminNote: 'Role withdrawn by the client because of a hiring freeze. No further action needed.',
+    submittedDaysAgo: 21,
+  },
+  {
+    recruiter: 'harmattanlogistics',
+    candidate: 'Blessing Udoh',
+    jobTitle: 'HR Officer',
+    jobDescription:
+      'Support recruitment, onboarding and payroll administration for a workforce of about 300 across our Lagos depots. Handle first-line employee queries and keep HRIS records accurate.',
+    employmentType: 'full_time',
+    salaryRange: '₦450,000 – ₦600,000 per month',
+    location: 'Apapa, Lagos',
+    startInDays: 30,
+    numberRequired: 1,
+    status: 'submitted',
+    submittedDaysAgo: 4,
+  },
+  {
+    recruiter: 'bluegate',
+    candidate: 'Emeka Nwosu',
+    jobTitle: 'Graduate Electrical Engineer',
+    jobDescription:
+      'Join our MEP team on commercial building projects: prepare installation drawings, take site measurements and support commissioning under a senior electrical engineer.',
+    employmentType: 'full_time',
+    salaryRange: '₦350,000 – ₦450,000 per month',
+    location: 'Jabi, Abuja',
+    startInDays: 21,
+    numberRequired: 1,
+    status: 'fulfilled',
+    adminNote: 'Offer accepted; the candidate starts at the Jabi site office.',
+    submittedDaysAgo: 35,
+  },
+  {
+    recruiter: 'lifebridgehealth',
+    candidate: 'Ibrahim Musa',
+    jobTitle: 'Medical Sales Representative',
+    jobDescription:
+      'Build relationships with hospitals and pharmacies across the FCT, present our diagnostics range and hit quarterly sales targets. A company vehicle is provided.',
+    employmentType: 'full_time',
+    salaryRange: '₦400,000 – ₦550,000 per month plus commission',
+    location: 'Wuse 2, Abuja',
+    startInDays: 45,
+    numberRequired: 1,
+    status: 'in_progress',
+    adminNote: 'Interview held; waiting on the client\'s feedback.',
+    submittedDaysAgo: 10,
+  },
+  {
+    recruiter: 'sahelfoods',
+    candidate: 'Nnamdi Chukwu',
+    jobTitle: 'Plant Maintenance Engineer',
+    jobDescription:
+      'Lead preventive maintenance on our processing and packaging lines, reduce unplanned downtime and manage a team of six technicians.',
+    employmentType: 'full_time',
+    salaryRange: '₦1,000,000 – ₦1,300,000 per month',
+    location: 'Kano, Kano',
+    startInDays: 60,
+    numberRequired: 1,
+    status: 'under_review',
+    adminNote: 'This candidate has another open request; checking their availability before proceeding.',
+    submittedDaysAgo: 7,
+  },
+  {
+    recruiter: 'orbistelecom',
+    candidate: 'Folake Adebayo',
+    jobTitle: 'Product Designer',
+    jobDescription:
+      'Design customer-facing flows for our self-service app, run usability sessions and maintain our Figma design system alongside two other designers.',
+    employmentType: 'full_time',
+    salaryRange: '₦800,000 – ₦1,100,000 per month',
+    location: 'Ikeja, Lagos',
+    startInDays: 45,
+    numberRequired: 1,
+    status: 'submitted',
+    submittedDaysAgo: 1,
+  },
+  {
+    recruiter: 'orbistelecom',
+    candidate: 'Tunde Balogun',
+    jobTitle: 'Frontend Engineering Intern',
+    jobDescription:
+      'Work with our web team on the customer portal, building React components, fixing UI bugs and writing tests under the guidance of a senior engineer.',
+    employmentType: 'internship',
+    salaryRange: '₦150,000 per month stipend',
+    location: 'Ikeja, Lagos',
+    startInDays: 20,
+    numberRequired: 2,
+    additionalNotes: 'Six-month programme with a path to a full-time role.',
+    status: 'in_progress',
+    adminNote: 'The candidate has accepted an interview slot.',
+    submittedDaysAgo: 15,
+  },
+  {
+    recruiter: 'cornerstonerealty',
+    candidate: 'Chidinma Okafor',
+    jobTitle: 'Accounts Assistant',
+    jobDescription:
+      'Handle accounts payable and receivable, prepare weekly cash reports and support the finance manager during month-end close.',
+    employmentType: 'full_time',
+    salaryRange: '₦250,000 – ₦320,000 per month',
+    location: 'Lekki, Lagos',
+    startInDays: 30,
+    numberRequired: 1,
+    status: 'closed',
+    adminNote: 'The candidate accepted another offer. Recruiter notified.',
+    submittedDaysAgo: 20,
+  },
+  {
+    recruiter: 'vantagemedia',
+    candidate: 'Aisha Bello',
+    jobTitle: 'Content Writer',
+    jobDescription:
+      "Write blog posts, social captions and campaign copy for the agency's consumer clients. Three days a week, mostly remote.",
+    employmentType: 'part_time',
+    salaryRange: '₦180,000 – ₦240,000 per month',
+    location: 'Yaba, Lagos',
+    startInDays: 14,
+    numberRequired: 1,
+    status: 'submitted',
+    submittedDaysAgo: 5,
+  },
+]);

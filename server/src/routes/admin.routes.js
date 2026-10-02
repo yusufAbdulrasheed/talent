@@ -4,8 +4,15 @@ import { getDashboard } from '../controllers/admin/dashboard.controller.js';
 import {
   getCandidate,
   listCandidates,
+  updateCandidateAttributes,
   updateCandidateStatus,
 } from '../controllers/admin/candidates.controller.js';
+import {
+  configureCandidateSavings,
+  decideWithdrawal,
+  getCandidateSavings,
+  listWithdrawalRequests,
+} from '../controllers/admin/savings.controller.js';
 import {
   getRecruiter,
   listRecruiters,
@@ -42,6 +49,7 @@ import { validateBody, validateQuery } from '../middleware/validate.middleware.j
 import {
   assignmentSchema,
   assignmentUpdateSchema,
+  candidateAttributesSchema,
   candidateListQuerySchema,
   candidateStatusSchema,
   contentListQuerySchema,
@@ -55,6 +63,9 @@ import {
   programUpdateSchema,
   recruiterApprovalSchema,
   recruiterListQuerySchema,
+  savingsConfigSchema,
+  savingsWithdrawalDecisionSchema,
+  savingsWithdrawalListQuerySchema,
   trainerStatusSchema,
 } from '../validators/admin.validators.js';
 
@@ -74,6 +85,16 @@ adminRouter.get('/dashboard', getDashboard);
 adminRouter.get('/candidates', validateQuery(candidateListQuerySchema), listCandidates);
 adminRouter.get('/candidates/:id', getCandidate);
 adminRouter.patch('/candidates/:id/status', validateBody(candidateStatusSchema), updateCandidateStatus);
+adminRouter.patch('/candidates/:id/attributes', validateBody(candidateAttributesSchema), updateCandidateAttributes);
+
+adminRouter.get('/candidates/:id/savings', getCandidateSavings);
+adminRouter.patch('/candidates/:id/savings/config', validateBody(savingsConfigSchema), configureCandidateSavings);
+adminRouter.get('/savings/withdrawals', validateQuery(savingsWithdrawalListQuerySchema), listWithdrawalRequests);
+adminRouter.patch(
+  '/savings/withdrawals/:candidateId/:requestId',
+  validateBody(savingsWithdrawalDecisionSchema),
+  decideWithdrawal,
+);
 
 adminRouter.get('/recruiters', validateQuery(recruiterListQuerySchema), listRecruiters);
 adminRouter.get('/recruiters/:id', getRecruiter);

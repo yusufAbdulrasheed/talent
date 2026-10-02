@@ -1,0 +1,77 @@
+.stats {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  margin-bottom: var(--space-5);
+
+  @include from(sm) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat {
+  @include surface-card;
+  @include hover-lift;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+
+.statUrgent {
+  border-color: var(--color-warning);
+  background: var(--color-warning-surface);
+
+  .iconBadge {
+    background: var(--color-surface);
+    color: var(--color-warning);
+  }
+
+  .statValue,
+  .statLabel {
+    color: var(--color-warning);
+  }
+}
+
+.iconBadge {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.statValue {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+}
+
+.statLabel {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+
+  @include from(md) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.withdrawalForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}

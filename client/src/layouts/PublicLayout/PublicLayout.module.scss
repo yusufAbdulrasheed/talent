@@ -18,8 +18,10 @@
   position: sticky;
   top: 0;
   z-index: var(--z-header);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-ink-900) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid var(--color-ink-border);
 }
 
 .headerInner {
@@ -34,26 +36,43 @@
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
-  color: var(--color-text);
-  letter-spacing: 0.04em;
+  color: var(--color-on-ink);
 
   &:hover {
     text-decoration: none;
+    color: var(--color-on-ink);
   }
 }
 
 .menuToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-ink-border);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
+  background: transparent;
+  color: var(--color-on-ink);
   font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+
+  &:hover {
+    background: var(--color-ink-700);
+  }
 
   @include from(lg) {
     display: none;
   }
+}
+
+.menuToggleLabel {
+  @include visually-hidden;
 }
 
 .nav {
@@ -82,25 +101,53 @@
   @include from(lg) {
     flex-direction: row;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-5);
   }
 }
 
 .navLink {
   display: block;
   padding: var(--space-2) 0;
-  color: var(--color-text-muted);
+  color: var(--color-on-ink-muted);
   font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-semibold);
+  position: relative;
 
   &:hover {
-    color: var(--color-text);
+    color: var(--color-on-ink);
     text-decoration: none;
+  }
+
+  @include from(lg) {
+    padding-block: var(--space-2);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: var(--gradient-text);
+      border-radius: var(--radius-full);
+      transform: scaleX(0);
+      transition: transform var(--transition-fast);
+    }
+
+    &:hover::after {
+      transform: scaleX(1);
+    }
   }
 }
 
 .navLinkActive {
-  color: var(--color-accent);
+  color: var(--color-on-ink);
+
+  @include from(lg) {
+    &::after {
+      transform: scaleX(1);
+    }
+  }
 }
 
 .actions {
@@ -111,6 +158,23 @@
   @include from(lg) {
     margin-top: 0;
   }
+
+  // Lift the ghost "Sign in" button onto the dark header. The `a.` prefix
+  // keeps this above the Button component's own variant styles.
+  a.navCta {
+    border-radius: var(--radius-full);
+    padding-inline: var(--space-5);
+  }
+
+  a.navSignIn {
+    border-radius: var(--radius-full);
+    color: var(--color-on-ink);
+
+    &:hover {
+      color: var(--color-on-ink);
+      background: color-mix(in srgb, var(--color-on-ink) 12%, transparent);
+    }
+  }
 }
 
 .main {
@@ -118,19 +182,124 @@
 }
 
 .footer {
-  border-top: 1px solid var(--color-border);
-  background: var(--color-surface-raised);
-  padding-block: var(--space-6);
+  background:
+    radial-gradient(40rem 20rem at 100% 0%, rgba(90, 59, 244, 0.22), transparent 60%),
+    var(--color-ink-900);
+  color: var(--color-on-ink-muted);
+  border-top: 1px solid var(--color-ink-border);
   font-size: var(--text-sm);
-  color: var(--color-text-muted);
 }
 
 .footerInner {
   @include container;
 
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-8) var(--space-7);
+
+  @include from(md) {
+    grid-template-columns: 1.2fr 2fr;
+    gap: var(--space-7);
+  }
+}
+
+.footerBrandCol {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  max-width: 22rem;
+}
+
+.footerBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-ink);
+
+  &:hover {
+    text-decoration: none;
+    color: var(--color-on-ink);
+  }
+}
+
+.footerBlurb {
+  line-height: var(--leading-normal);
+}
+
+.footerContact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-on-ink-muted);
+  line-height: var(--leading-normal);
+
+  a {
+    color: var(--color-on-ink-muted);
+
+    &:hover {
+      color: var(--color-on-ink);
+      text-decoration: none;
+    }
+  }
+}
+
+.footerNav {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(2, 1fr);
+
+  @include from(sm) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.footerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footerGroupTitle {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-on-ink);
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  a {
+    color: var(--color-on-ink-muted);
+
+    &:hover {
+      color: var(--color-on-ink);
+      text-decoration: none;
+    }
+  }
+}
+
+.footerBar {
+  border-top: 1px solid var(--color-ink-border);
+}
+
+.footerBarInner {
+  @include container;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  font-size: var(--text-xs);
 
   @include from(md) {
     flex-direction: row;
@@ -139,8 +308,17 @@
   }
 }
 
-.footerLinks {
+.footerBarLinks {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
+
+  a {
+    color: var(--color-on-ink-muted);
+
+    &:hover {
+      color: var(--color-on-ink);
+      text-decoration: none;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CANDIDATE_STATUSES, PLACEMENT_REQUEST_STATUSES } from '../constants/statuses.js';
+import { PUBLIC_CONTENT_TYPES } from '../models/public-content.model.js';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid identifier.');
 
@@ -23,6 +24,7 @@ export const candidateListQuerySchema = z
   .object({
     status: z.enum(Object.values(CANDIDATE_STATUSES)).optional(),
     search: z.string().trim().min(1).max(120).optional(),
+    jobTitle: z.string().trim().min(1).max(160).optional(),
     ...pagination,
   })
   .strict();
@@ -42,6 +44,46 @@ export const candidateStatusSchema = z
       });
     }
   });
+
+export const candidateAttributesSchema = z
+  .object({
+    availability: z.enum(['immediate', 'two_weeks', 'one_month', 'not_available']).optional(),
+    experienceLevel: z.enum(['entry', 'junior', 'mid', 'senior']).optional(),
+  })
+  .strict()
+  .refine((value) => value.availability !== undefined || value.experienceLevel !== undefined, {
+    message: 'Provide at least one of availability or experienceLevel.',
+  });
+
+export const savingsConfigSchema = z
+  .object({
+    monthlySalary: z.coerce.number().positive(),
+    savingsRate: z.coerce.number().int().min(5).max(10),
+  })
+  .strict();
+
+export const savingsWithdrawalDecisionSchema = z
+  .object({
+    status: z.enum(['approved', 'rejected']),
+    decisionNote: z.string().trim().max(1000).optional(),
+  })
+  .strict()
+  .superRefine((value, context) => {
+    if (value.status === 'rejected' && !value.decisionNote) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['decisionNote'],
+        message: 'A note is required when rejecting a withdrawal request.',
+      });
+    }
+  });
+
+export const savingsWithdrawalListQuerySchema = z
+  .object({
+    status: z.enum(['pending', 'approved', 'rejected']).optional(),
+    ...pagination,
+  })
+  .strict();
 
 export const recruiterListQuerySchema = z
   .object({
@@ -89,6 +131,7 @@ export const assignmentUpdateSchema = assignmentSchema.partial().strict();
 export const paymentListQuerySchema = z
   .object({
     status: z.enum(['initialized', 'success', 'failed', 'abandoned']).optional(),
+    purpose: z.enum(['candidate_training', 'recruiter_subscription']).optional(),
     reference: z.string().trim().min(3).max(100).optional(),
     ...pagination,
   })
@@ -110,9 +153,11 @@ export const placementStatusSchema = z
 
 export const contentSchema = z
   .object({
-    type: z.enum(['testimonial', 'gallery_item', 'event', 'faq']),
+    type: z.enum(PUBLIC_CONTENT_TYPES),
     title: z.string().trim().min(2).max(200),
-    body: z.string().trim().max(5000).optional(),
+    body: z.string().trim().max(20000).optional(),
+    excerpt: z.string().trim().max(300).optional(),
+    author: z.string().trim().max(120).optional(),
     imageUrl: z.string().trim().url().max(1000).optional(),
     eventDate: z.coerce.date().optional(),
     isPublished: z.boolean().optional(),
@@ -124,7 +169,7 @@ export const contentUpdateSchema = contentSchema.partial().strict();
 
 export const contentListQuerySchema = z
   .object({
-    type: z.enum(['testimonial', 'gallery_item', 'event', 'faq']).optional(),
+    type: z.enum(PUBLIC_CONTENT_TYPES).optional(),
     ...pagination,
   })
   .strict();

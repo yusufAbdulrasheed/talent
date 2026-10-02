@@ -6,10 +6,12 @@ import { escapeRegex, paginate } from '../../utils/pagination.js';
 
 function serializePayment(payment) {
   const candidate = payment.candidate;
+  const recruiterCompany = payment.recruiterCompany;
 
   return {
     id: payment.id ?? payment._id?.toString(),
     reference: payment.reference,
+    purpose: payment.purpose,
     provider: payment.provider,
     amount: payment.amount,
     currency: payment.currency,
@@ -18,15 +20,21 @@ function serializePayment(payment) {
     createdAt: payment.createdAt,
     candidateReference: candidate?.referenceNumber ?? null,
     candidateId: candidate?._id?.toString() ?? null,
+    recruiterCompanyName: recruiterCompany?.companyName ?? null,
+    subscriptionTier: payment.subscriptionTier ?? null,
   };
 }
 
 export const listPayments = asyncHandler(async (request, response) => {
-  const { status, reference, page, limit } = request.validatedQuery;
+  const { status, reference, purpose, page, limit } = request.validatedQuery;
   const query = {};
 
   if (status) {
     query.status = status;
+  }
+
+  if (purpose) {
+    query.purpose = purpose;
   }
 
   if (reference) {
@@ -40,17 +48,19 @@ export const listPayments = asyncHandler(async (request, response) => {
     // The raw provider payload stays out of list responses; it is large and
     // only useful when investigating a single transaction.
     select: '-providerPayload',
-    populate: [{ path: 'candidate', select: 'referenceNumber' }],
+    populate: [
+      { path: 'candidate', select: 'referenceNumber' },
+      { path: 'recruiterCompany', select: 'companyName' },
+    ],
   });
 
   sendSuccess(response, { data: { payments: items.map(serializePayment), pagination } });
 });
 
 export const getPayment = asyncHandler(async (request, response) => {
-  const payment = await Payment.findById(request.params.id).populate({
-    path: 'candidate',
-    select: 'referenceNumber status',
-  });
+  const payment = await Payment.findById(request.params.id)
+    .populate({ path: 'candidate', select: 'referenceNumber status' })
+    .populate({ path: 'recruiterCompany', select: 'companyName' });
 
   if (!payment) {
     throw new AppError('Payment not found.', 404);

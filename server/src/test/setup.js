@@ -22,7 +22,7 @@ afterAll(async () => {
   await mongod?.stop();
 });
 
-// Without SMTP configured the email service logs each message; that is correct
+// Without a Resend key the email service logs each message; that is correct
 // behaviour but it drowns the test output.
 vi.spyOn(console, 'info').mockImplementation(() => {});
 vi.spyOn(console, 'error').mockImplementation(() => {});

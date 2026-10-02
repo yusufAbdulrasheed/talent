@@ -23,6 +23,7 @@ function serialize(request) {
     location: request.location,
     startDate: request.startDate,
     numberRequired: request.numberRequired,
+    groupId: request.groupId ?? null,
     additionalNotes: request.additionalNotes,
     status: request.status,
     adminNote: request.adminNote,

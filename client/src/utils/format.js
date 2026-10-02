@@ -48,3 +48,20 @@ export function parseList(value) {
 export function formatList(items) {
   return Array.isArray(items) ? items.join(', ') : '';
 }
+
+export function formatFileSize(bytes) {
+  if (typeof bytes !== 'number' || Number.isNaN(bytes)) {
+    return '—';
+  }
+
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  const kb = bytes / 1024;
+  if (kb < 1024) {
+    return `${kb.toFixed(kb < 10 ? 1 : 0)} KB`;
+  }
+
+  return `${(kb / 1024).toFixed(1)} MB`;
+}

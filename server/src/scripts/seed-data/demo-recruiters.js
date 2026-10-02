@@ -1,0 +1,216 @@
+/**
+ * Demo recruiter accounts for `npm run seed:demo`.
+ *
+ * Fifteen recruiter companies, spread across every subscription tier so each
+ * talent-pool experience can be demonstrated without going through Paystack:
+ *
+ *   junior (free)  x6  → entry + junior talent unlocked, mid + senior locked
+ *   intermediate   x5  → adds mid
+ *   senior         x4  → everything unlocked
+ *
+ * Every paid company has `subscriptionPaidDaysAgo`: the seeder records a
+ * successful Paystack-style payment that many days ago and activates the tier
+ * from it, so the expiry is worked out by the app's own 30-day window logic.
+ *
+ * Three junior-tier companies are left un-approved so the admin approval queue
+ * has something in it. Approval does not gate a recruiter's own access.
+ *
+ * `slug` doubles as the demo email domain (`<slug>.demo.test`). Companies and
+ * people are fictional and every address is on the reserved `.test` TLD.
+ */
+export const DEMO_RECRUITERS = Object.freeze([
+  // ---- Senior tier ---------------------------------------------------------
+  {
+    firstName: 'Funmilayo',
+    lastName: 'Adeleke',
+    slug: 'paystride',
+    companyName: 'Paystride Technologies',
+    cacNumber: 'RC1843021',
+    industry: 'Fintech',
+    businessAddress: '14 Adeola Odeku Street, Victoria Island, Lagos',
+    phoneNumber: '+234 800 000 0101',
+    tier: 'senior',
+    subscriptionPaidDaysAgo: 9,
+    isApproved: true,
+  },
+  {
+    firstName: 'Tochukwu',
+    lastName: 'Anigbogu',
+    slug: 'kestrelcapital',
+    companyName: 'Kestrel Capital Bank',
+    cacNumber: 'RC0912457',
+    industry: 'Banking & Financial Services',
+    businessAddress: '31 Marina Road, Lagos Island, Lagos',
+    phoneNumber: '+234 800 000 0102',
+    tier: 'senior',
+    subscriptionPaidDaysAgo: 18,
+    isApproved: true,
+  },
+  {
+    firstName: 'Ebiere',
+    lastName: 'Dokubo',
+    slug: 'meridianenergy',
+    companyName: 'Meridian Energy Services',
+    cacNumber: 'RC1276390',
+    industry: 'Oil & Gas',
+    businessAddress: 'Plot 7 Trans-Amadi Industrial Layout, Port Harcourt, Rivers',
+    phoneNumber: '+234 800 000 0103',
+    tier: 'senior',
+    subscriptionPaidDaysAgo: 3,
+    isApproved: true,
+  },
+  {
+    firstName: 'Zainab',
+    lastName: 'Lawal',
+    slug: 'stratusadvisory',
+    companyName: 'Stratus Advisory',
+    cacNumber: 'RC1590118',
+    industry: 'Management Consulting',
+    businessAddress: '5 Ibrahim Babangida Boulevard, Maitama, Abuja',
+    phoneNumber: '+234 800 000 0104',
+    tier: 'senior',
+    subscriptionPaidDaysAgo: 22,
+    isApproved: true,
+  },
+
+  // ---- Intermediate tier ---------------------------------------------------
+  {
+    firstName: 'Sulaiman',
+    lastName: 'Garba',
+    slug: 'harmattanlogistics',
+    companyName: 'Harmattan Logistics',
+    cacNumber: 'RC1105284',
+    industry: 'Logistics & Supply Chain',
+    businessAddress: 'Warehouse 3, Wharf Road, Apapa, Lagos',
+    phoneNumber: '+234 800 000 0105',
+    tier: 'intermediate',
+    subscriptionPaidDaysAgo: 11,
+    isApproved: true,
+  },
+  {
+    firstName: 'Chiamaka',
+    lastName: 'Nnadi',
+    slug: 'bluegate',
+    companyName: 'Bluegate Construction',
+    cacNumber: 'RC1362905',
+    industry: 'Construction & Engineering',
+    businessAddress: 'Plot 214, Cadastral Zone, Jabi, Abuja',
+    phoneNumber: '+234 800 000 0106',
+    tier: 'intermediate',
+    subscriptionPaidDaysAgo: 5,
+    isApproved: true,
+  },
+  {
+    firstName: 'Rotimi',
+    lastName: 'Fatoki',
+    slug: 'lifebridgehealth',
+    companyName: 'Lifebridge Health Group',
+    cacNumber: 'RC1448763',
+    industry: 'Healthcare',
+    businessAddress: '8 Aminu Kano Crescent, Wuse 2, Abuja',
+    phoneNumber: '+234 800 000 0107',
+    tier: 'intermediate',
+    subscriptionPaidDaysAgo: 16,
+    isApproved: true,
+  },
+  {
+    firstName: 'Maryam',
+    lastName: 'Yakubu',
+    slug: 'sahelfoods',
+    companyName: 'Sahel Foods Nigeria',
+    cacNumber: 'RC0876512',
+    industry: 'FMCG & Food Processing',
+    businessAddress: 'Km 6 Zaria Road, Kano, Kano',
+    phoneNumber: '+234 800 000 0108',
+    tier: 'intermediate',
+    subscriptionPaidDaysAgo: 24,
+    isApproved: true,
+  },
+  {
+    firstName: 'Kelechi',
+    lastName: 'Umeh',
+    slug: 'orbistelecom',
+    companyName: 'Orbis Telecom',
+    cacNumber: 'RC1023347',
+    industry: 'Telecommunications',
+    businessAddress: '22 Obafemi Awolowo Way, Ikeja, Lagos',
+    phoneNumber: '+234 800 000 0109',
+    tier: 'intermediate',
+    subscriptionPaidDaysAgo: 1,
+    isApproved: true,
+  },
+
+  // ---- Junior tier (free) --------------------------------------------------
+  {
+    firstName: 'Damilola',
+    lastName: 'Coker',
+    slug: 'cornerstonerealty',
+    companyName: 'Cornerstone Realty',
+    cacNumber: 'RC1657720',
+    industry: 'Real Estate',
+    businessAddress: 'Block C, Admiralty Way, Lekki Phase 1, Lagos',
+    phoneNumber: '+234 800 000 0110',
+    tier: 'junior',
+    isApproved: true,
+  },
+  {
+    firstName: 'Ikenna',
+    lastName: 'Obiora',
+    slug: 'ironbark',
+    companyName: 'Ironbark Manufacturing',
+    cacNumber: 'RC0798831',
+    industry: 'Manufacturing',
+    businessAddress: 'Plot 12, Agbara Industrial Estate, Agbara, Ogun',
+    phoneNumber: '+234 800 000 0111',
+    tier: 'junior',
+    isApproved: true,
+  },
+  {
+    firstName: 'Sadiq',
+    lastName: 'Umar',
+    slug: 'vantagemedia',
+    companyName: 'Vantage Media Group',
+    cacNumber: 'RC1519046',
+    industry: 'Media & Advertising',
+    businessAddress: '3 Herbert Macaulay Way, Yaba, Lagos',
+    phoneNumber: '+234 800 000 0112',
+    tier: 'junior',
+    isApproved: true,
+  },
+  {
+    firstName: 'Patience',
+    lastName: 'Etim',
+    slug: 'nexusacademy',
+    companyName: 'Nexus Academy',
+    cacNumber: 'RC1284075',
+    industry: 'Education & Training',
+    businessAddress: '17 Ring Road, Ibadan, Oyo',
+    phoneNumber: '+234 800 000 0113',
+    tier: 'junior',
+    isApproved: false,
+  },
+  {
+    firstName: 'Bashir',
+    lastName: 'Aliyu',
+    slug: 'greenacre',
+    companyName: 'GreenAcre Agro',
+    cacNumber: 'RC1733609',
+    industry: 'Agriculture & Agribusiness',
+    businessAddress: 'Km 12 Kachia Road, Kaduna, Kaduna',
+    phoneNumber: '+234 800 000 0114',
+    tier: 'junior',
+    isApproved: false,
+  },
+  {
+    firstName: 'Nkechi',
+    lastName: 'Amadi',
+    slug: 'shopwave',
+    companyName: 'Shopwave Africa',
+    cacNumber: 'RC1801552',
+    industry: 'E-commerce',
+    businessAddress: '9 Commercial Avenue, Yaba, Lagos',
+    phoneNumber: '+234 800 000 0115',
+    tier: 'junior',
+    isApproved: false,
+  },
+]);

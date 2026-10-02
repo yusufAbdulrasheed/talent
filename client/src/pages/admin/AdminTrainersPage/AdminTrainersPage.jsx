@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CheckCircle2, GraduationCap, MailQuestion } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import Button from '../../../components/ui/Button/Button.jsx';
@@ -17,6 +18,29 @@ import { formatDate, formatDateTime } from '../../../utils/format.js';
 import styles from './AdminTrainersPage.module.scss';
 
 const EMPTY_TRAINER = { firstName: '', lastName: '', email: '' };
+
+function getInitials(name) {
+  const parts = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+}
+
+function StatTile({ label, value, icon }) {
+  const Icon = icon;
+
+  return (
+    <div className={styles.stat}>
+      <span className={styles.iconBadge} aria-hidden="true">
+        <Icon size={20} strokeWidth={2} />
+      </span>
+      <span className={styles.statValue}>{value}</span>
+      <span className={styles.statLabel}>{label}</span>
+    </div>
+  );
+}
 
 function AdminTrainersPage() {
   const queryClient = useQueryClient();
@@ -50,8 +74,26 @@ function AdminTrainersPage() {
   const fieldError = (field) =>
     createMutation.error?.response?.data?.details?.find((detail) => detail.field === field)?.message;
 
+  // Stat tiles are derived from the currently loaded page of trainers — a
+  // real snapshot, not a separate aggregate call.
+  const trainers = trainersQuery.data?.trainers ?? [];
+  const pagination = trainersQuery.data?.pagination;
+  const activeCount = trainers.filter((trainer) => trainer.isActive).length;
+  const pendingInviteCount = trainers.filter((trainer) => !trainer.lastLoginAt).length;
+
   const columns = [
-    { key: 'fullName', header: 'Name' },
+    {
+      key: 'fullName',
+      header: 'Name',
+      render: (row) => (
+        <span className={styles.nameCell}>
+          <span className={styles.avatar} aria-hidden="true">
+            {getInitials(row.fullName)}
+          </span>
+          {row.fullName ?? '—'}
+        </span>
+      ),
+    },
     { key: 'email', header: 'Email' },
     { key: 'assignmentCount', header: 'Assignments' },
     {
@@ -92,6 +134,14 @@ function AdminTrainersPage() {
         title="Trainers"
         description="Trainers cannot register themselves. Create an account and they will be emailed a link to set their password."
       />
+
+      {pagination ? (
+        <div className={styles.stats}>
+          <StatTile label="Total trainers" value={pagination.total} icon={GraduationCap} />
+          <StatTile label="Active" value={activeCount} icon={CheckCircle2} />
+          <StatTile label="Pending invite" value={pendingInviteCount} icon={MailQuestion} />
+        </div>
+      ) : null}
 
       <Card title="Add a trainer">
         {createMutation.isSuccess ? (
@@ -149,8 +199,8 @@ function AdminTrainersPage() {
       ) : null}
 
       <QueryBoundary query={trainersQuery} loadingLabel="Loading trainers">
-        {({ trainers, pagination }) =>
-          trainers.length === 0 ? (
+        {({ trainers: rows, pagination: pageInfo }) =>
+          rows.length === 0 ? (
             <EmptyState
               title="No trainers yet"
               description="Create your first trainer using the form above."
@@ -160,13 +210,13 @@ function AdminTrainersPage() {
               <DataTable
                 caption="Trainer accounts"
                 columns={columns}
-                rows={trainers}
+                rows={rows}
                 getRowKey={(row) => row.id}
               />
               <Pagination
-                page={pagination.page}
-                totalPages={pagination.totalPages}
-                total={pagination.total}
+                page={pageInfo.page}
+                totalPages={pageInfo.totalPages}
+                total={pageInfo.total}
                 onPageChange={setPage}
               />
             </Card>

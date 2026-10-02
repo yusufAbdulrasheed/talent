@@ -1,103 +1,66 @@
-import crypto from 'node:crypto';
-import Payment from '../models/payment.model.js';
-import { CANDIDATE_STATUSES } from '../constants/statuses.js';
 import { AppError } from '../utils/app-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { sendSuccess } from '../utils/api-response.js';
-import { getCandidateForUser, isProfileComplete } from '../services/candidate.service.js';
-import { sendPaymentReceiptEmail } from '../services/notification.service.js';
-import {
-  getTrainingFeeInKobo,
-  initializePaystackTransaction,
-  verifyPaystackSignature,
-  verifyPaystackTransaction,
-} from '../services/paystack.service.js';
-
-const PAID_STATUSES = [
-  CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
-  CANDIDATE_STATUSES.UNDER_REVIEW,
-  CANDIDATE_STATUSES.APPROVED,
-];
-
-export const initializeTrainingPayment = asyncHandler(async (request, response) => {
-  if (!request.user.isEmailVerified) {
-    throw new AppError('Verify your email address before making payment.', 403);
-  }
-
-  const candidate = await getCandidateForUser(request.user.id);
-
-  if (!isProfileComplete(candidate)) {
-    throw new AppError('Complete your profile before making payment.', 422);
-  }
-
-  if (PAID_STATUSES.includes(candidate.status)) {
-    throw new AppError('Your training payment has already been confirmed.', 409);
-  }
-
-  const amountInKobo = getTrainingFeeInKobo();
-  const reference = `TMS-${Date.now()}-${crypto.randomBytes(6).toString('hex')}`;
-  const payment = await Payment.create({
-    candidate: candidate.id,
-    reference,
-    amount: amountInKobo / 100,
-    status: 'initialized',
-  });
-
-  const transaction = await initializePaystackTransaction({
-    email: request.user.email,
-    amountInKobo,
-    reference,
-    metadata: { candidateReference: candidate.referenceNumber, paymentId: payment.id },
-  });
-
-  candidate.status = CANDIDATE_STATUSES.PAYMENT_PENDING;
-  await candidate.save();
-
-  sendSuccess(response, {
-    status: 201,
-    data: { authorizationUrl: transaction.authorization_url, reference: payment.reference },
-  });
-});
-
-export const getMyPayments = asyncHandler(async (request, response) => {
-  const candidate = await getCandidateForUser(request.user.id);
-  const payments = await Payment.find({ candidate: candidate.id })
-    .select('-providerPayload')
-    .sort({ createdAt: -1 });
-
-  sendSuccess(response, { data: { payments } });
-});
+import { verifyPaystackSignature, verifyPaystackTransaction } from '../services/paystack.service.js';
+import Payment, { PAYMENT_PURPOSES } from '../models/payment.model.js';
+import RecruiterCompany from '../models/recruiter-company.model.js';
+import { activateTier, applyLazyExpiry, getOrCreateSubscription } from '../services/recruiter-subscription.service.js';
+import { notifyUser } from '../services/notification.service.js';
 
 /**
- * Lets the Paystack return page show an accurate result without trusting the
- * redirect: the status reported here is whatever the webhook already verified
- * and stored.
+ * Settles a confirmed recruiter-subscription payment: marks the `Payment`
+ * row successful and activates the purchased tier. Idempotent against
+ * Paystack's at-least-once webhook delivery — a reference already marked
+ * `success` is a no-op.
  */
-export const getPaymentStatus = asyncHandler(async (request, response) => {
-  const candidate = await getCandidateForUser(request.user.id);
-  const payment = await Payment.findOne({
-    reference: request.params.reference,
-    candidate: candidate.id,
-  }).select('-providerPayload');
+async function handleChargeSuccess(reference) {
+  const payment = await Payment.findOne({ reference });
 
-  if (!payment) {
-    throw new AppError('Payment not found.', 404);
+  if (!payment || payment.status === 'success') {
+    return;
   }
 
-  sendSuccess(response, {
-    data: {
-      payment: {
-        reference: payment.reference,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-        paidAt: payment.paidAt,
-      },
-      candidateStatus: candidate.status,
-    },
-  });
-});
+  // Never trust the webhook payload alone — re-verify server-side.
+  const verified = await verifyPaystackTransaction(reference);
+  if (verified.status !== 'success') {
+    return;
+  }
 
+  payment.status = 'success';
+  payment.paidAt = verified.paid_at ? new Date(verified.paid_at) : new Date();
+  payment.providerPayload = verified;
+  await payment.save();
+
+  if (payment.purpose !== PAYMENT_PURPOSES.RECRUITER_SUBSCRIPTION) {
+    return;
+  }
+
+  const subscription = await getOrCreateSubscription(payment.recruiterCompany);
+  applyLazyExpiry(subscription);
+  activateTier(subscription, payment.subscriptionTier);
+  await subscription.save();
+
+  // Best effort: the subscription is already active, so a notify failure
+  // must not surface as a failed webhook (Paystack would only retry it).
+  try {
+    const company = await RecruiterCompany.findById(payment.recruiterCompany);
+    if (company) {
+      await notifyUser({
+        recipient: company.user,
+        type: 'subscription.activated',
+        title: 'Subscription activated',
+        message: `Your ${payment.subscriptionTier} tier is now active.`,
+      });
+    }
+  } catch (error) {
+    console.error('Unable to notify the recruiter of their subscription activation:', error);
+  }
+}
+
+/**
+ * Paystack webhook endpoint. It is mounted with a raw body parser in app.js so
+ * the HMAC signature can be verified against the exact bytes Paystack sent.
+ */
 export const paystackWebhook = asyncHandler(async (request, response) => {
   const signature = request.headers['x-paystack-signature'];
 
@@ -107,57 +70,8 @@ export const paystackWebhook = asyncHandler(async (request, response) => {
 
   const event = JSON.parse(request.body.toString('utf8'));
 
-  if (event.event !== 'charge.success') {
-    sendSuccess(response);
-    return;
-  }
-
-  const reference = event.data?.reference;
-  const payment = await Payment.findOne({ reference }).populate({
-    path: 'candidate',
-    populate: { path: 'user', select: 'email firstName' },
-  });
-
-  // Unknown references are acknowledged rather than retried: they are not ours.
-  if (!payment) {
-    sendSuccess(response);
-    return;
-  }
-
-  if (!payment.candidate) {
-    throw new AppError('Candidate profile not found for this payment.', 404);
-  }
-
-  // The webhook payload is only a trigger. The amount, currency, and status are
-  // read back from Paystack directly before anything is trusted.
-  const verifiedTransaction = await verifyPaystackTransaction(reference);
-  const expectedAmountInKobo = Math.round(payment.amount * 100);
-
-  if (
-    verifiedTransaction.status !== 'success'
-    || verifiedTransaction.amount !== expectedAmountInKobo
-    || verifiedTransaction.currency !== payment.currency
-  ) {
-    throw new AppError('Paystack transaction verification failed.', 400);
-  }
-
-  // Paystack retries webhooks, so this must stay idempotent.
-  if (payment.status !== 'success') {
-    payment.status = 'success';
-    payment.paidAt = new Date(verifiedTransaction.paid_at);
-    payment.providerPayload = verifiedTransaction;
-    await payment.save();
-
-    payment.candidate.status = CANDIDATE_STATUSES.PAYMENT_CONFIRMED;
-    await payment.candidate.save();
-
-    // A failed receipt must not fail the webhook, or Paystack would retry a
-    // payment that has already been recorded.
-    try {
-      await sendPaymentReceiptEmail(payment);
-    } catch (error) {
-      console.error('Unable to send payment receipt:', error);
-    }
+  if (event.event === 'charge.success') {
+    await handleChargeSuccess(event.data.reference);
   }
 
   sendSuccess(response);

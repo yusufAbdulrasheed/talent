@@ -17,9 +17,10 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--color-text);
-  background: var(--color-surface);
+  background: var(--color-canvas);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -29,7 +30,22 @@ h4,
 h5,
 h6 {
   margin: 0;
+  font-family: var(--font-heading);
   line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+h1,
+h2 {
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.025em;
+}
+
+h3,
+h4,
+h5,
+h6 {
   font-weight: var(--weight-semibold);
 }
 
@@ -74,7 +90,8 @@ a {
   text-decoration: none;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    color: var(--color-accent-hover);
   }
 }
 
@@ -88,6 +105,16 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-900);
+}
+
+// Hide native search-field clear buttons; our inputs style their own chrome.
+input[type='search']::-webkit-search-cancel-button {
+  -webkit-appearance: none;
 }
 
 :focus-visible {

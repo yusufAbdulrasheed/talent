@@ -10,6 +10,14 @@ import { generateCandidateReference } from './reference-number.service.js';
 const PUBLIC_REGISTRATION_ROLES = [USER_ROLES.TALENT, USER_ROLES.RECRUITER];
 const PASSWORD_SALT_ROUNDS = 12;
 
+// TEMPORARY: email verification is disabled for now, so nobody needs to
+// click an emailed link to use the product. This does not touch the
+// verification machinery itself — token issuance, /verify-email,
+// resend-verification, and the email templates all still work exactly as
+// before if this is flipped back to `false`; accounts just start (and stay)
+// verified instead of needing to go through it.
+const SKIP_EMAIL_VERIFICATION = true;
+
 export function serializeUser(user) {
   return {
     id: user.id,
@@ -34,7 +42,14 @@ export async function registerUser({ firstName, lastName, email, password, role,
   }
 
   const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
-  const user = await User.create({ firstName, lastName, email, passwordHash, role });
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    passwordHash,
+    role,
+    ...(SKIP_EMAIL_VERIFICATION ? { isEmailVerified: true } : {}),
+  });
 
   // Every role gets its own profile record up front, so no part of the system
   // has to cope with a user that has no matching profile. If that second write
@@ -76,6 +91,12 @@ export async function loginUser({ email, password }) {
 
   if (!user.isActive) {
     throw new AppError('This account has been deactivated.', 403);
+  }
+
+  // Covers accounts that were created before SKIP_EMAIL_VERIFICATION was
+  // switched on, so the bypass applies retroactively too.
+  if (SKIP_EMAIL_VERIFICATION && !user.isEmailVerified) {
+    user.isEmailVerified = true;
   }
 
   user.lastLoginAt = new Date();

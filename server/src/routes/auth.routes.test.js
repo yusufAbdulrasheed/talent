@@ -208,6 +208,12 @@ describe('email verification and password reset', () => {
   it('verifies an email with the token from the email and refuses to reuse it', async () => {
     const register = await request(app).post('/api/v1/auth/register').send(talentPayload);
     const userId = register.body.data.user.id;
+    // Email verification is disabled for now (SKIP_EMAIL_VERIFICATION), so
+    // registration itself no longer sends a verification email — force the
+    // account unverified and request one explicitly to still exercise the
+    // verify/replay mechanics end to end.
+    await User.updateOne({ _id: userId }, { isEmailVerified: false });
+    await request(app).post('/api/v1/auth/resend-verification').send({ email: talentPayload.email });
     const token = tokenFromLastEmail();
 
     const verified = await request(app).post('/api/v1/auth/verify-email').send({ token });
@@ -220,7 +226,9 @@ describe('email verification and password reset', () => {
   });
 
   it('stores verification tokens hashed, never in plain text', async () => {
-    await request(app).post('/api/v1/auth/register').send(talentPayload);
+    const register = await request(app).post('/api/v1/auth/register').send(talentPayload);
+    await User.updateOne({ _id: register.body.data.user.id }, { isEmailVerified: false });
+    await request(app).post('/api/v1/auth/resend-verification').send({ email: talentPayload.email });
     const token = tokenFromLastEmail();
 
     const stored = await AccountToken.findOne({ type: 'email_verification' });
@@ -231,6 +239,11 @@ describe('email verification and password reset', () => {
 
   it('rejects an unknown verification token', async () => {
     const register = await request(app).post('/api/v1/auth/register').send(talentPayload);
+    // Email verification is disabled for now (SKIP_EMAIL_VERIFICATION), so
+    // registration already leaves the account verified; force it back to
+    // unverified here so this test still isolates "an unknown token doesn't
+    // verify" from that unrelated default.
+    await User.updateOne({ _id: register.body.data.user.id }, { isEmailVerified: false });
 
     const response = await request(app)
       .post('/api/v1/auth/verify-email')

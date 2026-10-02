@@ -7,9 +7,22 @@
   gap: var(--space-3);
   padding: var(--space-8) var(--space-4);
   text-align: center;
+  background: var(--color-surface-raised);
+}
+
+.iconBadge {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .code {
+  font-family: var(--font-heading);
   font-size: var(--text-4xl);
   font-weight: var(--weight-bold);
   color: var(--color-brand-300);
@@ -18,4 +31,5 @@
 
 .body {
   color: var(--color-text-muted);
+  max-width: 32rem;
 }

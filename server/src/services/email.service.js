@@ -1,42 +1,41 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import environment from '../config/env.js';
 
-let transporter = null;
+let client = null;
 
-function isSmtpConfigured() {
-  return Boolean(
-    environment.SMTP_HOST
-    && environment.SMTP_USER
-    && environment.SMTP_PASSWORD
-    && environment.SMTP_FROM,
-  );
+function isConfigured() {
+  return Boolean(environment.RESEND_API_KEY && environment.EMAIL_FROM);
 }
 
-// One pooled transporter for the process rather than one per message.
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: environment.SMTP_HOST,
-      port: environment.SMTP_PORT || 587,
-      secure: Number(environment.SMTP_PORT) === 465,
-      auth: { user: environment.SMTP_USER, pass: environment.SMTP_PASSWORD },
-    });
+function getClient() {
+  if (!client) {
+    client = new Resend(environment.RESEND_API_KEY);
   }
 
-  return transporter;
+  return client;
 }
 
-export async function sendEmail({ to, subject, text, html }) {
-  if (!isSmtpConfigured()) {
+export async function sendEmail({ to, subject, text, html, replyTo }) {
+  if (!isConfigured()) {
     if (environment.NODE_ENV === 'production') {
       throw new Error('Email is not configured.');
     }
 
-    // Without SMTP credentials the message is logged so local flows that
-    // depend on a token (verification, reset) remain testable.
+    
     console.info(`[Development email]\nTo: ${to}\nSubject: ${subject}\n\n${text}\n`);
     return;
   }
 
-  await getTransporter().sendMail({ from: environment.SMTP_FROM, to, subject, text, html });
+  const { error } = await getClient().emails.send({
+    from: environment.EMAIL_FROM,
+    to,
+    subject,
+    text,
+    html,
+    ...(replyTo ? { replyTo } : {}),
+  });
+
+  if (error) {
+    throw new Error(`Email delivery failed: ${error.message ?? error.name ?? 'unknown Resend error'}`);
+  }
 }

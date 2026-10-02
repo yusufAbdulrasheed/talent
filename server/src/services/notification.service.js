@@ -5,35 +5,12 @@ import { sendEmail } from './email.service.js';
 import {
   candidateApprovedEmail,
   candidateRejectedEmail,
-  paymentReceiptEmail,
   placementRequestEmail,
   placementRequestStatusEmail,
+  savingsWithdrawalDecisionEmail,
+  savingsWithdrawalRequestEmail,
 } from './email-templates.js';
 import { CANDIDATE_STATUSES } from '../constants/statuses.js';
-
-/**
- * Emails a receipt for a confirmed payment.
- * Expects `payment.candidate` populated, with `candidate.user` populated too.
- */
-export async function sendPaymentReceiptEmail(payment) {
-  const candidate = payment.candidate;
-  const user = candidate?.user;
-
-  if (!user?.email) {
-    return;
-  }
-
-  const message = paymentReceiptEmail({
-    firstName: user.firstName,
-    referenceNumber: candidate.referenceNumber,
-    reference: payment.reference,
-    amount: payment.amount,
-    currency: payment.currency,
-    paidAt: payment.paidAt,
-  });
-
-  await sendEmail({ to: user.email, ...message });
-}
 
 /** Records an in-app notification for a single recipient. */
 export async function notifyUser({ recipient, type, title, message, metadata }) {
@@ -121,7 +98,11 @@ export async function notifyAdminsOfPlacementRequest({ request, companyName }) {
   }
 
   const title = 'New placement request';
-  const message = `${companyName} requested ${request.candidateReference} for ${request.jobTitle}.`;
+  const count = request.candidateCount ?? 1;
+  const message =
+    count > 1
+      ? `${companyName} requested ${count} talents (${request.candidateReference}) for ${request.jobTitle}.`
+      : `${companyName} requested ${request.candidateReference} for ${request.jobTitle}.`;
 
   await Notification.insertMany(
     admins.map((admin) => ({
@@ -136,4 +117,68 @@ export async function notifyAdminsOfPlacementRequest({ request, companyName }) {
   const email = placementRequestEmail({ companyName, ...request });
 
   await Promise.allSettled(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
+}
+
+/**
+ * Tells every administrator that a talent has requested a savings
+ * withdrawal, in-app and by email. Best effort, mirroring
+ * `notifyAdminsOfPlacementRequest` — a mail outage must not roll back a
+ * request the talent has already successfully submitted.
+ */
+export async function notifyAdminsOfWithdrawalRequest({ candidate, amount }) {
+  const admins = await User.find({ role: USER_ROLES.ADMIN, isActive: true }).select('email firstName');
+
+  if (admins.length === 0) {
+    console.warn('A withdrawal request was submitted but no active administrator exists to notify.');
+    return;
+  }
+
+  const title = 'New savings withdrawal request';
+  const message = `${candidate.referenceNumber} requested a withdrawal of ${amount}.`;
+
+  await Notification.insertMany(
+    admins.map((admin) => ({
+      recipient: admin.id,
+      type: 'savings.withdrawal_requested',
+      title,
+      message,
+      metadata: { candidateId: candidate.id },
+    })),
+  );
+
+  const email = savingsWithdrawalRequestEmail({ referenceNumber: candidate.referenceNumber, amount });
+
+  await Promise.allSettled(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
+}
+
+/**
+ * Tells a talent the outcome of their withdrawal request, in-app and by
+ * email. Expects `candidate.user` populated.
+ */
+export async function notifyTalentOfWithdrawalDecision(candidate, withdrawalRequest) {
+  const user = candidate.user;
+
+  if (!user?.email) {
+    return;
+  }
+
+  const isApproved = withdrawalRequest.status === 'approved';
+
+  await notifyUser({
+    recipient: user.id ?? user._id,
+    type: `savings.withdrawal_${withdrawalRequest.status}`,
+    title: isApproved ? 'Withdrawal approved' : 'Withdrawal request update',
+    message: isApproved
+      ? `Your withdrawal request for ${withdrawalRequest.amount} has been approved.`
+      : `Your withdrawal request for ${withdrawalRequest.amount} was not approved. See the note on your dashboard.`,
+  });
+
+  const email = savingsWithdrawalDecisionEmail({
+    firstName: user.firstName,
+    amount: withdrawalRequest.amount,
+    status: withdrawalRequest.status,
+    decisionNote: withdrawalRequest.decisionNote,
+  });
+
+  await sendEmail({ to: user.email, ...email });
 }

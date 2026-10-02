@@ -1,0 +1,55 @@
+// `--logo-size` is the mark's height; the wordmark is sized from it so the
+// three lines always span the mark, as in the official lockup.
+.logo {
+  display: inline-flex;
+  flex-direction: column;
+  gap: calc(var(--logo-size) * 0.18);
+  color: inherit;
+}
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logo-size) * 0.3);
+
+  svg {
+    flex: none;
+  }
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-heading);
+  font-weight: var(--weight-extrabold);
+  font-size: calc(var(--logo-size) * 0.34);
+  line-height: 0.98;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tagline {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: var(--weight-medium);
+  font-size: calc(var(--logo-size) * 0.26);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.light {
+  color: #ffffff;
+
+  .tagline {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.dark {
+  color: var(--color-ink-800);
+
+  .tagline {
+    color: var(--color-accent);
+  }
+}

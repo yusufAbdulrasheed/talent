@@ -30,14 +30,6 @@ async function paystackRequest(path, options = {}) {
   return payload.data;
 }
 
-export function getTrainingFeeInKobo() {
-  if (!environment.TRAINING_FEE_NGN) {
-    throw new AppError('The training fee has not been configured.', 503);
-  }
-
-  return Math.round(environment.TRAINING_FEE_NGN * 100);
-}
-
 export async function initializePaystackTransaction({ email, amountInKobo, reference, metadata }) {
   return paystackRequest('/transaction/initialize', {
     method: 'POST',

@@ -1,15 +1,89 @@
-.details {
-  display: grid;
-  gap: var(--space-4);
-  margin: 0;
+.titleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 
-  @include from(md) {
-    grid-template-columns: repeat(2, 1fr);
+  svg {
+    color: var(--color-accent);
   }
+}
+
+.statusIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+
+  svg {
+    color: var(--color-accent);
+  }
+}
+
+// Job description / notes on the left, a compact status + summary panel
+// pinned on the right — recruiters only ever view their own requests here,
+// so there is no admin-style actions panel.
+.layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
 
   @include from(lg) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: minmax(0, 1fr) 20rem;
   }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  @include from(lg) {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
+}
+
+.statusPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.statusMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+
+  dt {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
 
   dt {
     font-size: var(--text-sm);
@@ -23,7 +97,14 @@
 }
 
 .reference {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   font-family: var(--font-mono);
+
+  svg {
+    color: var(--color-text-subtle);
+  }
 }
 
 // Preserves the line breaks the recruiter typed into the textarea.

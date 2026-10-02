@@ -20,6 +20,31 @@ export async function updateCandidateStatus({ id, ...payload }) {
   return data.data.candidate;
 }
 
+export async function updateCandidateAttributes({ id, ...payload }) {
+  const { data } = await http.patch(`/admin/candidates/${id}/attributes`, payload);
+  return data.data.candidate;
+}
+
+export async function getCandidateSavings(id) {
+  const { data } = await http.get(`/admin/candidates/${id}/savings`);
+  return data.data.savings;
+}
+
+export async function configureCandidateSavings({ id, ...payload }) {
+  const { data } = await http.patch(`/admin/candidates/${id}/savings/config`, payload);
+  return data.data.savings;
+}
+
+export async function listSavingsWithdrawals(params) {
+  const { data } = await http.get('/admin/savings/withdrawals', { params });
+  return data.data;
+}
+
+export async function decideSavingsWithdrawal({ candidateId, requestId, ...payload }) {
+  const { data } = await http.patch(`/admin/savings/withdrawals/${candidateId}/${requestId}`, payload);
+  return data.data.savings;
+}
+
 export async function listRecruiters(params) {
   const { data } = await http.get('/admin/recruiters', { params });
   return data.data;

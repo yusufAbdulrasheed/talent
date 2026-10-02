@@ -1,0 +1,221 @@
+.wizard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  flex: 1 0 auto;
+
+  &:last-child {
+    flex: none;
+  }
+}
+
+.stepButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+  }
+}
+
+.stepButtonCurrent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.stepButtonDone {
+  color: var(--color-text);
+}
+
+.stepMarker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-sunken);
+  color: currentColor;
+}
+
+.stepButtonDone .stepMarker {
+  background: var(--color-success-surface);
+  color: var(--color-success);
+}
+
+.stepButtonCurrent .stepMarker {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+.stepLabel {
+  @include from(md) {
+    display: inline;
+  }
+}
+
+.stepConnector {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  height: 1px;
+  margin: 0 var(--space-2);
+  background: var(--color-border);
+}
+
+.stepConnectorDone {
+  background: var(--color-success);
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  svg {
+    flex: none;
+    color: var(--color-accent);
+  }
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+
+  @include from(md) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.actionsEnd {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.linkAction {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+.body {
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+}
+
+.summaryList {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+
+  @include from(md) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  dt {
+    font-size: var(--text-sm);
+    color: var(--color-text-subtle);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--color-text);
+    font-weight: var(--weight-medium);
+  }
+}
+
+.summarySection {
+  margin-top: var(--space-4);
+}
+
+.summarySubheading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.documentList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.documentItem {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  font-size: var(--text-sm);
+}
+
+.documentName {
+  color: var(--color-text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

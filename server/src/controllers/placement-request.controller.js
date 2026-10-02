@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import Candidate from '../models/candidate.model.js';
 import PlacementRequest from '../models/placement-request.model.js';
 import { CANDIDATE_STATUSES } from '../constants/statuses.js';
@@ -5,6 +6,7 @@ import { AppError } from '../utils/app-error.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { sendSuccess } from '../utils/api-response.js';
 import { getCompanyForUser } from '../services/recruiter.service.js';
+import { getCurrentSubscription, getUnlockedExperienceLevels } from '../services/recruiter-subscription.service.js';
 import { notifyAdminsOfPlacementRequest } from '../services/notification.service.js';
 
 /**
@@ -21,7 +23,7 @@ function serializePlacementRequest(request, candidateReference) {
     salaryRange: request.salaryRange,
     location: request.location,
     startDate: request.startDate,
-    numberRequired: request.numberRequired,
+    groupId: request.groupId ?? null,
     additionalNotes: request.additionalNotes,
     status: request.status,
     adminNote: request.adminNote,
@@ -30,20 +32,70 @@ function serializePlacementRequest(request, candidateReference) {
   };
 }
 
+/**
+ * Resolves references to approved candidates the recruiter's plan unlocks.
+ * Resolving by reference and requiring APPROVED means a recruiter cannot reach
+ * a candidate who is not in the talent pool; the tier check is the real guard
+ * behind the client hiding locked talent. All-or-nothing: one bad reference
+ * rejects the whole submission.
+ */
+async function resolveRequestableCandidates(company, references) {
+  const normalised = references.map((reference) => reference.toUpperCase());
+  const candidates = await Candidate.find({
+    referenceNumber: { $in: normalised },
+    status: CANDIDATE_STATUSES.APPROVED,
+  }).select('_id referenceNumber experienceLevel');
+
+  const byReference = new Map(candidates.map((candidate) => [candidate.referenceNumber, candidate]));
+  const missing = normalised.filter((reference) => !byReference.has(reference));
+
+  if (missing.length > 0) {
+    throw new AppError(
+      normalised.length === 1
+        ? 'Candidate not found in the talent pool.'
+        : `These talents are no longer in the talent pool: ${missing.join(', ')}.`,
+      404,
+    );
+  }
+
+  const subscription = await getCurrentSubscription(company.id);
+  const unlockedLevels = getUnlockedExperienceLevels(subscription);
+  const locked = normalised.filter((reference) => !unlockedLevels.includes(byReference.get(reference).experienceLevel));
+
+  if (locked.length > 0) {
+    throw new AppError(
+      normalised.length === 1
+        ? 'Subscribe to a higher tier to request this candidate.'
+        : `Subscribe to a higher tier to request: ${locked.join(', ')}.`,
+      403,
+    );
+  }
+
+  return normalised.map((reference) => byReference.get(reference));
+}
+
+// Best effort: the requests are already saved, so a notification failure must
+// not turn a successful submission into an error for the recruiter.
+async function notifyAdmins(placementRequest, candidates, company) {
+  try {
+    await notifyAdminsOfPlacementRequest({
+      request: {
+        ...placementRequest.toObject(),
+        id: placementRequest.id,
+        candidateReference: candidates.map((candidate) => candidate.referenceNumber).join(', '),
+        candidateCount: candidates.length,
+      },
+      companyName: company.companyName,
+    });
+  } catch (error) {
+    console.error('Unable to notify administrators of a placement request:', error);
+  }
+}
+
 export const createPlacementRequest = asyncHandler(async (request, response) => {
   const company = await getCompanyForUser(request.user.id);
   const { candidateReference, ...details } = request.validated;
-
-  // Resolving by reference and requiring APPROVED means a recruiter cannot
-  // reach a candidate who is not in the talent pool.
-  const candidate = await Candidate.findOne({
-    referenceNumber: candidateReference.toUpperCase(),
-    status: CANDIDATE_STATUSES.APPROVED,
-  }).select('_id referenceNumber');
-
-  if (!candidate) {
-    throw new AppError('Candidate not found in the talent pool.', 404);
-  }
+  const [candidate] = await resolveRequestableCandidates(company, [candidateReference]);
 
   const placementRequest = await PlacementRequest.create({
     ...details,
@@ -51,20 +103,44 @@ export const createPlacementRequest = asyncHandler(async (request, response) => 
     candidate: candidate.id,
   });
 
-  // Best effort: the request is already saved, so a notification failure must
-  // not turn a successful submission into an error for the recruiter.
-  try {
-    await notifyAdminsOfPlacementRequest({
-      request: { ...placementRequest.toObject(), id: placementRequest.id, candidateReference: candidate.referenceNumber },
-      companyName: company.companyName,
-    });
-  } catch (error) {
-    console.error('Unable to notify administrators of a placement request:', error);
-  }
+  await notifyAdmins(placementRequest, [candidate], company);
 
   sendSuccess(response, {
     status: 201,
     data: { placementRequest: serializePlacementRequest(placementRequest, candidate.referenceNumber) },
+  });
+});
+
+/**
+ * One role, several talents picked together from the talent pool. Stored as
+ * one request per candidate (so the admin workflow is unchanged) sharing a
+ * `groupId`, with a single notification to the administrators.
+ */
+export const createGroupPlacementRequest = asyncHandler(async (request, response) => {
+  const company = await getCompanyForUser(request.user.id);
+  const { candidateReferences, ...details } = request.validated;
+  const candidates = await resolveRequestableCandidates(company, candidateReferences);
+  const groupId = randomUUID();
+
+  const placementRequests = await PlacementRequest.insertMany(
+    candidates.map((candidate) => ({
+      ...details,
+      recruiterCompany: company.id,
+      candidate: candidate._id,
+      groupId,
+    })),
+  );
+
+  await notifyAdmins(placementRequests[0], candidates, company);
+
+  sendSuccess(response, {
+    status: 201,
+    data: {
+      groupId,
+      placementRequests: placementRequests.map((item, index) =>
+        serializePlacementRequest(item, candidates[index].referenceNumber),
+      ),
+    },
   });
 });
 

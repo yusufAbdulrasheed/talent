@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { Search, Receipt } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import Button from '../../../components/ui/Button/Button.jsx';
@@ -48,12 +49,38 @@ function AdminPaymentsPage() {
   };
 
   const columns = [
-    { key: 'reference', header: 'Reference' },
-    { key: 'candidateReference', header: 'Candidate' },
+    {
+      key: 'reference',
+      header: 'Reference',
+      render: (row) => <span className={styles.reference}>{row.reference}</span>,
+    },
+    {
+      key: 'purpose',
+      header: 'Purpose',
+      render: (row) =>
+        row.purpose === 'recruiter_subscription' ? (
+          <StatusBadge tone="info">Subscription{row.subscriptionTier ? ` · ${row.subscriptionTier}` : ''}</StatusBadge>
+        ) : (
+          <StatusBadge tone="neutral">Candidate training</StatusBadge>
+        ),
+    },
+    {
+      key: 'candidateReference',
+      header: 'Candidate / company',
+      render: (row) => (
+        <span className={styles.reference}>{row.candidateReference ?? row.recruiterCompanyName ?? '—'}</span>
+      ),
+    },
     {
       key: 'amount',
       header: 'Amount',
-      render: (row) => formatCurrency(row.amount, row.currency),
+      align: 'right',
+      render: (row) => (
+        <span className={styles.amount}>
+          <Receipt size={14} aria-hidden="true" />
+          {formatCurrency(row.amount, row.currency)}
+        </span>
+      ),
     },
     {
       key: 'status',
@@ -71,10 +98,17 @@ function AdminPaymentsPage() {
     <>
       <PageHeader
         title="Payments"
-        description="Every training-fee transaction. Payments are confirmed by the Paystack webhook, never by hand."
+        description="The full transaction log — recruiter subscriptions and legacy candidate payments. Confirmed by the Paystack webhook, never by hand."
       />
 
-      <Card title="Filter">
+      <Card
+        title={
+          <span className={styles.cardTitle}>
+            <Search size={18} aria-hidden="true" />
+            Search transactions
+          </span>
+        }
+      >
         <div className={styles.filters}>
           <form
             className={styles.searchForm}

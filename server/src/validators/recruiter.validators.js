@@ -1,12 +1,14 @@
 import { z } from 'zod';
 import { PLACEMENT_REQUEST_STATUSES } from '../constants/statuses.js';
+import { SUBSCRIPTION_TIERS } from '../models/recruiter-subscription.model.js';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid identifier.');
 
+// The company name (set at registration) is not editable here at all. The CAC
+// number may be supplied once, while it is still empty — see updateMyCompany.
 export const companyProfileSchema = z
   .object({
-    companyName: z.string().trim().min(2).max(160).optional(),
-    cacNumber: z.string().trim().max(80).optional(),
+    cacNumber: z.string().trim().min(1).max(80).optional(),
     businessAddress: z.string().trim().max(500).optional(),
     companyEmail: z.string().trim().email().max(254).optional(),
     website: z.string().trim().url('Enter a valid URL, including https://').max(300).optional(),
@@ -20,6 +22,7 @@ export const companyProfileSchema = z
 export const talentPoolQuerySchema = z
   .object({
     location: z.string().trim().min(1).max(160).optional(),
+    jobTitle: z.string().trim().min(1).max(160).optional(),
     skills: z
       .union([z.string(), z.array(z.string())])
       .transform((value) => (Array.isArray(value) ? value : value.split(',')))
@@ -27,29 +30,48 @@ export const talentPoolQuerySchema = z
       .pipe(z.array(z.string().max(80)).max(10))
       .optional(),
     certification: z.string().trim().min(1).max(160).optional(),
-    availability: z.enum(['immediate', 'two_weeks', 'one_month', 'not_available']).optional(),
-    experienceLevel: z.enum(['entry', 'junior', 'mid', 'senior']).optional(),
     program: objectId.optional(),
     keyword: z.string().trim().min(1).max(120).optional(),
+    // Browse one tier's talent (Junior / Intermediate / Senior). Asking for a
+    // tier above the recruiter's plan simply returns nothing.
+    tier: z.enum(Object.values(SUBSCRIPTION_TIERS)).optional(),
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(50).default(12),
   })
   .strict();
 
+export const MAX_CANDIDATES_PER_REQUEST = 20;
+
+const roleDetails = {
+  jobTitle: z.string().trim().min(2).max(160),
+  jobDescription: z.string().trim().min(10).max(6000),
+  employmentType: z.enum(['full_time', 'part_time', 'contract', 'internship']),
+  salaryRange: z.string().trim().max(120).optional(),
+  location: z.string().trim().min(2).max(160),
+  startDate: z.coerce.date().optional(),
+  additionalNotes: z.string().trim().max(3000).optional(),
+};
+
+// Recruiters only ever know a candidate by reference, never by id.
+const candidateReference = z.string().trim().min(5).max(40);
+
 export const placementRequestSchema = z
+  .object({ candidateReference, ...roleDetails })
+  .strict();
+
+/** One role, several selected candidates — submitted to the admin together. */
+export const groupPlacementRequestSchema = z
   .object({
-    // Recruiters only ever know a candidate by reference, never by id.
-    candidateReference: z.string().trim().min(5).max(40),
-    jobTitle: z.string().trim().min(2).max(160),
-    jobDescription: z.string().trim().min(10).max(6000),
-    employmentType: z.enum(['full_time', 'part_time', 'contract', 'internship']),
-    salaryRange: z.string().trim().max(120).optional(),
-    location: z.string().trim().min(2).max(160),
-    startDate: z.coerce.date().optional(),
-    numberRequired: z.coerce.number().int().min(1).max(100).default(1),
-    additionalNotes: z.string().trim().max(3000).optional(),
+    candidateReferences: z
+      .array(candidateReference)
+      .min(1, 'Select at least one talent.')
+      .max(MAX_CANDIDATES_PER_REQUEST, `Select at most ${MAX_CANDIDATES_PER_REQUEST} talents per request.`)
+      .transform((references) => [...new Set(references.map((reference) => reference.toUpperCase()))]),
+    ...roleDetails,
   })
   .strict();
+
+export const subscriptionCheckoutSchema = z.object({ tier: z.enum(['intermediate', 'senior']) }).strict();
 
 export const placementRequestQuerySchema = z
   .object({

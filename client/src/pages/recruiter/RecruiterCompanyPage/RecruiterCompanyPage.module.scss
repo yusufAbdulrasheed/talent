@@ -4,6 +4,52 @@
   gap: var(--space-5);
 }
 
+.sectionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.iconBadge {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+// Narrow "Primary contact" panel pinned beside the wider identity panels.
+.layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+
+  @include from(lg) {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+
+  @include from(lg) {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
+}
+
 .grid {
   display: grid;
   gap: var(--space-4);
@@ -13,7 +59,23 @@
   }
 }
 
+.contactFields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.lockedLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  svg {
+    color: var(--color-text-subtle);
+  }
 }

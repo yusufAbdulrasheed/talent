@@ -34,9 +34,7 @@ export const register = asyncHandler(async (request, response) => {
   const session = await registerUser(request.validated);
 
   // Best effort: the account and session already exist, so a mail failure must
-  // not turn a successful registration into a 500 and strand the user with an
-  // account they cannot be told about. They can request a new link from the
-  // verify-email page.
+  
   try {
     await sendVerificationEmail(session.user.id);
   } catch (error) {
@@ -86,11 +84,15 @@ export const resendVerification = asyncHandler(async (request, response) => {
   const user = await User.findOne({ email: email.toLowerCase() });
 
   if (user && !user.isEmailVerified) {
-    await sendVerificationEmail(user.id);
+    
+    try {
+      await sendVerificationEmail(user.id);
+    } catch (error) {
+      console.error('Unable to send the verification email:', error);
+    }
   }
 
-  // Always the same response, so this endpoint cannot be used to discover
-  // which addresses hold accounts.
+  
   sendSuccess(response, {
     status: 202,
     message: 'If an account requires verification, an email has been sent.',
@@ -98,7 +100,14 @@ export const resendVerification = asyncHandler(async (request, response) => {
 });
 
 export const requestPasswordReset = asyncHandler(async (request, response) => {
-  await sendPasswordResetEmail(request.validated.email);
+  // Best effort for the same reason: the response must be constant whether or
+  // not the address exists and whether or not the provider accepted the mail.
+  try {
+    await sendPasswordResetEmail(request.validated.email);
+  } catch (error) {
+    console.error('Unable to send the password reset email:', error);
+  }
+
   sendSuccess(response, {
     status: 202,
     message: 'If an account exists, password reset instructions have been sent.',

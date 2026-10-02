@@ -3,30 +3,48 @@
   flex: 1;
   place-items: center;
   padding: var(--space-6) var(--space-4);
-  background: var(--color-surface-raised);
+  background:
+    radial-gradient(40rem 28rem at 100% 0%, rgba(123, 60, 245, 0.14), transparent 60%),
+    radial-gradient(36rem 26rem at 0% 100%, rgba(53, 56, 240, 0.12), transparent 60%),
+    var(--color-canvas);
 }
 
 .panel {
+  @include surface-card;
+
   width: 100%;
-  max-width: 28rem;
+  max-width: 30rem;
   display: flex;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   flex-direction: column;
   gap: var(--space-5);
-  padding: var(--space-6);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-md);
+  padding: var(--space-7) var(--space-6);
 }
+
+.brand {
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+  color: var(--color-text);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
 
 .header {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  text-align: center;
 }
 
 .title {
   font-size: var(--text-2xl);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.03em;
 }
 
 .subtitle {

@@ -1,6 +1,6 @@
 import environment from '../config/env.js';
 
-const BRAND_NAME = 'Talent Recruitment & Training Management System';
+const BRAND_NAME = 'Sultan Magnate Consulting';
 
 function escapeHtml(value) {
   return String(value)
@@ -26,6 +26,7 @@ function layout({ heading, bodyHtml }) {
 <html>
   <body style="margin:0;padding:24px;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
     <div style="max-width:560px;margin:0 auto;padding:32px;background:#ffffff;border-radius:12px;">
+      <p style="margin:0 0 20px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#000066;">${escapeHtml(BRAND_NAME)}</p>
       <h1 style="margin:0 0 16px;font-size:20px;">${escapeHtml(heading)}</h1>
       ${bodyHtml}
       <p style="margin:32px 0 0;font-size:12px;color:#64748b;">${escapeHtml(BRAND_NAME)}</p>
@@ -36,7 +37,7 @@ function layout({ heading, bodyHtml }) {
 
 function button(href, label) {
   return `<p style="margin:24px 0;">
-    <a href="${escapeHtml(href)}" style="display:inline-block;padding:12px 20px;background:#4f46e5;color:#ffffff;border-radius:8px;text-decoration:none;">${escapeHtml(label)}</a>
+    <a href="${escapeHtml(href)}" style="display:inline-block;padding:12px 20px;background:#0000f8;color:#ffffff;border-radius:8px;text-decoration:none;">${escapeHtml(label)}</a>
   </p>
   <p style="margin:0;font-size:13px;color:#64748b;">If the button does not work, paste this link into your browser:<br>${escapeHtml(href)}</p>`;
 }
@@ -133,16 +134,16 @@ export function placementRequestEmail({
   jobTitle,
   employmentType,
   location,
-  numberRequired,
+  candidateCount = 1,
 }) {
   const link = new URL('/admin/placement-requests', environment.CLIENT_URL).toString();
   const rows = [
     ['Company', companyName],
-    ['Candidate reference', candidateReference],
+    [candidateCount > 1 ? 'Candidate references' : 'Candidate reference', candidateReference],
     ['Job title', jobTitle],
     ['Employment type', employmentType.replaceAll('_', ' ')],
     ['Location', location],
-    ['Number required', String(numberRequired)],
+    ['Talents requested', String(candidateCount)],
   ];
 
   return {
@@ -163,27 +164,50 @@ export function placementRequestEmail({
   };
 }
 
-export function paymentReceiptEmail({ firstName, referenceNumber, reference, amount, currency, paidAt }) {
-  const formattedAmount = new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: currency || 'NGN',
-  }).format(amount);
-  const formattedDate = new Date(paidAt).toLocaleString('en-NG');
+export function savingsWithdrawalRequestEmail({ referenceNumber, amount }) {
+  const link = new URL('/admin/savings-withdrawals', environment.CLIENT_URL).toString();
 
+  return {
+    subject: `Savings withdrawal request from ${referenceNumber}`,
+    text: `${referenceNumber} has requested a savings withdrawal of ${amount}.\n\nReview it here: ${link}`,
+    html: layout({
+      heading: 'New savings withdrawal request',
+      bodyHtml: `<p style="margin:0;">Candidate <strong>${escapeHtml(referenceNumber)}</strong> has requested a withdrawal of <strong>${escapeHtml(String(amount))}</strong>.</p>${button(link, 'Review withdrawal requests')}`,
+    }),
+  };
+}
+
+export function savingsWithdrawalDecisionEmail({ firstName, amount, status, decisionNote }) {
+  const link = new URL('/talent/savings', environment.CLIENT_URL).toString();
+  const isApproved = status === 'approved';
+  const noteHtml = decisionNote
+    ? `<p style="margin:16px 0 0;padding:12px;background:#f1f5f9;border-radius:8px;"><strong>Note from our team:</strong><br>${escapeHtml(decisionNote)}</p>`
+    : '';
+
+  return {
+    subject: isApproved ? 'Your withdrawal request was approved' : 'An update on your withdrawal request',
+    text: `Hello ${firstName},\n\nYour savings withdrawal request for ${amount} was ${status}.${decisionNote ? `\n\nNote: ${decisionNote}` : ''}\n\nView your savings: ${link}`,
+    html: layout({
+      heading: `Hello ${firstName},`,
+      bodyHtml: `<p style="margin:0;">Your savings withdrawal request for <strong>${escapeHtml(String(amount))}</strong> was <strong>${escapeHtml(status)}</strong>.</p>${noteHtml}${button(link, 'View your savings')}`,
+    }),
+  };
+}
+
+export function contactMessageEmail({ name, email, subject, message }) {
+  const heading = subject ? `Contact: ${subject}` : 'New contact message';
   const rows = [
-    ['Candidate reference', referenceNumber],
-    ['Payment reference', reference],
-    ['Amount', formattedAmount],
-    ['Date', formattedDate],
+    ['From', name],
+    ['Email', email],
+    ['Subject', subject || '—'],
   ];
 
   return {
-    subject: 'Your training fee payment receipt',
-    text: `Hello ${firstName},\n\nWe have received your training fee payment.\n\n${rows.map(([key, value]) => `${key}: ${value}`).join('\n')}\n\nYour application is now with our team for review.`,
+    subject: `[Website] ${subject || `Message from ${name}`}`,
+    text: `${rows.map(([key, value]) => `${key}: ${value}`).join('\n')}\n\nMessage:\n${message}`,
     html: layout({
-      heading: `Hello ${firstName},`,
-      bodyHtml: `<p style="margin:0 0 16px;">We have received your training fee payment.</p>
-      <dl style="margin:0;font-size:14px;">
+      heading,
+      bodyHtml: `<dl style="margin:0 0 16px;font-size:14px;">
         ${rows
           .map(
             ([key, value]) =>
@@ -191,7 +215,8 @@ export function paymentReceiptEmail({ firstName, referenceNumber, reference, amo
           )
           .join('')}
       </dl>
-      <p style="margin:24px 0 0;">Your application is now with our team for review.</p>`,
+      <p style="margin:0 0 6px;color:#64748b;font-size:13px;">Message</p>
+      <p style="margin:0;white-space:pre-wrap;">${escapeHtml(message)}</p>`,
     }),
   };
 }

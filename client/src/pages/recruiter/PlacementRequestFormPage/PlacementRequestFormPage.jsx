@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, ClipboardList, Send, StickyNote } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import Button from '../../../components/ui/Button/Button.jsx';
@@ -21,7 +22,6 @@ const INITIAL_FORM = {
   salaryRange: '',
   location: '',
   startDate: '',
-  numberRequired: '1',
   additionalNotes: '',
 };
 
@@ -74,6 +74,7 @@ function PlacementRequestFormPage() {
         description={`Tell us about the role you want to fill with candidate ${reference}.`}
         actions={
           <Button to={`/recruiter/talent-pool/${reference}`} variant="secondary">
+            <ArrowLeft size={16} aria-hidden="true" />
             Back to profile
           </Button>
         }
@@ -86,7 +87,14 @@ function PlacementRequestFormPage() {
           </Alert>
         ) : null}
 
-        <Card title="Role details">
+        <Card
+          title={
+            <span className={styles.titleWithIcon}>
+              <ClipboardList size={18} aria-hidden="true" />
+              Role details
+            </span>
+          }
+        >
           <div className={styles.grid}>
             <TextField
               label="Job title"
@@ -129,16 +137,6 @@ function PlacementRequestFormPage() {
               onChange={handleChange}
               error={fieldError('startDate')}
             />
-            <TextField
-              label="Number required"
-              name="numberRequired"
-              type="number"
-              min="1"
-              max="100"
-              value={form.numberRequired}
-              onChange={handleChange}
-              error={fieldError('numberRequired')}
-            />
           </div>
 
           <TextareaField
@@ -151,12 +149,21 @@ function PlacementRequestFormPage() {
             onChange={handleChange}
             error={fieldError('jobDescription')}
           />
+        </Card>
 
+        <Card
+          title={
+            <span className={styles.titleWithIcon}>
+              <StickyNote size={18} aria-hidden="true" />
+              Additional notes
+            </span>
+          }
+          description="Optional. Anything our team should know when arranging this placement."
+        >
           <TextareaField
             label="Additional notes"
             name="additionalNotes"
             rows={3}
-            hint="Optional. Anything our team should know when arranging this placement."
             value={form.additionalNotes}
             onChange={handleChange}
             error={fieldError('additionalNotes')}
@@ -165,6 +172,7 @@ function PlacementRequestFormPage() {
 
         <div className={styles.actions}>
           <Button type="submit" isLoading={createMutation.isPending}>
+            <Send size={16} aria-hidden="true" />
             Submit request
           </Button>
         </div>

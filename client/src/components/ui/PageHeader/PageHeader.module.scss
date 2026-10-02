@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 
 .headings {
@@ -21,10 +21,14 @@
 }
 
 .title {
-  font-size: var(--text-2xl);
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3vw, var(--text-3xl));
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.03em;
 }
 
 .description {
+  font-size: var(--text-lg);
   color: var(--color-text-muted);
   max-width: 60ch;
 }

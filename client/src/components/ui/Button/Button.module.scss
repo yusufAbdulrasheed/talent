@@ -5,13 +5,21 @@
   gap: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  font-weight: var(--weight-medium);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.005em;
   text-align: center;
   text-decoration: none;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 
   &:hover {
     text-decoration: none;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
   }
 
   &:disabled {
@@ -21,30 +29,40 @@
 }
 
 .sm {
-  padding: var(--space-1) var(--space-3);
+  min-height: 2.375rem;
+  padding: var(--space-1) var(--space-4);
+  border-radius: 10px;
   font-size: var(--text-sm);
 }
 
 .md {
-  padding: var(--space-2) var(--space-4);
-  font-size: var(--text-base);
+  min-height: 2.875rem;
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
 }
 
 .lg {
-  padding: var(--space-3) var(--space-5);
-  font-size: var(--text-lg);
+  min-height: 3.25rem;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
 }
 
 .fullWidth {
   width: 100%;
 }
 
+// Each variant restates `color` on hover: Button renders as an <a> for link
+// buttons, and the global `a:hover` colour rule would otherwise win.
 .primary {
-  background: var(--color-accent);
-  color: var(--color-text-inverse);
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow);
 
-  &:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--gradient-primary-hover);
+    color: #ffffff;
+    box-shadow: 0 12px 26px -8px rgba(59, 63, 245, 0.55);
   }
 }
 
@@ -53,8 +71,11 @@
   border-color: var(--color-border-strong);
   color: var(--color-text);
 
-  &:hover:not(:disabled) {
-    background: var(--color-surface-raised);
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 }
 
@@ -62,16 +83,22 @@
   background: transparent;
   color: var(--color-accent);
 
-  &:hover:not(:disabled) {
-    background: var(--color-brand-50);
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--color-accent-soft);
+    color: var(--color-accent-hover);
   }
 }
 
 .danger {
   background: var(--color-danger);
   color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
 
-  &:hover:not(:disabled) {
-    filter: brightness(0.92);
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: color-mix(in srgb, var(--color-danger) 88%, #000);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
   }
 }

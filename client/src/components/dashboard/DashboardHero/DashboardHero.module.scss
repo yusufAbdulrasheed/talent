@@ -1,0 +1,237 @@
+.hero {
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  min-height: 15rem;
+  padding: var(--space-6) var(--space-5);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(34rem 20rem at 85% 120%, rgba(123, 60, 245, 0.75), transparent 60%),
+    radial-gradient(28rem 18rem at 0% -20%, rgba(53, 56, 240, 0.55), transparent 60%),
+    linear-gradient(120deg, #0a1045 0%, #16206a 55%, #2a1f8f 100%);
+  color: #ffffff;
+  box-shadow: 0 30px 60px -32px rgba(20, 24, 110, 0.75);
+  isolation: isolate;
+
+  @include from(md) {
+    grid-template-columns: 1fr 15rem;
+    padding: var(--space-7) var(--space-7) var(--space-6);
+  }
+
+  @include from(xl) {
+    grid-template-columns: 1fr 18rem;
+  }
+}
+
+// ---- Decorative backdrop ------------------------------------------------------
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ringA,
+.ringB {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ringA {
+  right: -6rem;
+  top: -8rem;
+  width: 26rem;
+  height: 26rem;
+}
+
+.ringB {
+  right: -2rem;
+  top: -4rem;
+  width: 18rem;
+  height: 18rem;
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+// Faint dot grid in the top-left corner.
+.dots {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14rem;
+  height: 10rem;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 14px 14px;
+  mask-image: linear-gradient(135deg, #000 20%, transparent 75%);
+  -webkit-mask-image: linear-gradient(135deg, #000 20%, transparent 75%);
+}
+
+// ---- Copy -----------------------------------------------------------------------
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+  align-self: center;
+}
+
+.eyebrow {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.6875rem;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #d9dcff;
+}
+
+.title {
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  font-weight: var(--weight-extrabold);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+}
+
+.name {
+  background: linear-gradient(95deg, #a5a9ff 0%, #d0b2ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  max-width: 36rem;
+  font-size: var(--text-base);
+  color: rgba(235, 237, 255, 0.82);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+
+  // Secondary buttons read as glass on the gradient. Vite's scoped class
+  // names keep the local name (e.g. `_secondary_x1y2z`), so the attribute
+  // match finds the Button component's secondary variant.
+  :global(a),
+  :global(button) {
+    &[class*='secondary'] {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+
+      &:hover:not(:disabled),
+      &:focus-visible:not(:disabled) {
+        border-color: #ffffff;
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+// ---- Portrait — fully transparent, no background, no frame ---------------
+// No coloured panel or border behind the photo, and no CSS mask doing the
+// work either: these PNGs are pre-cut with a real alpha channel, so the
+// hero's own gradient shows straight through everywhere but the subject.
+
+.media {
+  position: relative;
+  display: none;
+  align-self: end;
+  height: 100%;
+  min-height: 14rem;
+  margin-bottom: calc(-1 * var(--space-6));
+
+  @include from(md) {
+    display: block;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+.portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  background: transparent;
+}
+
+.script {
+  position: absolute;
+  top: 0;
+  right: -0.5rem;
+  display: none;
+  font-family: var(--font-script);
+  font-size: 1.35rem;
+  line-height: 1.05;
+  text-align: right;
+  color: #ffffff;
+  transform: rotate(-6deg);
+
+  @include from(xl) {
+    display: block;
+  }
+}
+
+// ---- Floating stat chips --------------------------------------------------------
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+
+  @include from(md) {
+    grid-column: 1 / 2;
+  }
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.chipIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: #ffffff;
+  color: var(--color-accent);
+}
+
+.chipText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  strong {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-extrabold);
+  }
+
+  span {
+    font-size: 0.6875rem;
+    color: rgba(235, 237, 255, 0.75);
+  }
+}

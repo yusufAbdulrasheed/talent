@@ -1,23 +1,93 @@
-.summary {
+.titleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  svg {
+    color: var(--color-accent);
+  }
+}
+
+// Narrow summary/skills column on the left, certifications/education on the
+// right — matches the reference mockup's information hierarchy.
+.layout {
   display: grid;
+  gap: var(--space-5);
+  align-items: start;
+
+  @include from(lg) {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+
+  @include from(lg) {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
   margin: 0;
+  padding: 0;
+  list-style: none;
 
-  @include from(md) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
 
-  dt {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
+    svg {
+      flex: none;
+      margin-top: 0.15rem;
+      color: var(--color-text-subtle);
+    }
   }
+}
 
-  dd {
-    margin: 0;
-    font-weight: var(--weight-medium);
-  }
+.summaryLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.summaryValue {
+  font-weight: var(--weight-medium);
 }
 
 .muted {
   color: var(--color-text-muted);
+}
+
+.lockedCard {
+  border-style: dashed;
+  border-color: var(--color-gold);
+  background: var(--color-gold-soft);
+
+  > * + * {
+    margin-top: var(--space-3);
+  }
+}
+
+.bio {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  white-space: pre-line;
 }

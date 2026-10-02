@@ -1,0 +1,80 @@
+// A floating gradient card on the canvas, rather than a full-bleed band.
+.cta {
+  @include container;
+
+  padding-block: var(--space-7) var(--space-8);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-7) var(--space-6);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(30rem 16rem at 100% 100%, rgba(255, 255, 255, 0.18), transparent 60%),
+    var(--gradient-banner);
+  color: #ffffff;
+  box-shadow: 0 30px 60px -28px rgba(53, 56, 240, 0.8);
+
+  @include from(md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-7) var(--space-8);
+  }
+}
+
+// White-on-gradient button treatments. The `a.` prefix outranks the Button
+// component's own variant styles.
+.actions a:first-child {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: var(--color-accent);
+  box-shadow: none;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: var(--color-brand-50);
+    color: var(--color-accent-hover);
+  }
+}
+
+.actions a + a {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  color: #ffffff;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 34rem;
+}
+
+.title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.lead {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}

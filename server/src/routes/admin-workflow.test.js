@@ -20,7 +20,11 @@ async function admin() {
 describe('candidate approval publishes to the talent pool', () => {
   it('approves a paid candidate and makes them visible to recruiters', async () => {
     const adminToken = await admin();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.PAYMENT_CONFIRMED });
+    // A level the (free, junior-tier) recruiter has unlocked, so approval makes them appear in the list.
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.SUBMITTED,
+      overrides: { experienceLevel: 'junior' },
+    });
     const { token: recruiterToken } = await createRecruiter();
 
     const before = await request(app)
@@ -43,8 +47,17 @@ describe('candidate approval publishes to the talent pool', () => {
 
   it('removes a candidate from the pool when approval is withdrawn', async () => {
     const adminToken = await admin();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.APPROVED });
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.APPROVED,
+      overrides: { experienceLevel: 'junior' },
+    });
     const { token: recruiterToken } = await createRecruiter();
+
+    // Precondition: the candidate really is visible before approval is withdrawn.
+    const before = await request(app)
+      .get('/api/v1/recruiter/talent-pool')
+      .set('Authorization', bearer(recruiterToken));
+    expect(before.body.data.candidates).toHaveLength(1);
 
     await request(app)
       .patch(`/api/v1/admin/candidates/${candidate.id}/status`)
@@ -58,9 +71,9 @@ describe('candidate approval publishes to the talent pool', () => {
     expect(after.body.data.candidates).toHaveLength(0);
   });
 
-  it('refuses to approve a candidate who has not paid', async () => {
+  it('refuses to approve a candidate whose profile is still a draft', async () => {
     const adminToken = await admin();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.SUBMITTED });
+    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.DRAFT });
 
     const response = await request(app)
       .patch(`/api/v1/admin/candidates/${candidate.id}/status`)
@@ -68,14 +81,12 @@ describe('candidate approval publishes to the talent pool', () => {
       .send({ status: CANDIDATE_STATUSES.APPROVED });
 
     expect(response.status).toBe(409);
-    expect((await Candidate.findById(candidate.id)).status).toBe(CANDIDATE_STATUSES.SUBMITTED);
+    expect((await Candidate.findById(candidate.id)).status).toBe(CANDIDATE_STATUSES.DRAFT);
   });
 
   it.each([
     CANDIDATE_STATUSES.DRAFT,
     CANDIDATE_STATUSES.SUBMITTED,
-    CANDIDATE_STATUSES.PAYMENT_PENDING,
-    CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
   ])('refuses to let an administrator set the system-driven status %s', async (status) => {
     const adminToken = await admin();
     const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.UNDER_REVIEW });
@@ -85,7 +96,7 @@ describe('candidate approval publishes to the talent pool', () => {
       .set('Authorization', bearer(adminToken))
       .send({ status });
 
-    // Allowing these would let an administrator fake a training payment.
+    // Allowing these would let an administrator fake the candidate's own onboarding progress.
     expect(response.status).toBe(422);
   });
 
@@ -105,7 +116,7 @@ describe('candidate approval publishes to the talent pool', () => {
   it('emails the candidate on approval', async () => {
     const adminToken = await admin();
     const { candidate, user } = await createCandidate({
-      status: CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
+      status: CANDIDATE_STATUSES.SUBMITTED,
     });
     sendEmail.mockClear();
 
@@ -131,6 +142,27 @@ describe('candidate approval publishes to the talent pool', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.candidate.email).toBe(user.email);
     expect(response.body.data.candidate.phoneNumber).toBe('+2348012345678');
+    expect(response.body.data.candidate.jobTitle).toBe('Software Engineer');
+  });
+
+  it('filters the candidate list by job title, both as a dedicated filter and via the general search', async () => {
+    const adminToken = await admin();
+    await createCandidate({ overrides: { jobTitle: 'Frontend Developer' } });
+    await createCandidate({ overrides: { jobTitle: 'Registered Nurse' } });
+
+    const byFilter = await request(app)
+      .get('/api/v1/admin/candidates?jobTitle=frontend')
+      .set('Authorization', bearer(adminToken));
+    expect(byFilter.status).toBe(200);
+    expect(byFilter.body.data.candidates).toHaveLength(1);
+    expect(byFilter.body.data.candidates[0].jobTitle).toBe('Frontend Developer');
+
+    const bySearch = await request(app)
+      .get('/api/v1/admin/candidates?search=nurse')
+      .set('Authorization', bearer(adminToken));
+    expect(bySearch.status).toBe(200);
+    expect(bySearch.body.data.candidates).toHaveLength(1);
+    expect(bySearch.body.data.candidates[0].jobTitle).toBe('Registered Nurse');
   });
 });
 
@@ -150,7 +182,12 @@ describe('placement requests', () => {
 
   it('accepts a request for an approved candidate', async () => {
     const { token } = await createRecruiter();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.APPROVED });
+    // Junior is the default free tier — this test is about the placement
+    // flow itself, not tier gating (covered in recruiter-subscription.test.js).
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.APPROVED,
+      overrides: { experienceLevel: 'junior' },
+    });
 
     const response = await submitRequest(token, candidate.referenceNumber);
 
@@ -171,7 +208,10 @@ describe('placement requests', () => {
   it('notifies administrators when a request is submitted', async () => {
     await createAuthedUser({ role: USER_ROLES.ADMIN });
     const { token } = await createRecruiter();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.APPROVED });
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.APPROVED,
+      overrides: { experienceLevel: 'junior' },
+    });
     sendEmail.mockClear();
 
     const created = await submitRequest(token, candidate.referenceNumber);
@@ -183,7 +223,10 @@ describe('placement requests', () => {
   it('never exposes one recruiter’s request to another', async () => {
     const first = await createRecruiter({ companyName: 'First Ltd' });
     const second = await createRecruiter({ companyName: 'Second Ltd' });
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.APPROVED });
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.APPROVED,
+      overrides: { experienceLevel: 'junior' },
+    });
 
     const created = await submitRequest(first.token, candidate.referenceNumber);
     const requestId = created.body.data.placementRequest.id;
@@ -203,7 +246,10 @@ describe('placement requests', () => {
   it('emails the recruiter when an administrator changes the status', async () => {
     const adminToken = await admin();
     const { token } = await createRecruiter();
-    const { candidate } = await createCandidate({ status: CANDIDATE_STATUSES.APPROVED });
+    const { candidate } = await createCandidate({
+      status: CANDIDATE_STATUSES.APPROVED,
+      overrides: { experienceLevel: 'junior' },
+    });
     const created = await submitRequest(token, candidate.referenceNumber);
     sendEmail.mockClear();
 

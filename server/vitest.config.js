@@ -19,7 +19,9 @@ export default defineConfig({
       JWT_REFRESH_SECRET: 'test-refresh-secret-long-enough-for-validation-002',
       PAYSTACK_SECRET_KEY: 'sk_test_dummy_secret',
       TRAINING_FEE_NGN: '5000',
-      // SMTP is intentionally unset: sendEmail logs instead of dialling out.
+      RECRUITER_SUB_INTERMEDIATE_NGN: '15000',
+      RECRUITER_SUB_SENIOR_NGN: '30000',
+      // RESEND_API_KEY is intentionally unset: sendEmail logs instead of sending.
     },
   },
 });

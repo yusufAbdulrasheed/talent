@@ -1,8 +1,6 @@
 export const CANDIDATE_STATUSES = Object.freeze({
   DRAFT: 'draft',
   SUBMITTED: 'submitted',
-  PAYMENT_PENDING: 'payment_pending',
-  PAYMENT_CONFIRMED: 'payment_confirmed',
   UNDER_REVIEW: 'under_review',
   APPROVED: 'approved',
   REJECTED: 'rejected',

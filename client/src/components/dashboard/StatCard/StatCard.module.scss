@@ -1,0 +1,114 @@
+.card {
+  @include surface-card;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  overflow: hidden;
+  color: var(--color-text);
+}
+
+.interactive {
+  @include hover-lift;
+
+  &:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  &:hover .arrow {
+    color: var(--color-accent);
+    transform: translateX(3px);
+  }
+}
+
+.icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-md);
+  background: var(--gradient-soft);
+  color: var(--color-accent);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.value {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+.arrow {
+  flex: none;
+  color: var(--color-text-subtle);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+// Work waiting on the viewer.
+.urgent {
+  border-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
+  background: linear-gradient(135deg, var(--color-warning-surface), var(--color-surface) 70%);
+
+  .icon {
+    background: var(--color-warning);
+    color: #ffffff;
+  }
+
+  .value {
+    color: var(--color-warning);
+  }
+}
+
+// The one number that matters most on the page.
+.featured {
+  border-color: transparent;
+  background: var(--gradient-primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow);
+
+  &.interactive:hover {
+    color: #ffffff;
+  }
+
+  .icon {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+  }
+
+  .label,
+  .hint,
+  .arrow {
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  &.interactive:hover .arrow {
+    color: #ffffff;
+  }
+}

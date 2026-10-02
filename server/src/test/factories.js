@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import Candidate from '../models/candidate.model.js';
 import RecruiterCompany from '../models/recruiter-company.model.js';
+import TalentSavings, { SAVINGS_STATUSES } from '../models/talent-savings.model.js';
 import { USER_ROLES } from '../constants/user-roles.js';
 import { CANDIDATE_STATUSES } from '../constants/statuses.js';
 import { createAccessToken } from '../utils/auth-tokens.js';
@@ -48,6 +49,7 @@ export async function createCandidate({
     gender: 'female',
     dateOfBirth: new Date('1998-04-12'),
     location: 'Ikeja, Lagos',
+    jobTitle: 'Software Engineer',
     education: 'BSc Computer Science, Unilag',
     skills: ['React', 'Node.js'],
     certifications: ['AWS Cloud Practitioner'],
@@ -71,6 +73,26 @@ export async function createRecruiter({ companyName = 'Acme Nigeria' } = {}) {
   });
 
   return { user, company, token: createAccessToken(user) };
+}
+
+export async function createTalentSavings({
+  candidate,
+  monthlySalary = 200000,
+  savingsRate = 10,
+  status = SAVINGS_STATUSES.ACTIVE,
+  startedAt = new Date(),
+  lastAccrualPeriod,
+  ...overrides
+} = {}) {
+  return TalentSavings.create({
+    candidate: candidate.id ?? candidate,
+    monthlySalary,
+    savingsRate,
+    status,
+    startedAt,
+    lastAccrualPeriod,
+    ...overrides,
+  });
 }
 
 export function bearer(token) {

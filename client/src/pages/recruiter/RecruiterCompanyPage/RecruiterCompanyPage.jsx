@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Building2, Lock, MapPin, Save, UserRound } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import Button from '../../../components/ui/Button/Button.jsx';
@@ -28,10 +29,22 @@ function toFormState(company) {
   return Object.fromEntries(FIELDS.map((field) => [field, company[field] ?? '']));
 }
 
-function toPayload(form) {
+// The company name is fixed at registration and never sent. The CAC number is
+// sent only while it is still empty: once recorded, the API refuses changes.
+const LOCKED_FIELDS = new Set(['companyName', 'cacNumber']);
+
+function toPayload(form, company) {
   const payload = {};
 
+  if (!company.cacNumber && form.cacNumber.trim()) {
+    payload.cacNumber = form.cacNumber.trim();
+  }
+
   for (const field of FIELDS) {
+    if (LOCKED_FIELDS.has(field)) {
+      continue;
+    }
+
     const value = form[field].trim();
 
     // Empty values are omitted; the API rejects blanks against its own rules.
@@ -41,6 +54,28 @@ function toPayload(form) {
   }
 
   return payload;
+}
+
+function SectionTitle({ icon, children }) {
+  const Icon = icon;
+
+  return (
+    <span className={styles.sectionTitle}>
+      <span className={styles.iconBadge} aria-hidden="true">
+        <Icon size={18} strokeWidth={2} />
+      </span>
+      {children}
+    </span>
+  );
+}
+
+function LockedLabel({ children }) {
+  return (
+    <span className={styles.lockedLabel}>
+      {children}
+      <Lock size={13} aria-label="(locked)" />
+    </span>
+  );
 }
 
 function RecruiterCompanyPage() {
@@ -87,7 +122,7 @@ function CompanyForm({ company, queryClient }) {
       noValidate
       onSubmit={(event) => {
         event.preventDefault();
-        saveMutation.mutate(toPayload(form));
+        saveMutation.mutate(toPayload(form, company));
       }}
     >
       {saveMutation.isSuccess ? <Alert variant="success">Your company profile has been saved.</Alert> : null}
@@ -101,93 +136,112 @@ function CompanyForm({ company, queryClient }) {
         </Alert>
       )}
 
-      <Card
-        title="Company details"
-        actions={
-          <StatusBadge tone={company.isApproved ? 'success' : 'warning'}>
-            {company.isApproved ? 'Approved' : 'Pending approval'}
-          </StatusBadge>
-        }
-      >
-        <div className={styles.grid}>
-          <TextField
-            label="Company name"
-            name="companyName"
-            autoComplete="organization"
-            value={form.companyName}
-            onChange={handleChange}
-            error={fieldError('companyName')}
-          />
-          <TextField
-            label="CAC number"
-            name="cacNumber"
-            hint="Your Corporate Affairs Commission registration number."
-            value={form.cacNumber}
-            onChange={handleChange}
-            error={fieldError('cacNumber')}
-          />
-          <TextField
-            label="Industry"
-            name="industry"
-            value={form.industry}
-            onChange={handleChange}
-            error={fieldError('industry')}
-          />
-          <TextField
-            label="Website"
-            name="website"
-            type="url"
-            placeholder="https://example.com"
-            hint="Include https://"
-            value={form.website}
-            onChange={handleChange}
-            error={fieldError('website')}
-          />
+      <div className={styles.layout}>
+        <div className={styles.main}>
+          <Card
+            title={<SectionTitle icon={Building2}>Core identity</SectionTitle>}
+            actions={
+              <StatusBadge tone={company.isApproved ? 'success' : 'warning'}>
+                {company.isApproved ? 'Approved' : 'Pending approval'}
+              </StatusBadge>
+            }
+          >
+            <div className={styles.grid}>
+              <TextField
+                label={<LockedLabel>Company name</LockedLabel>}
+                name="companyName"
+                autoComplete="organization"
+                value={form.companyName}
+                disabled
+                hint="Set when you registered. Contact support to change it."
+              />
+              {company.cacNumber ? (
+                <TextField
+                  label={<LockedLabel>CAC number</LockedLabel>}
+                  name="cacNumber"
+                  value={form.cacNumber}
+                  disabled
+                  hint="Recorded. Contact support if it needs correcting."
+                />
+              ) : (
+                <TextField
+                  label="CAC number"
+                  name="cacNumber"
+                  hint="Your Corporate Affairs Commission number. It can't be changed once saved."
+                  value={form.cacNumber}
+                  onChange={handleChange}
+                  error={fieldError('cacNumber')}
+                />
+              )}
+              <TextField
+                label="Industry"
+                name="industry"
+                value={form.industry}
+                onChange={handleChange}
+                error={fieldError('industry')}
+              />
+              <TextField
+                label="Website"
+                name="website"
+                type="url"
+                placeholder="https://example.com"
+                hint="Include https://"
+                value={form.website}
+                onChange={handleChange}
+                error={fieldError('website')}
+              />
+            </div>
+          </Card>
+
+          <Card title={<SectionTitle icon={MapPin}>Headquarters</SectionTitle>}>
+            <TextareaField
+              label="Business address"
+              name="businessAddress"
+              rows={3}
+              value={form.businessAddress}
+              onChange={handleChange}
+              error={fieldError('businessAddress')}
+            />
+          </Card>
         </div>
 
-        <TextareaField
-          label="Business address"
-          name="businessAddress"
-          rows={3}
-          value={form.businessAddress}
-          onChange={handleChange}
-          error={fieldError('businessAddress')}
-        />
-      </Card>
-
-      <Card title="Contact details">
-        <div className={styles.grid}>
-          <TextField
-            label="Contact person"
-            name="contactPerson"
-            autoComplete="name"
-            value={form.contactPerson}
-            onChange={handleChange}
-            error={fieldError('contactPerson')}
-          />
-          <TextField
-            label="Company email"
-            name="companyEmail"
-            type="email"
-            autoComplete="email"
-            value={form.companyEmail}
-            onChange={handleChange}
-            error={fieldError('companyEmail')}
-          />
-          <TextField
-            label="Phone number"
-            name="phoneNumber"
-            type="tel"
-            autoComplete="tel"
-            value={form.phoneNumber}
-            onChange={handleChange}
-            error={fieldError('phoneNumber')}
-          />
+        <div className={styles.sidebar}>
+          <Card title={<SectionTitle icon={UserRound}>Primary contact</SectionTitle>}>
+            <div className={styles.contactFields}>
+              <TextField
+                label="Contact person"
+                name="contactPerson"
+                autoComplete="name"
+                value={form.contactPerson}
+                onChange={handleChange}
+                error={fieldError('contactPerson')}
+              />
+              <TextField
+                label="Company email"
+                name="companyEmail"
+                type="email"
+                autoComplete="email"
+                value={form.companyEmail}
+                onChange={handleChange}
+                error={fieldError('companyEmail')}
+              />
+              <TextField
+                label="Phone number"
+                name="phoneNumber"
+                type="tel"
+                autoComplete="tel"
+                value={form.phoneNumber}
+                onChange={handleChange}
+                error={fieldError('phoneNumber')}
+              />
+            </div>
+          </Card>
         </div>
-      </Card>
+      </div>
 
       <div className={styles.actions}>
         <Button type="submit" isLoading={saveMutation.isPending}>
+          <Save size={16} aria-hidden="true" />
           Save company profile
         </Button>
       </div>

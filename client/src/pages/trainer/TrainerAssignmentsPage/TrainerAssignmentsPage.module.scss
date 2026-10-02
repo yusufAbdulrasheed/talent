@@ -1,7 +1,40 @@
+// Card grid — one resting surface per assignment, directly on the canvas.
 .list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--space-4);
+  grid-template-columns: 1fr;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @include from(lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  > li {
+    display: flex;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cardIcon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .meta {
@@ -14,6 +47,9 @@
   }
 
   dt {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }

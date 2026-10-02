@@ -4,7 +4,7 @@
   align-items: end;
 
   @include from(md) {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 2fr 1fr;
   }
 }
 
@@ -21,4 +21,25 @@
 .reference {
   font-family: var(--font-mono);
   font-weight: var(--weight-medium);
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
 }

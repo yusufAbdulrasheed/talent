@@ -11,7 +11,9 @@ import talentRouter from './routes/talent.routes.js';
 import recruiterRouter from './routes/recruiter.routes.js';
 import trainerRouter from './routes/trainer.routes.js';
 import adminRouter from './routes/admin.routes.js';
-import paymentRouter from './routes/payment.routes.js';
+import contentRouter from './routes/content.routes.js';
+import contactRouter from './routes/contact.routes.js';
+import uploadRouter from './routes/upload.routes.js';
 import { paystackWebhook } from './controllers/payment.controller.js';
 
 const app = express();
@@ -36,7 +38,9 @@ app.use('/api/v1/talent', talentRouter);
 app.use('/api/v1/recruiter', recruiterRouter);
 app.use('/api/v1/trainer', trainerRouter);
 app.use('/api/v1/admin', adminRouter);
-app.use('/api/v1/payments', paymentRouter);
+app.use('/api/v1/content', contentRouter);
+app.use('/api/v1/contact', contactRouter);
+app.use('/api/v1/uploads', uploadRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

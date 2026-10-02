@@ -1,6 +1,14 @@
 // Wide tables scroll inside their own container rather than the page.
 .wrapper {
   overflow-x: auto;
+  // Reclaims the parent Card's padding so header/rows can span edge-to-edge.
+  margin: calc(var(--space-5) * -1);
+  margin-top: 0;
+
+  @include from(md) {
+    margin: calc(var(--space-6) * -1);
+    margin-top: 0;
+  }
 }
 
 .table {
@@ -11,7 +19,7 @@
 
   th,
   td {
-    padding: var(--space-3);
+    padding: var(--space-4) var(--space-5);
     text-align: left;
     border-bottom: 1px solid var(--color-border);
     vertical-align: middle;
@@ -19,17 +27,24 @@
 
   th {
     font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-muted);
+    letter-spacing: 0.06em;
+    color: var(--color-text-subtle);
+    background: var(--color-surface-raised);
+    border-top: 1px solid var(--color-border);
   }
 
   tbody tr:last-child td {
     border-bottom: 0;
   }
 
+  tbody tr {
+    transition: background-color var(--transition-fast);
+  }
+
   tbody tr:hover {
-    background: var(--color-surface-raised);
+    background: color-mix(in srgb, var(--color-accent-soft) 60%, transparent);
   }
 }
 

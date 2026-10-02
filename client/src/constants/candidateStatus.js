@@ -1,8 +1,6 @@
 export const CANDIDATE_STATUSES = Object.freeze({
   DRAFT: 'draft',
   SUBMITTED: 'submitted',
-  PAYMENT_PENDING: 'payment_pending',
-  PAYMENT_CONFIRMED: 'payment_confirmed',
   UNDER_REVIEW: 'under_review',
   APPROVED: 'approved',
   REJECTED: 'rejected',
@@ -21,17 +19,7 @@ export const CANDIDATE_STATUS_DETAILS = Object.freeze({
   [CANDIDATE_STATUSES.SUBMITTED]: {
     label: 'Submitted',
     tone: 'info',
-    description: 'Your profile is complete. The next step is to pay your training fee.',
-  },
-  [CANDIDATE_STATUSES.PAYMENT_PENDING]: {
-    label: 'Payment pending',
-    tone: 'warning',
-    description: 'We are waiting for your training fee payment to be confirmed.',
-  },
-  [CANDIDATE_STATUSES.PAYMENT_CONFIRMED]: {
-    label: 'Payment confirmed',
-    tone: 'success',
-    description: 'Your payment is confirmed. Our team will review your application shortly.',
+    description: 'Your profile and documents are complete. Our team will review your application shortly.',
   },
   [CANDIDATE_STATUSES.UNDER_REVIEW]: {
     label: 'Under review',

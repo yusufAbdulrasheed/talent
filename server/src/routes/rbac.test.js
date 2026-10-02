@@ -6,7 +6,9 @@ import { bearer, createAuthedUser } from '../test/factories.js';
 
 const PORTAL_ROUTES = [
   { path: '/api/v1/talent/profile', owner: USER_ROLES.TALENT },
+  { path: '/api/v1/talent/savings', owner: USER_ROLES.TALENT },
   { path: '/api/v1/recruiter/company', owner: USER_ROLES.RECRUITER },
+  { path: '/api/v1/recruiter/subscription', owner: USER_ROLES.RECRUITER },
   { path: '/api/v1/trainer/dashboard', owner: USER_ROLES.TRAINER },
   { path: '/api/v1/admin/dashboard', owner: USER_ROLES.ADMIN },
 ];

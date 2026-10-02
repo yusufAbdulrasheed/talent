@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { GraduationCap, Users, CalendarDays } from 'lucide-react';
 import PageHeader from '../../../components/ui/PageHeader/PageHeader.jsx';
 import Card from '../../../components/ui/Card/Card.jsx';
 import StatusBadge from '../../../components/ui/StatusBadge/StatusBadge.jsx';
@@ -40,7 +41,14 @@ function TrainerAssignmentsPage() {
               {assignments.map((assignment) => (
                 <li key={assignment.id}>
                   <Card
-                    title={assignment.program?.title ?? 'Programme removed'}
+                    title={
+                      <span className={styles.cardTitle}>
+                        <span className={styles.cardIcon}>
+                          <GraduationCap size={18} aria-hidden="true" />
+                        </span>
+                        {assignment.program?.title ?? 'Programme removed'}
+                      </span>
+                    }
                     description={assignment.program?.description}
                     actions={
                       <StatusBadge tone={assignment.isActive ? 'success' : 'neutral'}>
@@ -54,11 +62,17 @@ function TrainerAssignmentsPage() {
                         <dd>{assignment.batchName}</dd>
                       </div>
                       <div>
-                        <dt>Candidates</dt>
+                        <dt>
+                          <Users size={14} aria-hidden="true" />
+                          Candidates
+                        </dt>
                         <dd>{assignment.candidateCount}</dd>
                       </div>
                       <div>
-                        <dt>Assigned</dt>
+                        <dt>
+                          <CalendarDays size={14} aria-hidden="true" />
+                          Assigned
+                        </dt>
                         <dd>{formatDate(assignment.createdAt)}</dd>
                       </div>
                     </dl>

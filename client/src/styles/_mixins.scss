@@ -31,3 +31,81 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+// Shared look for text inputs, selects, and textareas: 46px tall, soft
+// border, royal-blue glow on focus. Keeps every form control in lockstep.
+@mixin input-field {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-text-subtle);
+  }
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring-glow);
+  }
+
+  &:disabled {
+    background: var(--color-surface-raised);
+    color: var(--color-text-subtle);
+    cursor: not-allowed;
+  }
+}
+
+// The "Card" elevation level: a panel resting lightly on the canvas.
+@mixin surface-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+
+// Lift on hover for interactive cards/rows.
+@mixin hover-lift {
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+// Gradient-filled display text (e.g. the first name in a greeting).
+@mixin gradient-text($gradient: var(--gradient-text)) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+// Re-maps the semantic tokens for a subtree that sits on the navy ink ramp,
+// so shared components (links, buttons, fields) stay legible on it.
+@mixin ink-scope {
+  --color-text: var(--color-on-ink);
+  --color-text-muted: var(--color-on-ink-muted);
+  --color-text-subtle: #8088bf;
+  --color-surface: rgba(255, 255, 255, 0.06);
+  --color-surface-raised: rgba(255, 255, 255, 0.04);
+  --color-surface-sunken: rgba(255, 255, 255, 0.08);
+  --color-border: var(--color-ink-border);
+  --color-border-strong: rgba(160, 170, 255, 0.28);
+  --color-accent: #8f94ff;
+  --color-accent-hover: #b3b6ff;
+  --color-accent-soft: rgba(143, 148, 255, 0.14);
+  --color-focus: #9fa3ff;
+
+  color: var(--color-on-ink);
+}

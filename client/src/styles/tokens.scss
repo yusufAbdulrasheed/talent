@@ -1,55 +1,104 @@
-// Global design tokens.
+// Global design tokens — Sultan Magnate Consulting.
 //
-// The palette below is a deliberate placeholder. Swap the --color-brand-*
-// ramp and the font stacks once the client signs off on branding; nothing
-// else in the codebase should hard-code a colour or a spacing value.
+// "Building Systems. Sustaining Legacies." The look is bright and airy: a
+// deep-navy chrome (public header/hero, portal sidebar) frames light lavender
+// canvases, white cards with soft blue-tinted shadows, and a royal-blue →
+// violet gradient on every primary action. Gold survives as a quiet premium
+// accent (locked tiers, the logo slash) rather than a navigation colour.
+// Every component reads these variables — never a literal colour, spacing,
+// radius, or shadow value.
 :root {
-  // Brand ramp — placeholder indigo
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-300: #a5b4fc;
-  --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
+  // Brand ramp — royal blue with a violet lean. 500/600 are the working
+  // accents; the light end doubles as tinted surfaces and icon wells.
+  --color-brand-50: #f1f2ff;
+  --color-brand-100: #e4e6ff;
+  --color-brand-200: #cdd0ff;
+  --color-brand-300: #a9adff;
+  --color-brand-400: #7478fb;
+  --color-brand-500: #3b3ff5;
+  --color-brand-600: #2c2fe0;
+  --color-brand-700: #2426b8;
+  --color-brand-800: #1a1d8a;
+  --color-brand-900: #000066;
 
-  // Neutral ramp
+  --color-royal: #3538f0;
+
+  // Gold — the secondary brand colour (#CC9933), used sparingly for premium
+  // / locked markers. `-strong` is legible as text on white.
+  --color-gold: #cc9933;
+  --color-gold-soft: #fbf3e2;
+  --color-gold-strong: #a9791d;
+  --color-gold-on-dark: #e6c079;
+  --color-on-gold: #26190a;
+
+  // Extended accents — gradients, data visualisation.
+  --color-violet: #7b3cf5;
+  --color-indigo: #3000a2;
+
+  // Signature gradients.
+  --gradient-primary: linear-gradient(135deg, #3538f0 0%, #5a3bf4 60%, #7b3cf5 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #2a2de0 0%, #4c2fe6 60%, #6c2fe8 100%);
+  --gradient-text: linear-gradient(100deg, #4b3ff5 0%, #8a4cf7 100%);
+  --gradient-ink: linear-gradient(180deg, #0c1552 0%, #0a1045 45%, #070b33 100%);
+  --gradient-banner: linear-gradient(110deg, #1d1f9e 0%, #3538f0 45%, #7b3cf5 100%);
+  --gradient-soft: linear-gradient(135deg, #eef0ff 0%, #f5efff 100%);
+
+  // Neutral ramp — cool slate with a faint navy undertone.
   --color-neutral-0: #ffffff;
-  --color-neutral-50: #f8fafc;
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #1e293b;
-  --color-neutral-900: #0f172a;
+  --color-neutral-50: #f6f7fd;
+  --color-neutral-100: #eff0f9;
+  --color-neutral-200: #e4e6f2;
+  --color-neutral-300: #cdd0e1;
+  --color-neutral-400: #9a9eb8;
+  --color-neutral-500: #6f7492;
+  --color-neutral-600: #555a78;
+  --color-neutral-700: #41465f;
+  --color-neutral-800: #252a45;
+  --color-neutral-900: #0f1437;
+
+  // Ink ramp — house navy for the portal sidebar and marketing chrome.
+  --color-ink-900: #070b33;
+  --color-ink-800: #0c1552;
+  --color-ink-700: #16206a;
+  --color-ink-600: #25307f;
+  --color-ink-border: rgba(160, 170, 255, 0.16);
 
   // Status
-  --color-success: #15803d;
-  --color-success-surface: #dcfce7;
-  --color-warning: #b45309;
-  --color-warning-surface: #fef3c7;
-  --color-danger: #b91c1c;
-  --color-danger-surface: #fee2e2;
-  --color-info: #0369a1;
-  --color-info-surface: #e0f2fe;
+  --color-success: #0f9f6e;
+  --color-success-surface: #e4f7ef;
+  --color-warning: #c96a05;
+  --color-warning-surface: #fff3e2;
+  --color-danger: #d02b3c;
+  --color-danger-surface: #ffe6e8;
+  --color-info: #3538f0;
+  --color-info-surface: #eceeff;
 
   // Semantic aliases — prefer these in component styles
   --color-text: var(--color-neutral-900);
-  --color-text-muted: var(--color-neutral-500);
+  --color-text-muted: var(--color-neutral-600);
+  --color-text-subtle: var(--color-neutral-500);
   --color-text-inverse: var(--color-neutral-0);
   --color-surface: var(--color-neutral-0);
   --color-surface-raised: var(--color-neutral-50);
-  --color-border: var(--color-neutral-200);
+  --color-surface-sunken: var(--color-neutral-100);
+  --color-canvas: #f4f5fd;
+  --color-border: #e9ebf5;
   --color-border-strong: var(--color-neutral-300);
-  --color-focus: var(--color-brand-600);
-  --color-accent: var(--color-brand-600);
+  --color-focus: var(--color-brand-500);
+  --color-accent: var(--color-royal);
   --color-accent-hover: var(--color-brand-700);
+  --color-accent-soft: var(--color-brand-50);
+  --color-accent-contrast: #b9bdff; // legible blue on navy surfaces
+
+  // On-dark semantic aliases — text and panels layered on the ink ramp
+  --color-on-ink: #f1f2ff;
+  --color-on-ink-muted: #aab0dc;
+  --color-ink-surface: var(--color-ink-800);
+  --color-ink-surface-raised: var(--color-ink-700);
+
+  // Premium / locked marker. Gold, deepened so it reads as text on white.
+  --color-role-accent: var(--color-gold-strong);
+  --color-role-accent-contrast: #ffffff;
 
   // Spacing — 4px base
   --space-1: 0.25rem;
@@ -62,8 +111,12 @@
   --space-8: 4rem;
   --space-9: 6rem;
 
-  // Typography
-  --font-sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  // Typography — Plus Jakarta Sans: geometric, friendly, crisp at display
+  // sizes. Manrope / Inter remain as metrics-close fallbacks.
+  --font-sans: 'Plus Jakarta Sans', 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-script: 'Caveat', 'Segoe Script', cursive;
   --font-mono: 'Cascadia Mono', 'SF Mono', Menlo, Consolas, monospace;
 
   --text-xs: 0.75rem;
@@ -72,38 +125,47 @@
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
-  --text-3xl: 2.25rem;
+  --text-3xl: 2.125rem;
   --text-4xl: 3rem;
 
   --leading-tight: 1.2;
-  --leading-normal: 1.55;
+  --leading-normal: 1.6;
 
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
+  --weight-extrabold: 800;
 
-  // Radii
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 14px;
+  // Radii — generous and soft.
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-full: 999px;
 
-  // Elevation
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+  // Elevation — blue-tinted ambient shadows; cards float gently on the canvas.
+  --shadow-sm: 0 1px 2px rgba(22, 28, 90, 0.05);
+  --shadow-md: 0 1px 2px rgba(22, 28, 90, 0.04), 0 10px 30px -12px rgba(38, 44, 140, 0.12);
+  --shadow-lg: 0 2px 6px rgba(22, 28, 90, 0.05), 0 24px 48px -18px rgba(38, 44, 140, 0.22);
+  --shadow-overlay: 0 30px 60px -20px rgba(22, 28, 90, 0.3), 0 8px 16px -8px rgba(22, 28, 90, 0.12);
+  --shadow-glow: 0 8px 20px -6px rgba(59, 63, 245, 0.45);
+  --focus-ring-glow: 0 0 0 4px rgba(59, 63, 245, 0.14);
 
   // Layout
-  --container-width: 1180px;
-  --header-height: 4rem;
+  --container-width: 1200px;
+  --header-height: 4.5rem;
+  --sidebar-width: 16.5rem;
+  // Icon-only rail width when the sidebar is collapsed — see PortalLayout.
+  --sidebar-width-collapsed: 5rem;
 
   // Motion
-  --transition-fast: 120ms ease;
-  --transition-base: 200ms ease;
+  --transition-fast: 140ms ease;
+  --transition-base: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
 
   // Stacking order
   --z-header: 100;
+  --z-sidebar: 90;
   --z-dropdown: 200;
   --z-modal: 300;
   --z-toast: 400;

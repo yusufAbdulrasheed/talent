@@ -9,8 +9,8 @@ import { USER_ROLES } from '../../constants/user-roles.js';
 import { asyncHandler } from '../../utils/async-handler.js';
 import { sendSuccess } from '../../utils/api-response.js';
 
-const PAID_STATUSES = [
-  CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
+const ONBOARDED_STATUSES = [
+  CANDIDATE_STATUSES.SUBMITTED,
   CANDIDATE_STATUSES.UNDER_REVIEW,
   CANDIDATE_STATUSES.APPROVED,
 ];
@@ -20,7 +20,7 @@ export const getDashboard = asyncHandler(async (_request, response) => {
   const [
     candidatesByStatus,
     totalCandidates,
-    paidCandidates,
+    onboardedCandidates,
     recruiters,
     approvedRecruiters,
     requestsByStatus,
@@ -31,7 +31,7 @@ export const getDashboard = asyncHandler(async (_request, response) => {
   ] = await Promise.all([
     Candidate.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
     Candidate.countDocuments(),
-    Candidate.countDocuments({ status: { $in: PAID_STATUSES } }),
+    Candidate.countDocuments({ status: { $in: ONBOARDED_STATUSES } }),
     RecruiterCompany.countDocuments(),
     RecruiterCompany.countDocuments({ isApproved: true }),
     PlacementRequest.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
@@ -51,10 +51,10 @@ export const getDashboard = asyncHandler(async (_request, response) => {
     data: {
       candidates: {
         total: totalCandidates,
-        paid: paidCandidates,
+        submitted: onboardedCandidates,
         approved: candidateCounts[CANDIDATE_STATUSES.APPROVED] ?? 0,
         awaitingReview:
-          (candidateCounts[CANDIDATE_STATUSES.PAYMENT_CONFIRMED] ?? 0)
+          (candidateCounts[CANDIDATE_STATUSES.SUBMITTED] ?? 0)
           + (candidateCounts[CANDIDATE_STATUSES.UNDER_REVIEW] ?? 0),
         byStatus: candidateCounts,
       },

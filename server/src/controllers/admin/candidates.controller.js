@@ -7,9 +7,10 @@ import { sendSuccess } from '../../utils/api-response.js';
 import { escapeRegex, paginate } from '../../utils/pagination.js';
 import { sendCandidateDecisionEmail } from '../../services/notification.service.js';
 
-// A candidate is only reviewable once their payment has been confirmed.
+// A candidate is only reviewable once their profile and required documents
+// are complete (status has left `draft`).
 const REVIEWABLE_STATUSES = [
-  CANDIDATE_STATUSES.PAYMENT_CONFIRMED,
+  CANDIDATE_STATUSES.SUBMITTED,
   CANDIDATE_STATUSES.UNDER_REVIEW,
   CANDIDATE_STATUSES.APPROVED,
   CANDIDATE_STATUSES.REJECTED,
@@ -32,9 +33,11 @@ function serializeForAdmin(candidate) {
     gender: candidate.gender,
     dateOfBirth: candidate.dateOfBirth,
     location: candidate.location,
+    jobTitle: candidate.jobTitle,
     education: candidate.education,
     skills: candidate.skills,
     certifications: candidate.certifications,
+    bio: candidate.bio,
     workExperience: candidate.workExperience,
     availability: candidate.availability,
     experienceLevel: candidate.experienceLevel,
@@ -47,7 +50,7 @@ function serializeForAdmin(candidate) {
 }
 
 export const listCandidates = asyncHandler(async (request, response) => {
-  const { status, search, page, limit } = request.validatedQuery;
+  const { status, search, jobTitle, page, limit } = request.validatedQuery;
   const query = {};
 
   if (status) {
@@ -56,7 +59,14 @@ export const listCandidates = asyncHandler(async (request, response) => {
 
   if (search) {
     const pattern = new RegExp(escapeRegex(search), 'i');
-    query.$or = [{ referenceNumber: pattern }, { location: pattern }, { skills: pattern }];
+    query.$or = [{ referenceNumber: pattern }, { location: pattern }, { jobTitle: pattern }, { skills: pattern }];
+  }
+
+  // A dedicated filter alongside the general search above, so "job title" is
+  // a first-class way to narrow the list, not just one of several things the
+  // search box happens to match.
+  if (jobTitle) {
+    query.jobTitle = new RegExp(escapeRegex(jobTitle), 'i');
   }
 
   const { items, pagination } = await paginate(Candidate, {
@@ -90,6 +100,25 @@ export const getCandidate = asyncHandler(async (request, response) => {
   });
 });
 
+export const updateCandidateAttributes = asyncHandler(async (request, response) => {
+  const candidate = await Candidate.findById(request.params.id).populate({
+    path: 'user',
+    select: 'firstName lastName email',
+  });
+
+  if (!candidate) {
+    throw new AppError('Candidate not found.', 404);
+  }
+
+  Object.assign(candidate, request.validated);
+  await candidate.save();
+
+  sendSuccess(response, {
+    message: 'Candidate attributes updated.',
+    data: { candidate: serializeForAdmin(candidate) },
+  });
+});
+
 export const updateCandidateStatus = asyncHandler(async (request, response) => {
   const { status, note } = request.validated;
   const candidate = await Candidate.findById(request.params.id).populate({
@@ -101,11 +130,11 @@ export const updateCandidateStatus = asyncHandler(async (request, response) => {
     throw new AppError('Candidate not found.', 404);
   }
 
-  // Approving someone who has not paid would put them in the talent pool
-  // without completing onboarding.
+  // Approving someone who has not finished onboarding would put them in the
+  // talent pool with an incomplete profile.
   if (!REVIEWABLE_STATUSES.includes(candidate.status)) {
     throw new AppError(
-      'This candidate cannot be reviewed yet. Their training payment has not been confirmed.',
+      'This candidate cannot be reviewed yet. Their profile or required documents are not yet complete.',
       409,
     );
   }

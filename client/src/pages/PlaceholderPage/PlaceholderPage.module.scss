@@ -1,21 +1,43 @@
 .page {
-  @include container(48rem);
+  @include container(40rem);
+
+  display: flex;
+  padding-block: var(--space-8);
+}
+
+.card {
+  @include surface-card;
 
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--space-3);
-  padding-block: var(--space-7);
+  width: 100%;
+  padding: var(--space-7) var(--space-6);
+  text-align: center;
+}
+
+.iconBadge {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
 }
 
 .description {
   color: var(--color-text-muted);
+  max-width: 34rem;
 }
 
 .milestone {
-  align-self: flex-start;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
   background: var(--color-info-surface);
   color: var(--color-info);
   font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
 }

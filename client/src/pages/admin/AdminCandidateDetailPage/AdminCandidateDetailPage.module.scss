@@ -1,7 +1,119 @@
-.decisionActions {
+// ---- Header row: breadcrumb, name + status pill, meta line, decision actions.
+.headerRow {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerMain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-start;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+
+  &:hover {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
+.titleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-3);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.02em;
+}
+
+// The role this candidate presents themselves for — a subtitle under their name.
+.jobTitleLine {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent);
+}
+
+.metaLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.dot {
+  color: var(--color-text-subtle);
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+// ---- Two-column review layout: candidate content on the left, contact info
+// and the admin review panel on the right. ---------------------------------
+.layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+
+  @include from(lg) {
+    grid-template-columns: minmax(0, 1fr) 22rem;
+  }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+// The review panel itself stays in view while the (potentially long) left
+// column of candidate content scrolls underneath it.
+.reviewCard {
+  @include from(lg) {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-5));
+  }
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  svg {
+    flex-shrink: 0;
+    color: var(--color-accent);
+  }
 }
 
 .reviewMeta {
@@ -16,10 +128,6 @@
 
   @include from(md) {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include from(lg) {
-    grid-template-columns: repeat(4, 1fr);
   }
 
   dt {
@@ -37,10 +145,77 @@
   }
 }
 
+.attributesForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.attributesHint {
+  font-size: var(--text-sm);
+  color: var(--color-text-subtle);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  align-items: end;
+
+  @include from(md) {
+    grid-template-columns: 1fr 1fr auto;
+  }
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.withdrawalList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.withdrawalRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+}
+
+.withdrawalActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.withdrawalButtons {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
 .section {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+
+  & + & {
+    margin-top: var(--space-4);
+  }
 }
 
 .subheading {
@@ -52,4 +227,35 @@
 
 .body {
   white-space: pre-wrap;
+}
+
+// ---- Contact information panel --------------------------------------------
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.contactRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.contactIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.contactValue {
+  font-weight: var(--weight-medium);
+  word-break: break-word;
 }
