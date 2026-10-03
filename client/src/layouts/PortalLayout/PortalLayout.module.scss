@@ -121,6 +121,12 @@
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @include from(md) {
     flex: 1;
