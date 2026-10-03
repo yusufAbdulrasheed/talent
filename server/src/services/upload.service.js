@@ -3,16 +3,6 @@ import { AppError } from '../utils/app-error.js';
 
 const ROOT_FOLDER = 'tms';
 
-/**
- * Streams an in-memory file buffer to Cloudinary.
- *
- * @param {Buffer} buffer
- * @param {object}  options
- * @param {string}  options.folder        Sub-folder under `tms/`, e.g. "content".
- * @param {string} [options.resourceType] "image" | "raw" | "auto" (default "auto").
- * @param {string} [options.filename]     Original name, used as the public id stem.
- * @returns {Promise<{url:string, publicId:string, resourceType:string, format:string, bytes:number, width?:number, height?:number, originalFilename:string}>}
- */
 export function uploadBuffer(buffer, { folder, resourceType = 'auto', filename } = {}) {
   if (!isCloudinaryConfigured()) {
     throw new AppError('File uploads are not configured on this server.', 503);
@@ -50,7 +40,6 @@ export function uploadBuffer(buffer, { folder, resourceType = 'auto', filename }
   });
 }
 
-/** Removes an asset. Best-effort — a failed delete never blocks the caller. */
 export async function destroyAsset(publicId, resourceType = 'image') {
   if (!isCloudinaryConfigured() || !publicId) {
     return;

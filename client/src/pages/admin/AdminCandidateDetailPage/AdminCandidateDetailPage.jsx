@@ -91,7 +91,6 @@ function CandidateDetail({ candidate, payments, id }) {
   const statusMutation = useMutation({
     mutationFn: updateCandidateStatus,
     onSuccess: () => {
-      // Detail, list, and dashboard counts are all affected.
       queryClient.invalidateQueries({ queryKey: queryKeys.admin.all });
       setNote('');
     },

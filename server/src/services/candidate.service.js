@@ -1,11 +1,6 @@
 import Candidate, { REQUIRED_DOCUMENT_TYPES } from '../models/candidate.model.js';
 import { AppError } from '../utils/app-error.js';
 
-/**
- * Fields a candidate must supply before their profile counts as complete.
- * `availability` and `experienceLevel` are set by an administrator, not the
- * candidate, so they are not part of this check.
- */
 export function isProfileComplete(candidate) {
   return Boolean(
     candidate.phoneNumber
@@ -18,7 +13,6 @@ export function isProfileComplete(candidate) {
   );
 }
 
-/** True once every required document type has been uploaded. */
 export function hasRequiredDocuments(candidate) {
   const uploaded = new Set((candidate.documents ?? []).map((document) => document.type));
   return REQUIRED_DOCUMENT_TYPES.every((type) => uploaded.has(type));
@@ -34,7 +28,6 @@ export async function getCandidateForUser(userId) {
   return candidate;
 }
 
-/** The candidate's own view of their record. Never used for the talent pool. */
 export function serializeCandidate(candidate) {
   return {
     id: candidate.id,

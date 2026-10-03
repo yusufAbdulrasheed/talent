@@ -33,7 +33,6 @@ function sendSession(response, session, status) {
 export const register = asyncHandler(async (request, response) => {
   const session = await registerUser(request.validated);
 
-  // Best effort: the account and session already exist, so a mail failure must
   
   try {
     await sendVerificationEmail(session.user.id);
@@ -100,8 +99,6 @@ export const resendVerification = asyncHandler(async (request, response) => {
 });
 
 export const requestPasswordReset = asyncHandler(async (request, response) => {
-  // Best effort for the same reason: the response must be constant whether or
-  // not the address exists and whether or not the provider accepted the mail.
   try {
     await sendPasswordResetEmail(request.validated.email);
   } catch (error) {

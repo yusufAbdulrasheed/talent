@@ -3,10 +3,6 @@ import FullPageLoader from '../components/feedback/FullPageLoader/FullPageLoader
 import { useAuth } from '../auth/useAuth.js';
 import { getRoleHomePath } from '../auth/roles.js';
 
-/**
- * Inverse of ProtectedRoute: keeps signed-in users off the login and
- * registration screens by bouncing them to their portal.
- */
 function GuestRoute() {
   const { isLoading, isAuthenticated, user } = useAuth();
 

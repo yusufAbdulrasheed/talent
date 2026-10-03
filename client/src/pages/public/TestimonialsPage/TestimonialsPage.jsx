@@ -12,7 +12,6 @@ import styles from './TestimonialsPage.module.scss';
 
 const params = { type: 'testimonial', limit: 30 };
 
-// Shown only until an admin publishes real testimonials in Content Studio.
 const FALLBACK = [
   {
     _id: 'fallback-1',
@@ -63,8 +62,6 @@ function TestimonialsPage() {
     queryFn: () => listPublicContent(params),
   });
 
-  // Real content when it exists, the built-in set otherwise (including while
-  // loading fails) — a testimonials page should never be a bare error.
   const items = query.data?.content?.length ? query.data.content : FALLBACK;
 
   return (

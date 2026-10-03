@@ -2,11 +2,6 @@ import { useEffect, useId, useRef } from 'react';
 import { X } from 'lucide-react';
 import styles from './Modal.module.scss';
 
-/**
- * Accessible modal built on the native <dialog>: the browser handles focus
- * trapping, the Escape key and the inert backdrop. `onClose` fires for Escape,
- * the close button and a click on the backdrop.
- */
 function Modal({ isOpen, onClose, title, description, children, footer, size = 'md' }) {
   const dialogRef = useRef(null);
   const titleId = useId();
@@ -14,7 +9,6 @@ function Modal({ isOpen, onClose, title, description, children, footer, size = '
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    // jsdom (tests) has no showModal; the dialog simply stays closed there.
     if (!dialog || typeof dialog.showModal !== 'function') return;
 
     if (isOpen && !dialog.open) {
@@ -35,7 +29,6 @@ function Modal({ isOpen, onClose, title, description, children, footer, size = '
         onClose();
       }}
       onClick={(event) => {
-        // A click on the ::backdrop targets the dialog element itself.
         if (event.target === dialogRef.current) onClose();
       }}
     >

@@ -57,7 +57,6 @@ describe('talent savings — lazy accrual', () => {
       .send({ status: 'discontinued' })
       .expect(200);
 
-    // Simulate months passing while discontinued.
     const savings = await TalentSavings.findOne({ candidate: candidate.id });
     savings.lastAccrualPeriod = addMonthsToPeriod(currentPeriod(), -5);
     await savings.save();
@@ -91,14 +90,12 @@ describe('talent savings — lazy accrual', () => {
       .send({ status: 'active' })
       .expect(200);
 
-    // Resuming itself must not post the paused-gap backlog.
     expect(resume.body.data.savings.accrualCount).toBe(1);
 
     const after = await request(app)
       .get('/api/v1/talent/savings')
       .set('Authorization', bearer(token));
 
-    // Only the current month accrues going forward.
     expect(after.body.data.savings.accrualCount).toBe(2);
   });
 });
@@ -125,7 +122,7 @@ describe('talent savings — withdrawals', () => {
     const response = await request(app)
       .post('/api/v1/talent/savings/withdrawals')
       .set('Authorization', bearer(token))
-      .send({ amount: savingsRes.body.data.savings.balance }); // 100%, over the 90% cap
+      .send({ amount: savingsRes.body.data.savings.balance }); 
 
     expect(response.status).toBe(422);
   });

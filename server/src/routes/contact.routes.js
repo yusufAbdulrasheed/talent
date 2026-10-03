@@ -7,8 +7,6 @@ import { submitContactMessage } from '../controllers/contact.controller.js';
 
 const contactRouter = Router();
 
-// Each submission sends an email, so the abuse here is using us to spam a
-// third party. Budget it tightly per IP.
 const contactLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 5,

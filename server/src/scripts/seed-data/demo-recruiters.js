@@ -1,25 +1,4 @@
-/**
- * Demo recruiter accounts for `npm run seed:demo`.
- *
- * Fifteen recruiter companies, spread across every subscription tier so each
- * talent-pool experience can be demonstrated without going through Paystack:
- *
- *   junior (free)  x6  → entry + junior talent unlocked, mid + senior locked
- *   intermediate   x5  → adds mid
- *   senior         x4  → everything unlocked
- *
- * Every paid company has `subscriptionPaidDaysAgo`: the seeder records a
- * successful Paystack-style payment that many days ago and activates the tier
- * from it, so the expiry is worked out by the app's own 30-day window logic.
- *
- * Three junior-tier companies are left un-approved so the admin approval queue
- * has something in it. Approval does not gate a recruiter's own access.
- *
- * `slug` doubles as the demo email domain (`<slug>.demo.test`). Companies and
- * people are fictional and every address is on the reserved `.test` TLD.
- */
 export const DEMO_RECRUITERS = Object.freeze([
-  // ---- Senior tier ---------------------------------------------------------
   {
     firstName: 'Funmilayo',
     lastName: 'Adeleke',
@@ -73,7 +52,6 @@ export const DEMO_RECRUITERS = Object.freeze([
     isApproved: true,
   },
 
-  // ---- Intermediate tier ---------------------------------------------------
   {
     firstName: 'Sulaiman',
     lastName: 'Garba',
@@ -140,7 +118,6 @@ export const DEMO_RECRUITERS = Object.freeze([
     isApproved: true,
   },
 
-  // ---- Junior tier (free) --------------------------------------------------
   {
     firstName: 'Damilola',
     lastName: 'Coker',

@@ -18,9 +18,6 @@ import { paystackWebhook } from './controllers/payment.controller.js';
 
 const app = express();
 
-// Rate limiting and logging both depend on the real client IP. With a proxy in
-// front, Express reports the proxy's address for every request unless this is
-// set, which would collapse all users into a single rate-limit bucket.
 app.set('trust proxy', environment.TRUST_PROXY_HOPS);
 
 app.use(helmet());

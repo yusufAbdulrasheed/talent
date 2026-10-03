@@ -1,26 +1,5 @@
 import styles from './DashboardHero.module.scss';
 
-/**
- * Signature banner at the top of every portal overview: greeting and actions
- * on a navy → violet gradient, with a decorative portrait — genuinely
- * transparent (the PNG's own alpha channel, pre-cut, not a CSS mask trick) —
- * plus a few floating "chips" for headline numbers.
- *
- *   <DashboardHero
- *     eyebrow="Recruiter console"
- *     greeting="Good morning,"
- *     name="David"
- *     subtitle="Find professionals who are ready…"
- *     photo="/illustrations/hero-recruiter.png"
- *     chips={[{ icon: Users, label: 'Verified talent', value: 18 }]}
- *   >
- *     <Button …>Find talent</Button>
- *   </DashboardHero>
- *
- * `photo` is a path into client/public/illustrations — pre-cut PNGs with a
- * real alpha channel, cropped tight to the subject. Stock imagery for mood
- * only; it never represents the signed-in user or a candidate.
- */
 function DashboardHero({ eyebrow, greeting, name, subtitle, photo, chips = [], script, children }) {
   return (
     <section className={styles.hero}>

@@ -6,12 +6,9 @@ export default defineConfig({
     globals: false,
     setupFiles: ['./src/test/setup.js'],
     include: ['src/**/*.test.js'],
-    // One in-memory mongod is shared, so test files must not run in parallel.
     fileParallelism: false,
     testTimeout: 30_000,
     hookTimeout: 120_000,
-    // The app reads configuration at import time. These values keep tests
-    // hermetic: no .env is loaded, so the real database is never reachable.
     env: {
       NODE_ENV: 'test',
       CLIENT_URL: 'http://localhost:5173',
@@ -21,7 +18,6 @@ export default defineConfig({
       TRAINING_FEE_NGN: '5000',
       RECRUITER_SUB_INTERMEDIATE_NGN: '15000',
       RECRUITER_SUB_SENIOR_NGN: '30000',
-      // RESEND_API_KEY is intentionally unset: sendEmail logs instead of sending.
     },
   },
 });

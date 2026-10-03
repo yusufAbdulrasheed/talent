@@ -37,14 +37,12 @@ const EMPTY_FILTERS = {
   certification: '',
 };
 
-// Talent is browsed by the same three tiers a recruiter subscribes to.
 const TIER_LABELS = {
   junior: 'Junior',
   intermediate: 'Intermediate',
   senior: 'Senior',
 };
 
-/** Drops blank fields so they never reach the API, which rejects empty values. */
 function toQueryParams(filters, page, tier) {
   const params = { page };
 
@@ -70,8 +68,6 @@ function pluralise(count, singular, plural = `${singular}s`) {
 function TalentPoolPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // The URL is the source of truth for the applied search, so results can be
-  // linked to and survive a refresh. The form holds the in-progress edits.
   const applied = {
     ...EMPTY_FILTERS,
     ...Object.fromEntries(
@@ -81,13 +77,10 @@ function TalentPoolPage() {
     ),
   };
   const page = Number(searchParams.get('page') ?? 1);
-  // A bookmarked or hand-edited unknown tier falls back to "All" rather than erroring.
   const requestedTier = searchParams.get('tier') ?? '';
   const tier = Object.hasOwn(TIER_LABELS, requestedTier) ? requestedTier : '';
 
   const [form, setForm] = useState(applied);
-  // Talents picked for a multi-talent request, keyed by reference. Kept across
-  // result pages and filter changes until the request is sent or cleared.
   const [selected, setSelected] = useState(() => new Map());
   const [isGroupRequestOpen, setGroupRequestOpen] = useState(false);
 
@@ -126,8 +119,6 @@ function TalentPoolPage() {
     setForm((previous) => ({ ...previous, [name]: value }));
   };
 
-  // Clearing the filters keeps the level tab: the tab is where you are looking,
-  // not a filter you typed.
   const handleReset = () => {
     setForm(EMPTY_FILTERS);
     setSearchParams(tier ? { tier } : {});
@@ -327,11 +318,6 @@ function TalentPoolPage() {
   );
 }
 
-/**
- * "All" plus one tab per tier. Counts are head-counts of approved talent and
- * ignore the search filters on purpose (the server does the same), so a tab
- * above the recruiter's plan discloses how many people it holds and nothing else.
- */
 function LevelTabs({ tiers, selected, onSelect }) {
   const browsableTotal = tiers.filter((entry) => entry.unlocked).reduce((sum, entry) => sum + entry.total, 0);
   const options = [
@@ -368,7 +354,6 @@ function LevelTabs({ tiers, selected, onSelect }) {
   );
 }
 
-/** On the "All" tab: a single line saying what the current plan is not showing. */
 function LockedTiersNotice({ tiers }) {
   const lockedTiers = tiers.filter((entry) => !entry.unlocked && entry.total > 0);
 
@@ -393,7 +378,6 @@ function LockedTiersNotice({ tiers }) {
   );
 }
 
-/** Shown instead of a list when the selected tab is above the plan. Head-count only. */
 function LockedTierPanel({ tier }) {
   const label = TIER_LABELS[tier.tier] ?? tier.tier;
 
@@ -415,8 +399,6 @@ function LockedTierPanel({ tier }) {
   );
 }
 
-// Recruiters only ever see an anonymous profile, so the card leads with the
-// reference number and a neutral avatar — never a name or photo.
 const MAX_CARD_SKILLS = 3;
 
 function CandidateCard({ candidate, isSelected, onToggleSelected }) {

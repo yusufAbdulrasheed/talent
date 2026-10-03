@@ -1,7 +1,5 @@
-// Wide tables scroll inside their own container rather than the page.
 .wrapper {
   overflow-x: auto;
-  // Reclaims the parent Card's padding so header/rows can span edge-to-edge.
   margin: calc(var(--space-5) * -1);
   margin-top: 0;
 

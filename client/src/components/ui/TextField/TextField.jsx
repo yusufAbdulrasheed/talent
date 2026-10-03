@@ -1,9 +1,6 @@
 import { useId } from 'react';
 import styles from './TextField.module.scss';
 
-/**
- * Labelled input with hint and error slots, wired for screen readers.
- */
 function TextField({ label, hint, error, id, className = '', ...rest }) {
   const generatedId = useId();
   const fieldId = id ?? generatedId;

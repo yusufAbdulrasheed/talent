@@ -4,7 +4,6 @@
   min-width: 0;
 }
 
-// A soft gradient slab peeks out behind the photo for depth.
 .panel::before {
   content: '';
   position: absolute;

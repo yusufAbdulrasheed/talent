@@ -7,11 +7,6 @@ function toFieldErrors(error) {
   }));
 }
 
-/**
- * Validates and coerces `request.body` against a zod schema, exposing the
- * parsed result as `request.validated`. Handlers should read from there rather
- * than from `request.body`, so unknown keys can never reach the database.
- */
 export function validateBody(schema) {
   return (request, _response, next) => {
     const result = schema.safeParse(request.body);
@@ -25,7 +20,6 @@ export function validateBody(schema) {
   };
 }
 
-/** As `validateBody`, but for query-string parameters. */
 export function validateQuery(schema) {
   return (request, _response, next) => {
     const result = schema.safeParse(request.query);

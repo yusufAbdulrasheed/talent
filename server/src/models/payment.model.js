@@ -14,8 +14,6 @@ const paymentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    // Exactly one of candidate/recruiterCompany is set, matching `purpose` —
-    // enforced below.
     candidate: { type: mongoose.Schema.Types.ObjectId, ref: 'Candidate', index: true },
     recruiterCompany: { type: mongoose.Schema.Types.ObjectId, ref: 'RecruiterCompany', index: true },
     subscriptionTier: { type: String, enum: ['intermediate', 'senior'] },

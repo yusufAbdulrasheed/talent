@@ -24,7 +24,6 @@
   }
 }
 
-// ---- Decorative backdrop ------------------------------------------------------
 
 .backdrop {
   position: absolute;
@@ -55,7 +54,6 @@
   border-color: rgba(255, 255, 255, 0.07);
 }
 
-// Faint dot grid in the top-left corner.
 .dots {
   position: absolute;
   left: 0;
@@ -68,7 +66,6 @@
   -webkit-mask-image: linear-gradient(135deg, #000 20%, transparent 75%);
 }
 
-// ---- Copy -----------------------------------------------------------------------
 
 .copy {
   display: flex;
@@ -118,9 +115,6 @@
   gap: var(--space-3);
   margin-top: var(--space-2);
 
-  // Secondary buttons read as glass on the gradient. Vite's scoped class
-  // names keep the local name (e.g. `_secondary_x1y2z`), so the attribute
-  // match finds the Button component's secondary variant.
   :global(a),
   :global(button) {
     &[class*='secondary'] {
@@ -138,10 +132,6 @@
   }
 }
 
-// ---- Portrait — fully transparent, no background, no frame ---------------
-// No coloured panel or border behind the photo, and no CSS mask doing the
-// work either: these PNGs are pre-cut with a real alpha channel, so the
-// hero's own gradient shows straight through everywhere but the subject.
 
 .media {
   position: relative;
@@ -185,7 +175,6 @@
   }
 }
 
-// ---- Floating stat chips --------------------------------------------------------
 
 .chips {
   display: flex;

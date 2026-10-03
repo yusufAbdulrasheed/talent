@@ -1,10 +1,6 @@
 import { Component } from 'react';
 import styles from './ErrorBoundary.module.scss';
 
-/**
- * Last line of defence for render-time crashes. Query and mutation failures
- * are handled locally by the components that own them.
- */
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);

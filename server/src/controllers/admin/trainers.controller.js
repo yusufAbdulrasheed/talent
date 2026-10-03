@@ -48,11 +48,6 @@ export const listTrainers = asyncHandler(async (request, response) => {
   });
 });
 
-/**
- * Creates a trainer account. Trainers cannot self-register, so the account is
- * made with an unusable random password and the trainer sets their own via the
- * invite link. The password is never transmitted anywhere.
- */
 export const createTrainer = asyncHandler(async (request, response) => {
   const { firstName, lastName, email } = request.validated;
 

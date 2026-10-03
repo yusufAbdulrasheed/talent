@@ -1,22 +1,4 @@
-/**
- * Demo talent profiles for `npm run seed:demo`.
- *
- * Twenty fully populated candidates, five in each experience level. Every
- * field a candidate can hold is filled in. Sixteen are seeded as approved
- * (four per level), so they appear in the recruiter talent pool; the other
- * four carry an explicit `status` (`submitted` or `under_review`, one per
- * level) so the admin review queue has real work in it.
- *
- * Nothing here can reach a real person: the people and employers are
- * fictional, emails sit on the reserved `.test` TLD, and phone numbers use a
- * deliberately synthetic pattern (+234 800 000 00NN).
- */
 
-/**
- * Seeding convention for how an experience level maps to years worked. The
- * application itself has no such rule — an administrator assigns the level
- * during review — so this only keeps the demo profiles internally consistent.
- */
 export const EXPERIENCE_LEVEL_GUIDE = Object.freeze({
   entry: { label: 'Entry', years: '0–1 years' },
   junior: { label: 'Junior', years: '1–3 years' },
@@ -25,7 +7,6 @@ export const EXPERIENCE_LEVEL_GUIDE = Object.freeze({
 });
 
 export const DEMO_TALENTS = Object.freeze([
-  // ---- Entry --------------------------------------------------------------
   {
     experienceLevel: 'entry',
     firstName: 'Chidinma',
@@ -115,7 +96,6 @@ export const DEMO_TALENTS = Object.freeze([
       'Served as a customer-service assistant during my NYSC year at a microfinance bank, handling account enquiries, logging complaints in the ticketing system and resolving routine issues within the same day. Previously interned at a retail store, managing stock records and daily sales entry.',
   },
 
-  // ---- Junior -------------------------------------------------------------
   {
     experienceLevel: 'junior',
     firstName: 'Oluwaseun',
@@ -201,7 +181,6 @@ export const DEMO_TALENTS = Object.freeze([
       'Three years as a site engineer on residential and light-commercial projects in Benin City, supervising subcontractors, checking concrete and reinforcement quality, and keeping daily progress logs. Prepared bills of quantities for two projects under a senior quantity surveyor and tracked site materials against the programme.',
   },
 
-  // ---- Mid ----------------------------------------------------------------
   {
     experienceLevel: 'mid',
     firstName: 'Amaka',
@@ -297,7 +276,6 @@ export const DEMO_TALENTS = Object.freeze([
       'Five years coordinating projects for a development consultancy and then a telecoms operator in Abuja. Currently Project Coordinator on a fibre roll-out programme with a ₦1.2 billion budget, tracking milestones across eight workstreams, chasing risks and producing the fortnightly steering-committee pack.',
   },
 
-  // ---- Senior -------------------------------------------------------------
   {
     experienceLevel: 'senior',
     firstName: 'Adebayo',

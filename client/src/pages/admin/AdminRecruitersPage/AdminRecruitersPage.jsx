@@ -73,8 +73,6 @@ function AdminRecruitersPage() {
     setSearchParams(clean);
   };
 
-  // Stat tiles are derived from whatever page of results is already loaded —
-  // an honest snapshot of the current filter, not a separate aggregate call.
   const recruiters = recruitersQuery.data?.recruiters ?? [];
   const pagination = recruitersQuery.data?.pagination;
   const approvedCount = recruiters.filter((recruiter) => recruiter.isApproved).length;

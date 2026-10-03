@@ -1,13 +1,6 @@
 import { AVATAR_FACES, photoUrl } from '../../../constants/photos.js';
 import styles from './PublicHero.module.scss';
 
-/**
- * Dark navy page-header band for the public marketing site. Sits directly
- * under the sticky header so the two read as one surface.
- *
- * Pass `photos={{ main, accent }}` (IDs from constants/photos.js) to switch to
- * a split layout with a decorative photo collage beside the copy.
- */
 function PublicHero({ eyebrow, title, lead, align = 'left', photos, script, children }) {
   const hasPhotos = Boolean(photos?.main);
   const classes = [styles.hero, align === 'center' ? styles.center : '', hasPhotos ? styles.withPhotos : '']

@@ -22,7 +22,6 @@
   justify-content: flex-end;
 }
 
-// ---- Type filter pill bar --------------------------------------------------
 
 .tabBar {
   @include surface-card;
@@ -68,7 +67,6 @@
   }
 }
 
-// ---- Content list -----------------------------------------------------------
 
 .contentColumn {
   display: flex;

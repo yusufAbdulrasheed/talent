@@ -178,16 +178,23 @@ that list rather than disabling the scan.
    `JWT_REFRESH_SECRET`, `PAYSTACK_SECRET_KEY`, `TRAINING_FEE_NGN`, the Resend and
    Cloudinary variables, etc.) on the Netlify site, via the dashboard or
    `netlify env:set`.
-3. Set `CLIENT_URL` and `PAYSTACK_CALLBACK_URL` to the site's own Netlify URL
+3. **Set `TRUST_PROXY_HOPS=1`.** Without it every rate-limited route (login,
+   register, refresh, password reset) 500s: Netlify's function event doesn't
+   reliably populate the field `serverless-http` uses for the synthetic
+   request's socket address, so with trust proxy off `request.ip` comes out
+   `undefined` and `express-rate-limit` throws rather than keying everyone
+   into one bucket. Trust proxy makes Express resolve the client IP from the
+   `x-forwarded-for` header instead, which Netlify does set.
+4. Set `CLIENT_URL` and `PAYSTACK_CALLBACK_URL` to the site's own Netlify URL
    (or custom domain) — frontend and API are the same origin here.
-4. Leave `VITE_API_URL` **unset**. The client's default (`/api/v1`) is already
+5. Leave `VITE_API_URL` **unset**. The client's default (`/api/v1`) is already
    same-origin through the `/api/*` redirect, exactly like the Vite dev proxy —
    so the refresh cookie needs no cross-origin/SameSite handling, unlike the
    two-host setup in section 3.
-5. Register the Paystack webhook at
+6. Register the Paystack webhook at
    `https://<your-site>/api/v1/payments/paystack/webhook` — same path as before,
    now served by the function.
-6. Seed the administrator by running `npm run seed:admin` from a machine with
+7. Seed the administrator by running `npm run seed:admin` from a machine with
    the same `MONGODB_URI`, exactly as in section 3.
 
 **Known limitation: rate limiting is best-effort here.** `express-rate-limit`

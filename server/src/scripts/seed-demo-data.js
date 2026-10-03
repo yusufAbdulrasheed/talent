@@ -34,23 +34,15 @@ const DEFAULT_DEMO_PASSWORD = 'Demo@12345';
 const DEFAULT_ACCOUNTS_FILE = fileURLToPath(new URL('../../demo-accounts.md', import.meta.url));
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// Registration dates are staggered so the admin lists read like a real intake
-// rather than one identical timestamp. Approved talents registered long before
-// anything else in the dataset happens (so every review, subscription and
-// request below falls after it); talents still awaiting a decision are recent.
 const FIRST_TALENT_REGISTERED_DAYS_AGO = 90;
 const FIRST_RECRUITER_REGISTERED_DAYS_AGO = 100;
 const FIRST_TRAINER_REGISTERED_DAYS_AGO = 60;
 
-// Only used when RECRUITER_SUB_*_NGN is not configured; mirrors the test environment.
 const FALLBACK_TIER_PRICE_NGN = Object.freeze({
   [SUBSCRIPTION_TIERS.INTERMEDIATE]: 15_000,
   [SUBSCRIPTION_TIERS.SENIOR]: 30_000,
 });
 
-// Stable public placeholders. Real uploads go to Cloudinary; these stand in so
-// the document lists render. `publicId` is deliberately left unset — that is
-// what the upload service uses to delete an asset, and these are not ours.
 const PLACEHOLDER_IMAGE_URL = 'https://res.cloudinary.com/demo/image/upload/sample.jpg';
 const PLACEHOLDER_PDF_URL = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
@@ -63,25 +55,6 @@ const TIER_LABELS = Object.freeze({
 const daysAgo = (days) => new Date(Date.now() - days * DAY_MS);
 const daysFromNow = (days) => new Date(Date.now() + days * DAY_MS);
 
-/**
- * Seeds the demo dataset — everything the admin dashboard reports on:
- *
- *  - 20 fully populated talents, five per experience level (16 approved, 4
- *    awaiting review);
- *  - 15 recruiter companies across every subscription tier, with a successful
- *    subscription payment for each paid one;
- *  - 16 placement requests from those recruiters, covering every status;
- *  - 1 trainer account.
- *
- * Assumes mongoose is already connected. Re-running is safe: an account whose
- * email already exists is left exactly as it is, and payments and requests are
- * only added when missing, so nothing is overwritten or duplicated.
- *
- * @param {object} [options]
- * @param {string} [options.password]     Shared password for every demo account.
- * @param {string|null} [options.accountsFile]  Where to write the credentials
- *   sheet (markdown); pass `null` to skip writing it.
- */
 export async function seedDemoData({
   password = DEFAULT_DEMO_PASSWORD,
   accountsFile = DEFAULT_ACCOUNTS_FILE,
@@ -90,13 +63,9 @@ export async function seedDemoData({
     throw new Error(`The demo password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
   }
 
-  // One hash serves every account: they all share the demo password, and
-  // hashing 35 times at production cost would only slow the run down.
   const passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   const reviewer = await User.findOne({ role: USER_ROLES.ADMIN }).select('_id');
 
-  // Sequential on purpose: reference numbers are allocated in seed order, so
-  // they read entry → senior.
   const talents = [];
   for (const [index, talent] of DEMO_TALENTS.entries()) {
     talents.push({ ...talent, ...(await seedTalent(talent, index, passwordHash, reviewer)) });
@@ -149,7 +118,6 @@ function trainerEmail({ firstName, lastName, slug }) {
   return `${emailPart(firstName)}.${emailPart(lastName)}@${slug}.demo.test`;
 }
 
-/** Finds an existing account for `email`, refusing to reuse one that belongs to another role. */
 async function findExistingUser(email, role) {
   const existing = await User.findOne({ email });
 
@@ -181,10 +149,9 @@ function buildDocuments(talent) {
   return documents;
 }
 
-/** The admin's review record, shaped by how far along the candidate is. */
 function buildAdminReview({ talent, status, registeredAt, index, reviewer }) {
   if (status === CANDIDATE_STATUSES.SUBMITTED) {
-    return undefined; // Nobody has looked at it yet.
+    return undefined; 
   }
 
   const levelGuide = EXPERIENCE_LEVEL_GUIDE[talent.experienceLevel];
@@ -206,10 +173,6 @@ async function seedTalent(talent, index, passwordHash, reviewer) {
   if (existing) {
     const candidate = await Candidate.findOne({ user: existing.id });
 
-    // Backfill fields added to the seed data after this account already
-    // existed (jobTitle, bio). Only fills a gap — never overwrites a value
-    // that's already set, in case the account was actually logged into and
-    // edited by hand.
     if (candidate) {
       let patched = false;
       for (const field of ['jobTitle', 'bio']) {
@@ -243,7 +206,6 @@ async function seedTalent(talent, index, passwordHash, reviewer) {
     email,
     passwordHash,
     role: USER_ROLES.TALENT,
-    // Same as the admin seeder: nobody has to click an emailed link to demo.
     isEmailVerified: true,
     createdAt: registeredAt,
   });
@@ -273,21 +235,11 @@ async function seedTalent(talent, index, passwordHash, reviewer) {
 
     return { email, candidateId: candidate.id, referenceNumber: candidate.referenceNumber, status, created: true };
   } catch (error) {
-    // Mirrors registerUser: never leave a user behind without its profile.
     await User.deleteOne({ _id: user.id });
     throw error;
   }
 }
 
-/**
- * Keeps a paid-tier demo subscription valid no matter how long it's been
- * since the seed last ran. `subscriptionPaidDaysAgo` only describes the
- * subscription's state *at seed time* — real time keeps moving after that,
- * so a subscription seeded as "18 days into a 30-day window" quietly expires
- * (by design — that's the app's own lazy-expiry feature working correctly)
- * if the seed isn't re-run for a few weeks. Re-activating with a fresh
- * `paidAt` on every run is what keeps re-running the seeder reliable.
- */
 async function ensureSubscriptionTier(companyId, recruiter) {
   const isPaidTier = recruiter.tier !== SUBSCRIPTION_TIERS.JUNIOR;
 
@@ -295,9 +247,6 @@ async function ensureSubscriptionTier(companyId, recruiter) {
     throw new Error(`${recruiter.companyName} is on the ${recruiter.tier} plan but has no subscriptionPaidDaysAgo.`);
   }
 
-  // Every recruiter gets an explicit subscription row, junior tier included —
-  // the app itself would only create one lazily on first use, but the seed
-  // leaves a complete, consistent snapshot rather than depending on that.
   const subscription = await getOrCreateSubscription(companyId);
 
   if (isPaidTier) {
@@ -356,13 +305,6 @@ async function seedRecruiter(recruiter, index, passwordHash) {
   }
 }
 
-/**
- * A trainer account. In the real flow (createTrainer in
- * admin/trainers.controller.js) this gets an unusable random password and an
- * email invite to set their own — here it gets the shared demo password
- * directly, the same shortcut every other seeded account takes, so it is
- * usable immediately without a working mailbox.
- */
 async function seedTrainer(trainer, index, passwordHash) {
   const email = trainerEmail(trainer);
   const existing = await findExistingUser(email, USER_ROLES.TRAINER);
@@ -384,7 +326,6 @@ async function seedTrainer(trainer, index, passwordHash) {
   return { email, created: true };
 }
 
-/** The successful Paystack payment behind a paid recruiter's plan; `null` for the free tier. */
 async function seedSubscriptionPayment(recruiter) {
   if (recruiter.subscriptionPaidDaysAgo === undefined || !recruiter.companyId) {
     return null;
@@ -405,8 +346,6 @@ async function seedSubscriptionPayment(recruiter) {
     subscriptionTier: recruiter.tier,
     provider: 'paystack',
     reference,
-    // Stored in kobo, exactly as the real checkout does
-    // (see initializeSubscriptionCheckout in recruiter-subscription.controller.js).
     amount: priceNgn * 100,
     currency: 'NGN',
     status: 'success',
@@ -417,12 +356,6 @@ async function seedSubscriptionPayment(recruiter) {
   return { reference, created: true };
 }
 
-/**
- * Recruiter placement requests. Mirrors the two rules createPlacementRequest
- * enforces — the candidate must be approved and inside the recruiter's unlocked
- * experience levels — against the real database state, so seed data can never
- * describe something the product would refuse.
- */
 async function seedPlacementRequests({ talents, recruiters }) {
   const results = [];
 
@@ -471,7 +404,6 @@ async function seedPlacementRequests({ talents, recruiters }) {
         status: spec.status,
         adminNote: spec.adminNote,
         createdAt,
-        // An admin acted on it a couple of days after it came in.
         updatedAt: isUntouched ? createdAt : new Date(createdAt.getTime() + 2 * DAY_MS),
       });
     }
@@ -491,7 +423,6 @@ function titleCase(value) {
   return value.replace(/_/g, ' ').replace(/^./, (character) => character.toUpperCase());
 }
 
-/** The credentials sheet: printed to the console and written to `demo-accounts.md`. */
 function renderAccountsSheet({ password, talents, recruiters, placementRequests, trainers }) {
   const countByStatus = (status) => talents.filter((talent) => talent.status === status).length;
   const awaitingReview = countByStatus(CANDIDATE_STATUSES.SUBMITTED) + countByStatus(CANDIDATE_STATUSES.UNDER_REVIEW);
@@ -580,7 +511,6 @@ function renderAccountsSheet({ password, talents, recruiters, placementRequests,
   return lines.join('\n');
 }
 
-/** The connection string with credentials and options stripped, safe to print. */
 function describeTarget(uri) {
   return uri.replace(/\/\/[^@/]*@/, '//').replace(/\?.*$/, '');
 }
@@ -590,15 +520,6 @@ function parseAccountsFileArgument(argv) {
   return argument ? path.resolve(argument.slice('--out='.length)) : DEFAULT_ACCOUNTS_FILE;
 }
 
-/**
- * Seeds the demo dataset into whatever database MONGODB_URI points at, then
- * prints (and saves) every demo login.
- *
- *   npm run seed:demo --workspace=server
- *
- * Optional: SEED_DEMO_PASSWORD overrides the shared password; `--out=<path>`
- * changes where the credentials sheet is written.
- */
 async function main() {
   if (environment.NODE_ENV === 'production' && process.env.SEED_ALLOW_PRODUCTION !== 'true') {
     throw new Error(
@@ -631,7 +552,6 @@ async function main() {
   console.info(`\n${markdown}`);
 }
 
-// Only run when invoked directly, so tests can import `seedDemoData`.
 const isEntryPoint =
   Boolean(process.argv[1]) && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
 

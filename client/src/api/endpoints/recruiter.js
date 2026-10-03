@@ -55,7 +55,6 @@ export async function createPlacementRequest(payload) {
   return data.data.placementRequest;
 }
 
-/** One role, several talents selected together; returns `{ groupId, placementRequests }`. */
 export async function createGroupPlacementRequest(payload) {
   const { data } = await http.post('/recruiter/placement-requests/group', payload);
   return data.data;

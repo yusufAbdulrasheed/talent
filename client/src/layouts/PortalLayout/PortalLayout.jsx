@@ -16,10 +16,6 @@ function getInitials(name) {
     .join('');
 }
 
-// Collapsed/expanded is one toggle shared by every breakpoint (a narrow icon
-// rail on desktop, a hidden link strip on mobile — see PortalLayout.module.scss),
-// remembered across visits. Read/write are wrapped: private browsing or a
-// storage-blocking policy must not break the toggle, only its persistence.
 const COLLAPSE_STORAGE_KEY = 'tms.portalSidebarCollapsed';
 
 function readStoredCollapsed() {
@@ -43,7 +39,6 @@ function PortalLayout() {
     try {
       window.localStorage.setItem(COLLAPSE_STORAGE_KEY, String(isCollapsed));
     } catch {
-      // Toggle still works for this session; it just won't be remembered.
     }
   }, [isCollapsed]);
 

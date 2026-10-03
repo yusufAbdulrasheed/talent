@@ -36,8 +36,6 @@ function TierCard({ tier, subscription, onSubscribe, isPending }) {
   const isCurrent = subscription.tier === tier.value;
   const isPaid = tier.value !== 'junior';
   const price = isPaid ? subscription.pricing[tier.value] : 0;
-  // A lower tier than what's already active is rejected server-side; same
-  // tier is a renewal (allowed) and a higher tier is a normal purchase.
   const disabled = TIER_RANK[tier.value] < TIER_RANK[subscription.tier] || !price;
 
   return (
@@ -76,9 +74,6 @@ function RecruiterSubscriptionPage() {
 
   const checkoutMutation = useMutation({
     mutationFn: initializeSubscriptionCheckout,
-    // Paystack hosts the checkout, so this is a full page handoff. The
-    // webhook is what actually activates the tier; the return URL only
-    // reports the outcome.
     onSuccess: ({ authorizationUrl }) => {
       window.location.href = authorizationUrl;
     },

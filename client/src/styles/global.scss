@@ -112,7 +112,6 @@ button {
   color: var(--color-brand-900);
 }
 
-// Hide native search-field clear buttons; our inputs style their own chrome.
 input[type='search']::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }

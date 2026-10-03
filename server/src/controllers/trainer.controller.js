@@ -2,17 +2,6 @@ import TrainerAssignment from '../models/trainer-assignment.model.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { sendSuccess } from '../utils/api-response.js';
 
-/**
- * The trainer portal is read-only in this MVP.
- *
- * Trainers see who they are, which programmes and batches they are assigned
- * to, how many candidates are in each, and any announcement the administrator
- * has left. Attendance, assessments, materials, grades, and certificates are
- * Option 2 features and have no endpoints here at all — there is nothing for a
- * trainer to write to.
- *
- * Candidate identities are not exposed: only counts.
- */
 export const getMyDashboard = asyncHandler(async (request, response) => {
   const assignments = await TrainerAssignment.find({ trainer: request.user.id })
     .populate({ path: 'program', select: 'title description isActive' })

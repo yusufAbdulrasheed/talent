@@ -12,8 +12,6 @@ export const updateMyCompany = asyncHandler(async (request, response) => {
   const company = await getCompanyForUser(request.user.id);
   const { cacNumber, ...details } = request.validated;
 
-  // A CAC number is the company's legal identity: once recorded, only an
-  // administrator can change it. Re-sending the same value is harmless.
   if (cacNumber !== undefined) {
     if (company.cacNumber && company.cacNumber !== cacNumber.toUpperCase()) {
       throw new AppError('Your CAC number cannot be changed. Contact support if it is wrong.', 403);

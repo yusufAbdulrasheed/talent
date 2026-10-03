@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import styles from './InfoCard.module.scss';
 
-/** Icon + title + body card used across the marketing pages. */
 function InfoCard({ icon: Icon, eyebrow, title, children, to, linkLabel = 'Learn more' }) {
   return (
     <article className={styles.card}>

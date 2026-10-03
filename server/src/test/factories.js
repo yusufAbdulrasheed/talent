@@ -29,7 +29,6 @@ export async function createUser({ role = USER_ROLES.TALENT, isEmailVerified = t
   });
 }
 
-/** Creates a user of the given role and returns `{ user, token }`. */
 export async function createAuthedUser(options = {}) {
   const user = await createUser(options);
   return { user, token: createAccessToken(user) };

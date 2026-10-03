@@ -4,7 +4,6 @@ import app from '../app.js';
 import { USER_ROLES } from '../constants/user-roles.js';
 import { bearer, createAuthedUser } from '../test/factories.js';
 
-// A 1x1 PNG — enough for multer to accept and reach the controller.
 const PNG_1PX = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
   'base64',

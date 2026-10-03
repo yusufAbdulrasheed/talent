@@ -15,7 +15,6 @@ const documentSchema = new mongoose.Schema(
     type: { type: String, required: true, trim: true, enum: CANDIDATE_DOCUMENT_TYPES },
     url: { type: String, required: true },
     publicId: { type: String },
-    // Legacy field from the pre-Cloudinary build; kept optional for old rows.
     storageKey: { type: String },
     originalName: { type: String, required: true },
     mimeType: { type: String, required: true },
@@ -33,14 +32,7 @@ const candidateSchema = new mongoose.Schema(
     gender: { type: String, enum: ['female', 'male', 'prefer_not_to_say'] },
     dateOfBirth: { type: Date },
     location: { type: String, trim: true, maxlength: 160 },
-    // The role the candidate is presenting themselves for, e.g. "Frontend
-    // Developer" or "Accounts Assistant" — not the same as a recruiter's
-    // placement-request job title, which describes a vacancy, not a person.
-    // Shown on the anonymous profile and filterable by both recruiters and
-    // admins, so it is indexed on its own.
     jobTitle: { type: String, trim: true, maxlength: 160, index: true },
-    // Short professional summary shown to recruiters on the anonymous
-    // profile, so candidates are told not to include names or contacts.
     bio: { type: String, trim: true, maxlength: 600 },
     education: { type: String, trim: true, maxlength: 1000 },
     skills: [{ type: String, trim: true, maxlength: 80 }],

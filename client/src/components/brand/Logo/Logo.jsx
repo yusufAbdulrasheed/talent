@@ -1,17 +1,5 @@
 import styles from './Logo.module.scss';
 
-/**
- * Sultan Magnate Consulting logo.
- *
- * The mark is a vector trace of the official logo: two interlocking angular
- * brackets forming an "S", split by a diagonal bar. If an official vector file
- * is supplied later, replace the three path strings below — nothing else changes.
- *
- *   <Logo />                              the mark on its own (32px)
- *   <Logo variant="lockup" />             mark + stacked SULTAN / MAGNATE / CONSULTING
- *   <Logo variant="lockup" tagline />     … plus "Building Systems. Sustaining Legacies."
- *   <Logo tone="light" />                 white mark, for navy / blue backgrounds
- */
 const MARK_VIEWBOX = '0 0 380 385';
 const MARK_TOP = 'M75 65 L190 0 L340 85 L340 160 L300 185 L247 155 L293 128 L293 118 L190 62 L130 95 Z';
 const MARK_BAR = 'M45 79 L380 275 L335 305 L0 109 Z';

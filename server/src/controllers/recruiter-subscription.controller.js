@@ -34,7 +34,7 @@ export const initializeSubscriptionCheckout = asyncHandler(async (request, respo
   }
 
   const reference = `SUB-${crypto.randomUUID()}`;
-  const amount = priceNgn * 100; // kobo
+  const amount = priceNgn * 100; 
 
   await Payment.create({
     purpose: PAYMENT_PURPOSES.RECRUITER_SUBSCRIPTION,

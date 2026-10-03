@@ -20,8 +20,6 @@ export const requestWithdrawal = asyncHandler(async (request, response) => {
   const candidate = await getCandidateForUser(request.user.id);
   const savings = await requestWithdrawalService(candidate.id, request.validated.amount);
 
-  // Best effort: the request is already recorded, so a mail/notify failure
-  // must not surface as a failed submission.
   try {
     await notifyAdminsOfWithdrawalRequest({ candidate, amount: request.validated.amount });
   } catch (error) {

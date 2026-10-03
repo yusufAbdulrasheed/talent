@@ -17,10 +17,6 @@ function buildLink(path, token) {
   return url.toString();
 }
 
-/**
- * Minimal, table-free HTML with a plain-text counterpart. Inline styles only,
- * since email clients strip stylesheets.
- */
 function layout({ heading, bodyHtml }) {
   return `<!doctype html>
 <html>

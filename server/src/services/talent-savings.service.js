@@ -4,8 +4,6 @@ import { AppError } from '../utils/app-error.js';
 const MIN_ACCRUALS_FOR_WITHDRAWAL = 6;
 const MAX_WITHDRAWAL_SHARE = 0.9;
 
-/** 'YYYY-MM' for the given date, in UTC — deliberate, so the server process's
- * own timezone can never cause the accrual watermark to drift. */
 export function currentPeriod(date = new Date()) {
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
 }
@@ -30,13 +28,6 @@ function round2(value) {
   return Math.round(value * 100) / 100;
 }
 
-/**
- * Idempotent catch-up accrual: posts one ledger entry per elapsed calendar
- * month since `lastAccrualPeriod`, at the *current* salary/rate. Safe to call
- * on every read (talent or admin), so no scheduler/cron dependency is needed.
- * Mutates `savings` in place; the caller is responsible for saving it.
- * Returns true if anything changed.
- */
 export function applyLazyAccrual(savings, now = new Date()) {
   if (savings.status !== SAVINGS_STATUSES.ACTIVE) {
     return false;
@@ -62,10 +53,6 @@ export function applyLazyAccrual(savings, now = new Date()) {
   return changed;
 }
 
-/**
- * Loads (or lazily creates) a candidate's savings account and brings it up to
- * date. Every read path should go through this.
- */
 export async function getOrCreateSavings(candidateId, now = new Date()) {
   let savings = await TalentSavings.findOne({ candidate: candidateId });
 
@@ -80,12 +67,6 @@ export async function getOrCreateSavings(candidateId, now = new Date()) {
   return savings;
 }
 
-/**
- * Admin-only. First call activates the account (this is what "once placed"
- * means in practice — nothing else flips `status` to active); later calls
- * only change the going-forward salary/rate, since backdating a rate change
- * across an already-posted history isn't modeled.
- */
 export async function configureSavings(candidateId, { monthlySalary, savingsRate }, now = new Date()) {
   const savings = await getOrCreateSavings(candidateId, now);
 
@@ -95,8 +76,6 @@ export async function configureSavings(candidateId, { monthlySalary, savingsRate
   if (savings.status === SAVINGS_STATUSES.NOT_STARTED) {
     savings.status = SAVINGS_STATUSES.ACTIVE;
     savings.startedAt = now;
-    // Seeded one period back so the activation month itself accrues on the
-    // very next read (no proration for a partial first month).
     savings.lastAccrualPeriod = addMonthsToPeriod(currentPeriod(now), -1);
   }
 
@@ -104,7 +83,6 @@ export async function configureSavings(candidateId, { monthlySalary, savingsRate
   return savings;
 }
 
-/** Talent-only continue/discontinue toggle. */
 export async function setParticipationStatus(candidateId, nextStatus, now = new Date()) {
   const savings = await getOrCreateSavings(candidateId, now);
 
@@ -122,8 +100,6 @@ export async function setParticipationStatus(candidateId, nextStatus, now = new 
       throw new AppError('Savings are not currently discontinued.', 409);
     }
     savings.status = SAVINGS_STATUSES.ACTIVE;
-    // Critical: without this reset, the next lazy accrual would retroactively
-    // post an entry for every month the account sat discontinued.
     savings.lastAccrualPeriod = addMonthsToPeriod(currentPeriod(now), -1);
   }
 

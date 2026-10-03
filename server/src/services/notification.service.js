@@ -12,15 +12,10 @@ import {
 } from './email-templates.js';
 import { CANDIDATE_STATUSES } from '../constants/statuses.js';
 
-/** Records an in-app notification for a single recipient. */
 export async function notifyUser({ recipient, type, title, message, metadata }) {
   return Notification.create({ recipient, type, title, message, metadata });
 }
 
-/**
- * Emails a candidate the outcome of their review, and records it in-app.
- * Expects `candidate.user` populated.
- */
 export async function sendCandidateDecisionEmail(candidate, status, note) {
   const user = candidate.user;
 
@@ -49,10 +44,6 @@ export async function sendCandidateDecisionEmail(candidate, status, note) {
   await sendEmail({ to: user.email, ...message });
 }
 
-/**
- * Tells a recruiter their placement request has moved on.
- * Expects `request.recruiterCompany` populated with its `user`.
- */
 export async function sendPlacementStatusEmail(placementRequest, candidateReference) {
   const company = placementRequest.recruiterCompany;
   const recipientEmail = company?.companyEmail ?? company?.user?.email;
@@ -82,13 +73,6 @@ export async function sendPlacementStatusEmail(placementRequest, candidateRefere
   await sendEmail({ to: recipientEmail, ...message });
 }
 
-/**
- * Tells every administrator that a recruiter has submitted a placement
- * request, in-app and by email.
- *
- * Notifying is best-effort: a mail outage must not roll back a request the
- * recruiter has already successfully submitted.
- */
 export async function notifyAdminsOfPlacementRequest({ request, companyName }) {
   const admins = await User.find({ role: USER_ROLES.ADMIN, isActive: true }).select('email firstName');
 
@@ -119,12 +103,6 @@ export async function notifyAdminsOfPlacementRequest({ request, companyName }) {
   await Promise.allSettled(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
 }
 
-/**
- * Tells every administrator that a talent has requested a savings
- * withdrawal, in-app and by email. Best effort, mirroring
- * `notifyAdminsOfPlacementRequest` — a mail outage must not roll back a
- * request the talent has already successfully submitted.
- */
 export async function notifyAdminsOfWithdrawalRequest({ candidate, amount }) {
   const admins = await User.find({ role: USER_ROLES.ADMIN, isActive: true }).select('email firstName');
 
@@ -151,10 +129,6 @@ export async function notifyAdminsOfWithdrawalRequest({ candidate, amount }) {
   await Promise.allSettled(admins.map((admin) => sendEmail({ to: admin.email, ...email })));
 }
 
-/**
- * Tells a talent the outcome of their withdrawal request, in-app and by
- * email. Expects `candidate.user` populated.
- */
 export async function notifyTalentOfWithdrawalDecision(candidate, withdrawalRequest) {
   const user = candidate.user;
 

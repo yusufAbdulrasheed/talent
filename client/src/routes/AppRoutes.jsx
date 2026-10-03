@@ -70,8 +70,6 @@ function AppRoutes() {
           <Route path="reset-password" element={<ResetPasswordPage />} />
         </Route>
 
-        {/* Outside the guest guard: a signed-in but unverified user still
-            needs to be able to open their verification link. */}
         <Route path="verify-email" element={<VerifyEmailPage />} />
       </Route>
 
@@ -79,10 +77,8 @@ function AppRoutes() {
         <Route path="talent" element={<PortalLayout />}>
           <Route index element={<TalentOverviewPage />} />
           <Route path="profile" element={<TalentProfilePage />} />
-          {/* Documents are now step 3 of the profile wizard. */}
           <Route path="documents" element={<Navigate to="/talent/profile" replace />} />
           <Route path="savings" element={<TalentSavingsPage />} />
-          {/* Old path kept so existing links and bookmarks still resolve. */}
           <Route path="payments" element={<Navigate to="/talent/savings" replace />} />
         </Route>
       </Route>
@@ -127,12 +123,10 @@ function AppRoutes() {
             element={<AdminPlacementRequestDetailPage />}
           />
           <Route path="content-studio" element={<AdminContentPage />} />
-          {/* Old path kept so existing links and bookmarks still resolve. */}
           <Route path="content" element={<Navigate to="/admin/content-studio" replace />} />
         </Route>
       </Route>
 
-      {/* Legacy/entry-point convenience redirects. */}
       <Route path="dashboard" element={<Navigate to="/" replace />} />
 
       <Route element={<PublicLayout />}>

@@ -1,13 +1,9 @@
 import styles from './PublicSection.module.scss';
 
-/**
- * A full-bleed marketing section with a centred container and an optional
- * eyebrow / title / lead header. `tone` picks the background surface.
- */
 function PublicSection({
   id,
-  tone = 'surface', // surface | raised | ink
-  align = 'left', // left | center
+  tone = 'surface', 
+  align = 'left', 
   eyebrow,
   title,
   lead,

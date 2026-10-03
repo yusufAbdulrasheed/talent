@@ -7,8 +7,6 @@ import { createUpload } from '../controllers/upload.controller.js';
 
 const uploadRouter = Router();
 
-// Uploads are authenticated and size-capped, but each one hits a third-party
-// API, so keep a per-IP ceiling.
 const uploadLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 60,

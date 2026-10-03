@@ -8,10 +8,6 @@ const VARIANT_ICONS = {
   error: OctagonAlert,
 };
 
-/**
- * Inline status message. `error` and `warning` announce assertively so a
- * failed submission is not missed by screen-reader users.
- */
 function Alert({ children, variant = 'info', title }) {
   const isUrgent = variant === 'error' || variant === 'warning';
   const Icon = VARIANT_ICONS[variant] ?? Info;

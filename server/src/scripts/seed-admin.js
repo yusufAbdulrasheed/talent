@@ -8,15 +8,6 @@ import { USER_ROLES } from '../constants/user-roles.js';
 const PASSWORD_SALT_ROUNDS = 12;
 const MIN_PASSWORD_LENGTH = 12;
 
-/**
- * Creates the first administrator account. Public registration is limited to
- * talents and recruiters, so this is the only way an admin comes into being.
- *
- *   npm run seed:admin --workspace=server
- *
- * Reads ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_FIRST_NAME, ADMIN_LAST_NAME.
- * Re-running is safe: an existing account is reported, never overwritten.
- */
 async function seedAdmin() {
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
@@ -50,7 +41,6 @@ async function seedAdmin() {
     email,
     passwordHash: await bcrypt.hash(password, PASSWORD_SALT_ROUNDS),
     role: USER_ROLES.ADMIN,
-    // Seeded by an operator who already controls the mailbox.
     isEmailVerified: true,
   });
 

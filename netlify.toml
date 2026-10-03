@@ -3,21 +3,11 @@
   publish = "client/dist"
 
 [build.environment]
-  # These five are plain config (a fee amount, subscription prices, public
-  # URLs) — not secrets — but Netlify's scanner flags any repo string that
-  # matches an env var's configured value, and these also appear as zod
-  # defaults / test fixtures / docs examples. Omit them by name rather than
-  # disabling the scan outright, so real secrets (JWT/Paystack/Mongo/
-  # Cloudinary/Resend keys) are still caught.
   SECRETS_SCAN_OMIT_KEYS = "TRAINING_FEE_NGN,RECRUITER_SUB_INTERMEDIATE_NGN,RECRUITER_SUB_SENIOR_NGN,CLIENT_URL,PAYSTACK_CALLBACK_URL"
 
 [functions]
   directory = "server/netlify/functions"
   node_bundler = "esbuild"
-  # These depend on native bindings or dynamic requires that esbuild can't
-  # safely bundle; Netlify installs them into the function from node_modules
-  # instead. (Per Netlify's documented pattern for wrapping an existing
-  # Express app — see https://docs.netlify.com/functions/lambda-compatibility/.)
   external_node_modules = [
     "express",
     "mongoose",
@@ -36,7 +26,6 @@
     "dotenv",
   ]
 
-# The API must be matched before the SPA catch-all below.
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"

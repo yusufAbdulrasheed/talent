@@ -1,6 +1,5 @@
 import styles from './Card.module.scss';
 
-/** Panel used to group content inside a portal page. */
 function Card({ title, description, actions, children, className = '' }) {
   const hasHeader = title || description || actions;
 

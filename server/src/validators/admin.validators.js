@@ -9,11 +9,6 @@ const pagination = {
   limit: z.coerce.number().int().min(1).max(100).default(20),
 };
 
-/**
- * Statuses an administrator may set by hand. The earlier lifecycle states are
- * driven by the candidate and by payment confirmation, so allowing them here
- * would let an admin fake a payment.
- */
 export const ADMIN_SETTABLE_CANDIDATE_STATUSES = Object.freeze([
   CANDIDATE_STATUSES.UNDER_REVIEW,
   CANDIDATE_STATUSES.APPROVED,

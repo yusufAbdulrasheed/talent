@@ -5,22 +5,16 @@ import { CANDIDATE_STATUSES } from '../constants/statuses.js';
 import RecruiterSubscription from '../models/recruiter-subscription.model.js';
 import { bearer, createCandidate, createRecruiter } from '../test/factories.js';
 
-/**
- * The product promise is that a recruiter cannot learn who a candidate is.
- * These tests assert that over real HTTP, on the serialised response body,
- * rather than on the serializer in isolation.
- */
 describe('anonymous talent pool', () => {
   const FORBIDDEN_SUBSTRINGS = [
-    '+2348012345678', // phone number
-    'Ada Obi', // name typed into the work-experience free text
-    'Acme Ltd', // employer named in the same free text
-    '@example.test', // the candidate's account email
+    '+2348012345678', 
+    'Ada Obi', 
+    'Acme Ltd', 
+    '@example.test', 
   ];
 
   it('exposes only whitelisted fields for an unlocked (free-tier) candidate', async () => {
     const { token } = await createRecruiter();
-    // Junior tier is free by default and covers entry/junior candidates.
     await createCandidate({ status: CANDIDATE_STATUSES.APPROVED, overrides: { experienceLevel: 'junior' } });
 
     const response = await request(app)
@@ -43,15 +37,12 @@ describe('anonymous talent pool', () => {
       'referenceNumber',
       'skills',
     ]);
-    // The literal field is never surfaced, even for an unlocked candidate.
     expect(candidate).not.toHaveProperty('experienceLevel');
     expect(candidate).not.toHaveProperty('availability');
   });
 
   it('does not list a candidate above the recruiter\'s tier — it is only counted', async () => {
     const { token } = await createRecruiter();
-    // No subscription purchased — default tier is junior, which does not
-    // cover a "mid" level candidate.
     const { candidate } = await createCandidate({
       status: CANDIDATE_STATUSES.APPROVED,
       overrides: { experienceLevel: 'mid' },
@@ -64,14 +55,12 @@ describe('anonymous talent pool', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.candidates).toHaveLength(0);
     expect(response.body.data.pagination.total).toBe(0);
-    // All a locked tier ever discloses is its head-count.
     expect(response.body.data.tiers).toEqual([
       { tier: 'junior', unlocked: true, total: 0 },
       { tier: 'intermediate', unlocked: false, total: 1 },
       { tier: 'senior', unlocked: false, total: 0 },
     ]);
 
-    // No reference, location, skill or literal level for the locked candidate.
     const body = JSON.stringify(response.body);
     expect(body).not.toContain(candidate.referenceNumber);
     expect(body).not.toContain('Ikeja');
@@ -101,7 +90,6 @@ describe('anonymous talent pool', () => {
     };
 
     expect(await countFor('')).toBe(4);
-    // The Junior tier covers entry- and junior-level talent.
     expect(await countFor('?tier=junior')).toBe(2);
     expect(await countFor('?tier=intermediate')).toBe(1);
     expect(await countFor('?tier=senior')).toBe(1);
@@ -141,8 +129,6 @@ describe('anonymous talent pool', () => {
       return response.body.data.tiers;
     };
 
-    // A filter that matches the locked candidate, and one that matches nobody,
-    // must be indistinguishable — otherwise "does a Senior talent have X?" leaks.
     const unfiltered = await fetchTiers('');
     expect(await fetchTiers('?skills=Kubernetes')).toEqual(unfiltered);
     expect(await fetchTiers('?keyword=CKA')).toEqual(unfiltered);
@@ -161,7 +147,6 @@ describe('anonymous talent pool', () => {
 
   it('leaks no identifying data anywhere in the search response', async () => {
     const { token } = await createRecruiter();
-    // A level the (junior) recruiter has unlocked, so there is a real card to inspect.
     await createCandidate({ status: CANDIDATE_STATUSES.APPROVED, overrides: { experienceLevel: 'junior' } });
 
     const response = await request(app)
@@ -224,7 +209,6 @@ describe('anonymous talent pool', () => {
 
     expect(unapproved.status).toBe(404);
     expect(missing.status).toBe(404);
-    // Identical responses, so this cannot be used to probe which references exist.
     expect(unapproved.body.message).toBe(missing.body.message);
   });
 
@@ -287,7 +271,6 @@ describe('anonymous talent pool', () => {
 
   it('never exposes a locked candidate\'s job title, even when the filter would match it', async () => {
     const { token } = await createRecruiter();
-    // Outside this (junior-tier, by default) recruiter's plan — counted, never listed.
     await createCandidate({
       status: CANDIDATE_STATUSES.APPROVED,
       overrides: { jobTitle: 'Senior Software Architect', experienceLevel: 'senior' },
@@ -309,7 +292,6 @@ describe('anonymous talent pool', () => {
       overrides: { location: 'Ikeja, Lagos' },
     });
 
-    // Unescaped, `.*` would match everything and expose the whole pool.
     const response = await request(app)
       .get('/api/v1/recruiter/talent-pool?location=.*')
       .set('Authorization', bearer(token));

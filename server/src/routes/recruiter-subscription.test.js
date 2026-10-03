@@ -68,7 +68,6 @@ describe('recruiter subscription — tiers and gating', () => {
       .set('Authorization', bearer(token));
 
     expect(response.status).toBe(200);
-    // Only the junior-level candidate is listed; the other two are locked and appear only as counts.
     expect(response.body.data.candidates).toHaveLength(1);
     expect(response.body.data.candidates[0].locked).toBe(false);
     expect(response.body.data.tiers).toEqual([
@@ -79,7 +78,6 @@ describe('recruiter subscription — tiers and gating', () => {
 
     const body = JSON.stringify(response.body);
     expect(body).not.toContain('experienceLevel');
-    // Tier names are plan names and are shown on purpose; the underlying levels are not.
     expect(body).not.toContain('"mid"');
     expect(body).not.toContain('"entry"');
   });
@@ -170,7 +168,6 @@ describe('recruiter subscription — tiers and gating', () => {
     const pool = await request(app)
       .get('/api/v1/recruiter/talent-pool')
       .set('Authorization', bearer(token));
-    // The lapsed senior plan no longer unlocks senior talent: it is not listed, only counted.
     expect(pool.body.data.candidates).toHaveLength(0);
     expect(pool.body.data.tiers.find((tier) => tier.tier === 'senior')).toEqual({
       tier: 'senior',

@@ -1,6 +1,3 @@
-// ---- Stat tiles -------------------------------------------------------
-// Flat bento grid — every tile is its own resting surface, directly on the
-// canvas, no outer card wrapping the group. Mirrors AdminOverviewPage.
 
 .stats {
   display: grid;
@@ -51,7 +48,6 @@
   color: var(--color-text-muted);
 }
 
-// ---- Status filter pills ------------------------------------------------
 
 .filterBar {
   display: flex;
@@ -113,7 +109,6 @@
   color: var(--color-danger);
 }
 
-// ---- Table cells ----------------------------------------------------------
 
 .roleLink {
   display: inline-flex;

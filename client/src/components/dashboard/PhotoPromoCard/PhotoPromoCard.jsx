@@ -1,11 +1,6 @@
 import { photoUrl } from '../../../constants/photos.js';
 import styles from './PhotoPromoCard.module.scss';
 
-/**
- * Full-bleed photo card with a navy gradient scrim, used for a call to action
- * beside dashboard content. `photo` is an ID from constants/photos.js. `wide`
- * lays the copy over the left of a shorter, landscape card.
- */
 function PhotoPromoCard({ photo, icon, eyebrow, title, children, action, wide = false, className = '' }) {
   const Icon = icon;
   const classes = [styles.card, wide ? styles.wide : '', className].filter(Boolean).join(' ');

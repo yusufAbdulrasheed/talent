@@ -8,11 +8,6 @@ import {
   serializeCandidate,
 } from '../services/candidate.service.js';
 
-/**
- * A draft candidate advances to "submitted" on its own once the profile is
- * complete and every required document is uploaded; later statuses are only
- * ever changed by an administrator.
- */
 function advanceDraftIfReady(candidate) {
   if (
     candidate.status === CANDIDATE_STATUSES.DRAFT
@@ -38,10 +33,6 @@ export const updateMyProfile = asyncHandler(async (request, response) => {
   sendSuccess(response, { data: { candidate: serializeCandidate(candidate) } });
 });
 
-/**
- * Replaces the candidate's document set. The client uploads each file to
- * Cloudinary via /uploads first, then sends the stored asset metadata here.
- */
 export const putMyDocuments = asyncHandler(async (request, response) => {
   const candidate = await getCandidateForUser(request.user.id);
 

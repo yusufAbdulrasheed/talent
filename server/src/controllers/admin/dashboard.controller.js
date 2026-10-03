@@ -15,7 +15,6 @@ const ONBOARDED_STATUSES = [
   CANDIDATE_STATUSES.APPROVED,
 ];
 
-/** Operational counts for the admin landing page. */
 export const getDashboard = asyncHandler(async (_request, response) => {
   const [
     candidatesByStatus,

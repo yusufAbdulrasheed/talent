@@ -1,10 +1,8 @@
 import multer from 'multer';
 import { AppError } from '../utils/app-error.js';
 
-const MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free-plan ceiling for image/raw.
+const MAX_BYTES = 10 * 1024 * 1024; 
 
-// Raster images plus PDF. Extend as new document types are needed; SVG is left
-// out on purpose (script-bearing markup).
 const ALLOWED_MIME = new Set([
   'image/png',
   'image/jpeg',
@@ -27,10 +25,6 @@ const upload = multer({
   },
 });
 
-/**
- * Accepts a single `file` field, translating multer's own errors (size,
- * count) into the app's error shape.
- */
 export function singleFile(request, response, next) {
   upload.single('file')(request, response, (error) => {
     if (!error) {

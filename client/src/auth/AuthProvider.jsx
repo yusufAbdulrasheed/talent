@@ -23,21 +23,11 @@ function AuthProvider({ children }) {
     queryClient.clear();
   }, [queryClient]);
 
-  // A refresh that fails mid-session (revoked or expired token) drops the user
-  // back to anonymous rather than leaving stale data on screen.
   useEffect(() => {
     setSessionExpiredHandler(clearSession);
     return () => setSessionExpiredHandler(() => {});
   }, [clearSession]);
 
-  // On a cold load the access token is gone but the refresh cookie may not be.
-  //
-  // The request is started once and cached in a ref, so StrictMode's double
-  // mount cannot rotate the refresh token twice and invalidate the session it
-  // just restored. Handlers are attached on *every* mount: guarding the effect
-  // body with the ref instead would leave the second mount with no handlers at
-  // all, and the first mount's `isActive` already false, so the status would
-  // never leave `loading` and every guarded route would spin forever.
   useEffect(() => {
     let isActive = true;
 
@@ -83,8 +73,6 @@ function AuthProvider({ children }) {
     try {
       await authApi.logout();
     } finally {
-      // The local session is discarded even if the server call fails,
-      // otherwise a network blip would leave the user stuck signed in.
       clearSession();
     }
   }, [clearSession]);

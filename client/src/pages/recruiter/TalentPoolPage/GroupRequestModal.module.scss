@@ -1,4 +1,3 @@
-// ---- Step 1: pick talents -----------------------------------------------------
 
 .filterRow {
   max-width: 22rem;
@@ -22,7 +21,6 @@
   cursor: pointer;
 }
 
-// Scoped to this popup's rows so no other checkbox in the app is affected.
 .checkRow input,
 .row input {
   flex: none;
@@ -134,7 +132,6 @@
   color: var(--color-text-subtle);
 }
 
-// ---- Step 2: role details -------------------------------------------------------
 
 .form {
   display: flex;
@@ -196,7 +193,6 @@
   }
 }
 
-// ---- Done -------------------------------------------------------------------------
 
 .done {
   display: flex;

@@ -20,7 +20,6 @@ async function admin() {
 describe('candidate approval publishes to the talent pool', () => {
   it('approves a paid candidate and makes them visible to recruiters', async () => {
     const adminToken = await admin();
-    // A level the (free, junior-tier) recruiter has unlocked, so approval makes them appear in the list.
     const { candidate } = await createCandidate({
       status: CANDIDATE_STATUSES.SUBMITTED,
       overrides: { experienceLevel: 'junior' },
@@ -53,7 +52,6 @@ describe('candidate approval publishes to the talent pool', () => {
     });
     const { token: recruiterToken } = await createRecruiter();
 
-    // Precondition: the candidate really is visible before approval is withdrawn.
     const before = await request(app)
       .get('/api/v1/recruiter/talent-pool')
       .set('Authorization', bearer(recruiterToken));
@@ -96,7 +94,6 @@ describe('candidate approval publishes to the talent pool', () => {
       .set('Authorization', bearer(adminToken))
       .send({ status });
 
-    // Allowing these would let an administrator fake the candidate's own onboarding progress.
     expect(response.status).toBe(422);
   });
 
@@ -138,7 +135,6 @@ describe('candidate approval publishes to the talent pool', () => {
       .get(`/api/v1/admin/candidates/${candidate.id}`)
       .set('Authorization', bearer(adminToken));
 
-    // The admin review screen is the one place identity is legitimately visible.
     expect(response.status).toBe(200);
     expect(response.body.data.candidate.email).toBe(user.email);
     expect(response.body.data.candidate.phoneNumber).toBe('+2348012345678');
@@ -182,8 +178,6 @@ describe('placement requests', () => {
 
   it('accepts a request for an approved candidate', async () => {
     const { token } = await createRecruiter();
-    // Junior is the default free tier — this test is about the placement
-    // flow itself, not tier gating (covered in recruiter-subscription.test.js).
     const { candidate } = await createCandidate({
       status: CANDIDATE_STATUSES.APPROVED,
       overrides: { experienceLevel: 'junior' },
@@ -231,7 +225,6 @@ describe('placement requests', () => {
     const created = await submitRequest(first.token, candidate.referenceNumber);
     const requestId = created.body.data.placementRequest.id;
 
-    // Direct lookup with a valid id, from the wrong company.
     const crossRead = await request(app)
       .get(`/api/v1/recruiter/placement-requests/${requestId}`)
       .set('Authorization', bearer(second.token));

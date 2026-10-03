@@ -16,7 +16,6 @@ import PublicCTA from '../../../components/public/PublicCTA/PublicCTA.jsx';
 import InfoCard from '../../../components/public/InfoCard/InfoCard.jsx';
 import styles from './ServicesPage.module.scss';
 
-// Copy is placeholder until the client signs off on messaging.
 const SERVICES = [
   {
     icon: GraduationCap,

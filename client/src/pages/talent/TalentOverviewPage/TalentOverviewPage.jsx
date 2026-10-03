@@ -64,10 +64,6 @@ const BENEFITS = [
   { icon: Rocket, title: 'Build your future', body: 'More opportunities. A brighter you.' },
 ];
 
-/**
- * The journey from sign-up to the talent pool, derived entirely from real
- * account state. `action` is offered only on the first outstanding step.
- */
 function buildSteps(candidate, isEmailVerified) {
   const isApproved = candidate.status === CANDIDATE_STATUSES.APPROVED;
   const isSubmitted = candidate.status !== CANDIDATE_STATUSES.DRAFT;

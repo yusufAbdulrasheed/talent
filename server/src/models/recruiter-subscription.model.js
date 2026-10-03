@@ -15,8 +15,6 @@ const recruiterSubscriptionSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    // Junior is the free default and never expires. Intermediate/senior are
-    // paid, 30-day windows — see recruiter-subscription.service.js.
     tier: { type: String, enum: Object.values(SUBSCRIPTION_TIERS), default: SUBSCRIPTION_TIERS.JUNIOR, required: true },
     tierExpiresAt: { type: Date, default: null },
   },

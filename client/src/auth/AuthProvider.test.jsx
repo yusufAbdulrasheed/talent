@@ -8,7 +8,6 @@ import GuestRoute from '../routes/GuestRoute.jsx';
 import ProtectedRoute from '../routes/ProtectedRoute.jsx';
 import { USER_ROLES } from './roles.js';
 
-// The bootstrap path talks to axios directly, so the HTTP layer is the seam.
 vi.mock('../api/http.js', async () => {
   const actual = await vi.importActual('../api/http.js');
 
@@ -57,13 +56,10 @@ describe('AuthProvider session bootstrap', () => {
   });
 
   it('renders the login page for an anonymous visitor under StrictMode', async () => {
-    // No refresh cookie: the API answers 401 and the promise rejects.
     refreshSession.mockRejectedValue(new Error('401'));
 
     renderApp();
 
-    // Regression: a StrictMode double mount used to leave status stuck on
-    // `loading`, so guarded routes span forever and login never rendered.
     await waitFor(() => {
       expect(screen.getByText('Sign in form')).toBeInTheDocument();
     });
@@ -90,8 +86,6 @@ describe('AuthProvider session bootstrap', () => {
       expect(screen.getByText('Sign in form')).toBeInTheDocument();
     });
 
-    // Rotating the refresh token twice would invalidate the session it just
-    // restored, so exactly one call is the contract.
     expect(refreshSession).toHaveBeenCalledTimes(1);
   });
 

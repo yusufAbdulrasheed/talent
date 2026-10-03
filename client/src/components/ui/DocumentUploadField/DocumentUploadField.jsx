@@ -13,13 +13,6 @@ function isImageMime(mimeType) {
   return typeof mimeType === 'string' && mimeType.startsWith('image/');
 }
 
-/**
- * Labelled upload control for a candidate document. Unlike `FileUploadField`,
- * `value`/`onChange` carry the full document record the API expects
- * ({ type, url, publicId, originalName, mimeType, size }), not a bare URL —
- * `mimeType` in particular isn't part of the upload service's own response,
- * so it's captured from the browser `File` directly.
- */
 function DocumentUploadField({
   label,
   hint,

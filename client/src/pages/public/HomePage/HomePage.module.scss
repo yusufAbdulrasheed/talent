@@ -3,7 +3,6 @@
   overflow-x: clip;
 }
 
-/* ---------------------------------------------------- Shared section bits --- */
 .sectionInner {
   @include container;
 
@@ -45,7 +44,6 @@
   color: var(--color-text-muted);
 }
 
-/* ---------------------------------------------------------------- Hero --- */
 .hero {
   position: relative;
   overflow: hidden;
@@ -115,8 +113,6 @@
   gap: var(--space-3);
 }
 
-// Outline button that reads on the navy hero. The `a.` prefix outranks the
-// Button component's own variant styles.
 a.heroGhost {
   border-color: rgba(255, 255, 255, 0.4);
   background: transparent;
@@ -180,7 +176,6 @@ a.heroGhost {
   box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
 }
 
-// Second portrait tucked against the main photo's lower-right corner.
 .heroPhotoAccent {
   display: none;
 
@@ -295,7 +290,6 @@ a.heroGhost {
   }
 }
 
-/* ------------------------------------------------------- How it works --- */
 .how {
   background: var(--color-surface);
 }
@@ -404,7 +398,6 @@ a.heroGhost {
   }
 }
 
-/* ------------------------------------------------------------ Features --- */
 .features {
   background: var(--color-canvas);
 }
@@ -464,7 +457,6 @@ a.heroGhost {
   color: var(--color-accent);
 }
 
-/* ---------------------------------------------------------- Employers --- */
 .employers {
   position: relative;
   overflow: hidden;
@@ -540,7 +532,6 @@ a.heroGhost {
   }
 }
 
-// Recruiter photo sits behind the floating UI cards.
 .matchPhoto {
   position: absolute;
   inset: 0 0 0 18%;
@@ -665,7 +656,6 @@ a.heroGhost {
   }
 }
 
-/* ------------------------------------------------------------- Gallery --- */
 .gallery {
   background: var(--color-surface);
 }
@@ -720,7 +710,6 @@ a.heroGhost {
   margin-top: var(--space-4);
 }
 
-/* --------------------------------------------------------------- Paths --- */
 .paths {
   background: var(--color-canvas);
 }
@@ -780,7 +769,6 @@ a.heroGhost {
   box-shadow: var(--shadow-glow);
 }
 
-/* ------------------------------------------------------- Testimonials --- */
 .testimonials {
   background: var(--color-surface);
 }
@@ -839,7 +827,6 @@ a.heroGhost {
   }
 }
 
-/* --------------------------------------------------- FAQ + contact --- */
 .connect {
   background: var(--color-canvas);
 }
@@ -974,7 +961,6 @@ a.heroGhost {
   }
 }
 
-/* ---------------------------------------------------- Closing CTA card --- */
 .closing {
   background: var(--color-canvas);
 }

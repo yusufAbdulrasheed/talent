@@ -10,14 +10,11 @@ import { passwordResetEmail, trainerInviteEmail, verificationEmail } from './ema
 const TOKEN_DURATION_MS = 60 * 60 * 1000;
 const PASSWORD_SALT_ROUNDS = 12;
 
-// Only the hash is stored, so a database leak cannot be replayed as a
-// working verification or reset link.
 function hashToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 async function issueToken(user, type) {
-  // Issuing a new token invalidates any earlier one of the same type.
   await AccountToken.deleteMany({ user: user.id, type });
 
   const token = crypto.randomBytes(32).toString('base64url');
@@ -64,8 +61,6 @@ export async function verifyEmail(token) {
 export async function sendPasswordResetEmail(email) {
   const user = await User.findOne({ email: email.toLowerCase() });
 
-  // Silent return for unknown or disabled accounts: the caller always reports
-  // the same result, so this cannot be used to enumerate addresses.
   if (!user || !user.isActive) {
     return;
   }
@@ -76,10 +71,6 @@ export async function sendPasswordResetEmail(email) {
   await sendEmail({ to: user.email, ...message });
 }
 
-/**
- * Invites a newly created trainer to set their first password. Reuses the
- * password-reset token type, so the same consume-and-revoke path applies.
- */
 export async function sendTrainerInvite(userId) {
   const user = await User.findById(userId);
 
@@ -98,8 +89,6 @@ export async function resetPassword(token, password) {
   user.passwordHash = await bcrypt.hash(password, PASSWORD_SALT_ROUNDS);
   await user.save();
 
-  // Every existing session is dropped, so a stolen session cannot outlive
-  // the password it was created with.
   await RefreshToken.updateMany(
     { user: user.id, revokedAt: null },
     { $set: { revokedAt: new Date() } },

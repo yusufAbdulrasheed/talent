@@ -2,11 +2,6 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import styles from './StatCard.module.scss';
 
-/**
- * Headline number tile used on every portal overview. With `to` it becomes a
- * link to the list the number summarises. `tone="urgent"` flags work waiting
- * on the viewer; `tone="featured"` gives the tile the brand gradient.
- */
 function StatCard({ label, value, icon, hint, to, tone = 'default' }) {
   const Icon = icon;
   const classes = [styles.card, styles[tone], to ? styles.interactive : ''].filter(Boolean).join(' ');

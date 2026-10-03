@@ -26,7 +26,6 @@ import TextareaField from '../../../components/ui/TextareaField/TextareaField.js
 import { AVATAR_FACES, PHOTOS, photoUrl } from '../../../constants/photos.js';
 import styles from './HomePage.module.scss';
 
-// Copy and imagery are placeholder until the client signs off on messaging and branding.
 const HERO_STATS = [
   { value: '2,400+', label: 'Verified talents' },
   { value: '180+', label: 'Hiring partners' },
@@ -84,8 +83,6 @@ const EMPLOYER_POINTS = [
   'Hire with confidence',
 ];
 
-// Illustrative only — the matching card mirrors how recruiters actually see
-// talent: reference numbers, never names.
 const SAMPLE_MATCHES = [
   { reference: 'TAL-2026-00142', role: 'Accounts & Finance', score: '96%' },
   { reference: 'TAL-2026-00087', role: 'Software Engineering', score: '93%' },
@@ -186,7 +183,6 @@ function HomePage() {
     setForm((current) => ({ ...current, [name]: value }));
   };
 
-  // Not wired to a backend yet — shows a local confirmation on submit.
   const handleSubmit = (event) => {
     event.preventDefault();
     setSubmitted(true);

@@ -1,13 +1,5 @@
 import styles from './DataTable.module.scss';
 
-/**
- * Generic table.
- *
- * @param {Array} columns  [{ key, header, render?, align? }]
- * @param {Array} rows
- * @param {(row) => string} getRowKey
- * @param {string} caption  Describes the table for screen readers.
- */
 function DataTable({ columns, rows, getRowKey, caption }) {
   return (
     <div className={styles.wrapper}>

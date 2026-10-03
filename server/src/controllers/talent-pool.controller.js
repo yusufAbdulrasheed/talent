@@ -26,8 +26,6 @@ export const getCandidateByReference = asyncHandler(async (request, response) =>
   const unlockedLevels = await resolveUnlockedLevels(request.user.id);
   const candidate = await findAnonymousCandidate(request.params.reference, unlockedLevels);
 
-  // Unapproved and non-existent candidates are indistinguishable here, so this
-  // endpoint cannot be used to probe whether a reference exists.
   if (!candidate) {
     throw new AppError('Candidate not found in the talent pool.', 404);
   }

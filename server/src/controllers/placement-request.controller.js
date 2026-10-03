@@ -9,10 +9,6 @@ import { getCompanyForUser } from '../services/recruiter.service.js';
 import { getCurrentSubscription, getUnlockedExperienceLevels } from '../services/recruiter-subscription.service.js';
 import { notifyAdminsOfPlacementRequest } from '../services/notification.service.js';
 
-/**
- * A recruiter's view of their own request. The candidate is represented by
- * reference only — never by any identifying field.
- */
 function serializePlacementRequest(request, candidateReference) {
   return {
     id: request.id,
@@ -32,13 +28,6 @@ function serializePlacementRequest(request, candidateReference) {
   };
 }
 
-/**
- * Resolves references to approved candidates the recruiter's plan unlocks.
- * Resolving by reference and requiring APPROVED means a recruiter cannot reach
- * a candidate who is not in the talent pool; the tier check is the real guard
- * behind the client hiding locked talent. All-or-nothing: one bad reference
- * rejects the whole submission.
- */
 async function resolveRequestableCandidates(company, references) {
   const normalised = references.map((reference) => reference.toUpperCase());
   const candidates = await Candidate.find({
@@ -74,8 +63,6 @@ async function resolveRequestableCandidates(company, references) {
   return normalised.map((reference) => byReference.get(reference));
 }
 
-// Best effort: the requests are already saved, so a notification failure must
-// not turn a successful submission into an error for the recruiter.
 async function notifyAdmins(placementRequest, candidates, company) {
   try {
     await notifyAdminsOfPlacementRequest({
@@ -111,11 +98,6 @@ export const createPlacementRequest = asyncHandler(async (request, response) => 
   });
 });
 
-/**
- * One role, several talents picked together from the talent pool. Stored as
- * one request per candidate (so the admin workflow is unchanged) sharing a
- * `groupId`, with a single notification to the administrators.
- */
 export const createGroupPlacementRequest = asyncHandler(async (request, response) => {
   const company = await getCompanyForUser(request.user.id);
   const { candidateReferences, ...details } = request.validated;
@@ -174,8 +156,6 @@ export const listMyPlacementRequests = asyncHandler(async (request, response) =>
 export const getMyPlacementRequest = asyncHandler(async (request, response) => {
   const company = await getCompanyForUser(request.user.id);
 
-  // Scoping the lookup by company means one recruiter can never read another's
-  // request, even with a valid id.
   const placementRequest = await PlacementRequest.findOne({
     _id: request.params.id,
     recruiterCompany: company.id,

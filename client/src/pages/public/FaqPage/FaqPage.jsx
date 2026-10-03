@@ -12,7 +12,6 @@ import styles from './FaqPage.module.scss';
 
 const params = { type: 'faq', limit: 50 };
 
-// Shown until an admin publishes real FAQs in Content Studio.
 const FALLBACK = [
   {
     _id: 'fallback-1',

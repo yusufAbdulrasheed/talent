@@ -5,11 +5,6 @@ import { sendSuccess } from '../utils/api-response.js';
 import { sendEmail } from '../services/email.service.js';
 import { contactMessageEmail } from '../services/email-templates.js';
 
-/**
- * Public "Contact us" form. Emails every active administrator with the
- * message, reply-to set to the sender. Delivery is best-effort: a mail
- * outage must not surface as a failed submission to the visitor.
- */
 export const submitContactMessage = asyncHandler(async (request, response) => {
   const { name, email, subject, message } = request.validated;
 

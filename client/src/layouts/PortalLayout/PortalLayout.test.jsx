@@ -43,8 +43,6 @@ describe('PortalLayout — collapsible sidebar', () => {
 
     const expanded = screen.getByRole('button', { name: 'Expand sidebar' });
     expect(expanded).toHaveAttribute('aria-expanded', 'false');
-    // Visually hidden on a collapsed desktop rail / absent from the mobile strip,
-    // but never removed from the DOM — still reachable for assistive tech.
     expect(screen.getByRole('link', { name: /Find talent/ })).toBeInTheDocument();
   });
 

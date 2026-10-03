@@ -9,7 +9,6 @@ beforeAll(async () => {
   await mongoose.connect(mongod.getUri());
 });
 
-// Every test starts from an empty database, so ordering never matters.
 afterEach(async () => {
   const { collections } = mongoose.connection;
 
@@ -22,8 +21,6 @@ afterAll(async () => {
   await mongod?.stop();
 });
 
-// Without a Resend key the email service logs each message; that is correct
-// behaviour but it drowns the test output.
 vi.spyOn(console, 'info').mockImplementation(() => {});
 vi.spyOn(console, 'error').mockImplementation(() => {});
 vi.spyOn(console, 'warn').mockImplementation(() => {});

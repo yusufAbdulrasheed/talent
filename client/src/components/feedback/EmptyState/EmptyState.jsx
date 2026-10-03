@@ -1,7 +1,6 @@
 import { Inbox } from 'lucide-react';
 import styles from './EmptyState.module.scss';
 
-/** Shown where a list has loaded successfully but has nothing in it. */
 function EmptyState({ title, description, action, icon }) {
   const Icon = icon ?? Inbox;
 

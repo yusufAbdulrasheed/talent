@@ -4,8 +4,6 @@ import { SUBSCRIPTION_TIERS } from '../models/recruiter-subscription.model.js';
 
 const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid identifier.');
 
-// The company name (set at registration) is not editable here at all. The CAC
-// number may be supplied once, while it is still empty — see updateMyCompany.
 export const companyProfileSchema = z
   .object({
     cacNumber: z.string().trim().min(1).max(80).optional(),
@@ -18,7 +16,6 @@ export const companyProfileSchema = z
   })
   .strict();
 
-// Query values arrive as strings, so list and number fields are coerced here.
 export const talentPoolQuerySchema = z
   .object({
     location: z.string().trim().min(1).max(160).optional(),
@@ -32,8 +29,6 @@ export const talentPoolQuerySchema = z
     certification: z.string().trim().min(1).max(160).optional(),
     program: objectId.optional(),
     keyword: z.string().trim().min(1).max(120).optional(),
-    // Browse one tier's talent (Junior / Intermediate / Senior). Asking for a
-    // tier above the recruiter's plan simply returns nothing.
     tier: z.enum(Object.values(SUBSCRIPTION_TIERS)).optional(),
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(50).default(12),
@@ -52,14 +47,12 @@ const roleDetails = {
   additionalNotes: z.string().trim().max(3000).optional(),
 };
 
-// Recruiters only ever know a candidate by reference, never by id.
 const candidateReference = z.string().trim().min(5).max(40);
 
 export const placementRequestSchema = z
   .object({ candidateReference, ...roleDetails })
   .strict();
 
-/** One role, several selected candidates — submitted to the admin together. */
 export const groupPlacementRequestSchema = z
   .object({
     candidateReferences: z

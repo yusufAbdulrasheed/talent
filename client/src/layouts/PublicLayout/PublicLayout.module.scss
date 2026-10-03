@@ -159,8 +159,6 @@
     margin-top: 0;
   }
 
-  // Lift the ghost "Sign in" button onto the dark header. The `a.` prefix
-  // keeps this above the Button component's own variant styles.
   a.navCta {
     border-radius: var(--radius-full);
     padding-inline: var(--space-5);

@@ -13,7 +13,6 @@ import { getErrorMessage } from '../../../api/http.js';
 import { EMPLOYMENT_TYPE_OPTIONS } from '../../../constants/placementRequest.js';
 import styles from './GroupRequestModal.module.scss';
 
-// Mirrors the server's MAX_CANDIDATES_PER_REQUEST.
 export const MAX_GROUP_SIZE = 20;
 
 const INITIAL_ROLE = {
@@ -26,18 +25,10 @@ const INITIAL_ROLE = {
   additionalNotes: '',
 };
 
-/**
- * Pick several talents, describe the role once, and send the lot to the admin
- * as a single request. `selected` is a Map of reference → candidate owned by
- * the talent pool page, so picks made on the cards (and on other result pages)
- * carry into the popup.
- */
 function GroupRequestModal({ isOpen, onClose, candidates, selected, onToggle, onSelectAll, onClearSelection }) {
   const queryClient = useQueryClient();
   const [step, setStep] = useState('select');
   const [role, setRole] = useState(INITIAL_ROLE);
-  // Narrows the list below without touching the main page's own search — picks
-  // already made (from this page or any other) are never hidden by it.
   const [jobTitleFilter, setJobTitleFilter] = useState('');
 
   const mutation = useMutation({
@@ -53,8 +44,6 @@ function GroupRequestModal({ isOpen, onClose, candidates, selected, onToggle, on
     return !needle || (candidate.jobTitle ?? '').toLowerCase().includes(needle);
   };
 
-  // Selections from other pages first, then everything on the current page —
-  // "select all on this page" below only ever acts on the latter.
   const onPage = new Set(candidates.map((candidate) => candidate.referenceNumber));
   const allRows = [...[...selected.values()].filter((candidate) => !onPage.has(candidate.referenceNumber)), ...candidates];
   const rows = allRows.filter(matchesJobTitleFilter);

@@ -15,8 +15,6 @@ export const registerSchema = z
     email: emailField,
     password: passwordSchema,
     role: z.enum([USER_ROLES.TALENT, USER_ROLES.RECRUITER]),
-    // Recruiters register a company alongside their user account, so the
-    // recruiter record exists from the start rather than being created later.
     companyName: z.string().trim().min(2).max(160).optional(),
   })
   .strict()

@@ -11,8 +11,6 @@ vi.mock('../../../api/endpoints/recruiter.js', () => ({
 
 const { searchTalentPool, createGroupPlacementRequest } = await import('../../../api/endpoints/recruiter.js');
 
-// What the API returns for a recruiter on the free Junior plan: the Junior tier
-// is unlocked, Intermediate and Senior are only counted.
 const TIERS = [
   { tier: 'junior', unlocked: true, total: 8 },
   { tier: 'intermediate', unlocked: false, total: 4 },
@@ -55,7 +53,6 @@ const lastParams = () => searchTalentPool.mock.lastCall[0];
 describe('TalentPoolPage', () => {
   beforeEach(() => {
     searchTalentPool.mockReset();
-    // A locked tier yields no candidates, exactly as the API does.
     searchTalentPool.mockImplementation(async (params) =>
       pageOf(params.tier === 'senior' || params.tier === 'intermediate' ? [] : [CANDIDATE]),
     );
@@ -70,7 +67,6 @@ describe('TalentPoolPage', () => {
       fireEvent.change(screen.getByRole('textbox', { name: 'Location' }), { target: { value: 'Lagos' } });
       fireEvent.change(screen.getByRole('textbox', { name: 'Skills' }), { target: { value: 'Excel' } });
       fireEvent.change(screen.getByRole('textbox', { name: 'Certification' }), { target: { value: 'ICAN' } });
-      // Typing alone must not fire a request per keystroke.
       expect(searchTalentPool).toHaveBeenCalledTimes(1);
 
       fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
@@ -119,7 +115,6 @@ describe('TalentPoolPage', () => {
       renderPage();
       await screen.findByText('TAL-2026-00001');
 
-      // "All" counts what the plan can browse; locked tabs still show how many people they hold.
       expect(screen.getByRole('button', { name: /^All\s*8$/ })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /^Junior\s*8$/ })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Intermediate\s*4\s*\(locked on your plan\)/ })).toBeInTheDocument();
@@ -157,7 +152,6 @@ describe('TalentPoolPage', () => {
       expect(
         screen.getByText('8 more talents are locked on your plan: 4 Intermediate, 4 Senior.'),
       ).toBeInTheDocument();
-      // Locked talent is never listed on All either — only the unlocked profile.
       expect(screen.getAllByRole('link', { name: /View full profile/ })).toHaveLength(1);
     });
 
@@ -178,8 +172,6 @@ describe('TalentPoolPage', () => {
   });
 
   describe('multi-talent request', () => {
-    // jsdom has no <dialog>.showModal, so the popup's content stays in a closed
-    // dialog; `hidden: true` lets the queries reach it.
     const inPopup = { hidden: true };
     const popup = () => within(document.querySelector('dialog'));
 
@@ -254,7 +246,6 @@ describe('TalentPoolPage', () => {
 
         expect(popup().queryByText('TAL-2026-00001', inPopup)).not.toBeInTheDocument();
         expect(popup().getByText('TAL-2026-00002', inPopup)).toBeInTheDocument();
-        // The main page's own results and request are completely untouched.
         expect(searchTalentPool).toHaveBeenCalledTimes(1);
         expect(screen.getByText('TAL-2026-00001')).toBeInTheDocument();
       });
@@ -270,7 +261,6 @@ describe('TalentPoolPage', () => {
 
         fireEvent.click(popup().getByRole('checkbox', { name: 'Select all matching on this page', ...inPopup }));
 
-        // Only the filtered-in nurse got checked — the hidden frontend developer did not.
         expect(popup().getByRole('checkbox', { name: /TAL-2026-00002/, ...inPopup })).toBeChecked();
 
         fireEvent.change(popup().getByRole('textbox', { name: 'Filter by job title', ...inPopup }), {
@@ -283,7 +273,6 @@ describe('TalentPoolPage', () => {
         renderPage();
         await screen.findByText('TAL-2026-00001');
 
-        // Select TAL-2026-00001 on the main page first, as a "pick from another search".
         fireEvent.click(screen.getByRole('button', { name: /Select TAL-2026-00001/ }));
 
         fireEvent.click(screen.getByRole('button', { name: 'Request selected' }));
@@ -291,7 +280,6 @@ describe('TalentPoolPage', () => {
           target: { value: 'nurse' },
         });
 
-        // Hidden by the filter, but still selected — Continue must still work for it.
         expect(popup().queryByText('TAL-2026-00001', inPopup)).not.toBeInTheDocument();
         expect(popup().getByRole('button', { name: /Continue/, ...inPopup })).toBeEnabled();
       });

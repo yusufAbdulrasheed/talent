@@ -84,8 +84,6 @@ export const updatePlacementRequestStatus = asyncHandler(async (request, respons
 
   await placementRequest.save();
 
-  // Best effort: the status change is saved, so a mail failure must not
-  // surface to the administrator as a failed update.
   try {
     await sendPlacementStatusEmail(placementRequest, placementRequest.candidate?.referenceNumber);
   } catch (error) {

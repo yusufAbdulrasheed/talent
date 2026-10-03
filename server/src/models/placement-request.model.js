@@ -11,10 +11,7 @@ const placementRequestSchema = new mongoose.Schema(
     salaryRange: { type: String, trim: true, maxlength: 120 },
     location: { type: String, required: true, trim: true, maxlength: 160 },
     startDate: { type: Date },
-    // Kept for existing rows; every request is now for exactly one candidate.
     numberRequired: { type: Number, required: true, min: 1, default: 1 },
-    // Shared by the requests a recruiter submits together for several
-    // candidates at once, so they can be reviewed as one group.
     groupId: { type: String, index: true },
     additionalNotes: { type: String, trim: true, maxlength: 3000 },
     status: { type: String, enum: Object.values(PLACEMENT_REQUEST_STATUSES), default: PLACEMENT_REQUEST_STATUSES.SUBMITTED, index: true },

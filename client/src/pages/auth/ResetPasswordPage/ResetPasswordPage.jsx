@@ -21,8 +21,6 @@ function ResetPasswordPage() {
 
   const resetMutation = useMutation({
     mutationFn: resetPassword,
-    // The server revokes every existing session on reset, so the user has to
-    // sign in again with the new password.
     onSuccess: () => navigate('/login', { replace: true, state: { passwordReset: true } }),
   });
 

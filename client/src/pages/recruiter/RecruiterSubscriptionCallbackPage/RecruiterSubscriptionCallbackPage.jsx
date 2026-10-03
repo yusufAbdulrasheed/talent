@@ -11,7 +11,7 @@ import { queryKeys } from '../../../api/queryKeys.js';
 import styles from './RecruiterSubscriptionCallbackPage.module.scss';
 
 const POLL_INTERVAL_MS = 3000;
-const MAX_ATTEMPTS = 30; // ~90 seconds
+const MAX_ATTEMPTS = 30; 
 
 function RecruiterSubscriptionCallbackPage() {
   const [searchParams] = useSearchParams();

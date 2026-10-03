@@ -29,11 +29,6 @@ const documentSchema = z
   })
   .strict();
 
-/**
- * Accepts a partial document set so the wizard can save progress; the
- * candidate only advances to "submitted" once `hasRequiredDocuments` passes
- * (enforced in the controller).
- */
 export const talentDocumentsSchema = z
   .object({
     documents: z.array(documentSchema).max(20),
@@ -42,7 +37,6 @@ export const talentDocumentsSchema = z
   .superRefine((value, context) => {
     const seen = new Set();
     for (const document of value.documents) {
-      // Everything except certificates is a single, replace-in-place slot.
       if (document.type !== 'certificate' && seen.has(document.type)) {
         context.addIssue({
           code: z.ZodIssueCode.custom,

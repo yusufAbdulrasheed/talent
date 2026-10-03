@@ -20,9 +20,6 @@ import {
 import { formatDate } from '../../../utils/format.js';
 import styles from './AdminPlacementRequestsPage.module.scss';
 
-// Tiles shown above the table. Kept to the statuses an admin actively works
-// through — "closed" isn't part of the working queue, so it's left out here
-// the same way it's left out of the pill filter's default view.
 const STAT_CONFIG = [
   { status: PLACEMENT_REQUEST_STATUSES.SUBMITTED, icon: Inbox },
   { status: PLACEMENT_REQUEST_STATUSES.UNDER_REVIEW, icon: Eye },

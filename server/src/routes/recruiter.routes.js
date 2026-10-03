@@ -27,9 +27,6 @@ import {
 
 const recruiterRouter = Router();
 
-// Every route below is recruiter-only. Junior-tier talent (entry/junior
-// candidates) is free to browse and request; intermediate/senior candidates
-// require an active paid subscription — see recruiter-subscription.service.js.
 recruiterRouter.use(authenticate, authorize(USER_ROLES.RECRUITER));
 
 recruiterRouter.get('/company', getMyCompany);

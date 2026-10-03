@@ -19,8 +19,6 @@ function ForgotPasswordPage() {
     resetMutation.mutate(email);
   };
 
-  // The API deliberately answers the same way for unknown addresses, so the
-  // confirmation here must not imply the account exists.
   if (resetMutation.isSuccess) {
     return (
       <AuthPanel

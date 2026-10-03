@@ -29,8 +29,6 @@ describe('role-based access control', () => {
       const response = await request(app).get(path).set('Authorization', bearer(token));
 
       if (role === owner) {
-        // The owning role gets through authorisation. It may still 404 when no
-        // profile row exists yet, which is a data condition, not a denial.
         expect(response.status, `${role} on ${path}`).not.toBe(403);
         expect(response.status, `${role} on ${path}`).not.toBe(401);
       } else {
@@ -67,8 +65,6 @@ describe('role-based access control', () => {
       const response = await request(app)[method]('/api/v1/trainer/dashboard')
         .set('Authorization', bearer(token));
 
-      // Nothing is registered for these verbs, so they fall through to the
-      // 404 handler rather than mutating anything.
       expect(response.status, method).toBe(404);
     }
   });

@@ -1,20 +1,3 @@
-/**
- * Demo placement requests for `npm run seed:demo`.
- *
- * A placement request is how a recruiter asks for a specific talent, so this
- * is the recruiter-side information that fills the admin's "Placement
- * requests" screens and dashboard tiles. Sixteen requests cover every status:
- * 5 submitted, 3 under review, 4 in progress, 2 fulfilled, 2 closed.
- *
- * The app only lets a recruiter request a candidate who is APPROVED and whose
- * experience level their plan unlocks, and the seeder re-checks both against
- * the database before writing — so an edit here that breaks the rule fails
- * loudly instead of seeding a state the product cannot reach.
- *
- * `recruiter` is a recruiter `slug`; `candidate` is a talent's full name.
- * `submittedDaysAgo` is kept inside the recruiter's paid window, and at least 3
- * for anything past "submitted" so its last-updated date is not in the future.
- */
 export const DEMO_PLACEMENT_REQUESTS = Object.freeze([
   {
     recruiter: 'paystride',

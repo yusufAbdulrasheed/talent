@@ -47,8 +47,6 @@
   color: var(--color-danger);
 }
 
-// Body copy stays in the text colour for readability; the variant hue is
-// carried by the icon, title and border.
 .body > div {
   color: var(--color-text-muted);
 }

@@ -19,7 +19,6 @@ const ROLE_HOME_PATHS = Object.freeze({
   [USER_ROLES.ADMIN]: '/admin',
 });
 
-/** Where a user lands after signing in, or after hitting a route they own. */
 export function getRoleHomePath(role) {
   return ROLE_HOME_PATHS[role] ?? '/';
 }

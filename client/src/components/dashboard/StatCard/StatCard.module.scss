@@ -71,7 +71,6 @@
   transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
-// Work waiting on the viewer.
 .urgent {
   border-color: color-mix(in srgb, var(--color-warning) 35%, transparent);
   background: linear-gradient(135deg, var(--color-warning-surface), var(--color-surface) 70%);
@@ -86,7 +85,6 @@
   }
 }
 
-// The one number that matters most on the page.
 .featured {
   border-color: transparent;
   background: var(--gradient-primary);

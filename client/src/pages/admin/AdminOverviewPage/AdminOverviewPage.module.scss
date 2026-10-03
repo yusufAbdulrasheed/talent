@@ -49,14 +49,12 @@
   }
 }
 
-// Sections with only two headline numbers (payments) get wider tiles.
 .statsWide {
   @include from(xl) {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-// ---- Bottom activity row: recent requests + quick links --------------------
 
 .activityGrid {
   display: grid;

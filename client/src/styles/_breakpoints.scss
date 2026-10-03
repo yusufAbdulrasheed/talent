@@ -1,6 +1,5 @@
 @use 'sass:map';
 
-// Breakpoint scale. Mobile-first: every mixin below is a min-width query.
 $breakpoints: (
   sm: 480px,
   md: 768px,

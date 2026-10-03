@@ -27,7 +27,6 @@ import styles from './AdminProgramsPage.module.scss';
 const EMPTY_PROGRAM = { title: '', description: '' };
 const EMPTY_ASSIGNMENT = { trainer: '', program: '', batchName: '', announcement: '' };
 
-/** Bento tile for a single training programme. */
 function ProgramCard({ program, batchCount, candidateCount, isToggling, onToggle }) {
   const isActive = program.isActive;
 
@@ -119,9 +118,6 @@ function AdminProgramsPage() {
     .filter((trainer) => trainer.isActive)
     .map((trainer) => ({ value: trainer.id, label: `${trainer.fullName} (${trainer.email})` }));
 
-  // Real, already-fetched assignment data — used to derive per-programme
-  // batch/candidate counts and the announcements list. Nothing here is
-  // invented: it's the same rows the "Trainer assignments" table renders.
   const assignments = useMemo(() => assignmentsQuery.data?.assignments ?? [], [assignmentsQuery.data]);
 
   const assignmentsByProgram = useMemo(() => {

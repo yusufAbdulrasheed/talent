@@ -34,7 +34,6 @@ function PlacementRequestFormPage() {
   const createMutation = useMutation({
     mutationFn: createPlacementRequest,
     onSuccess: (placementRequest) => {
-      // The list and the dashboard counts are both stale now.
       queryClient.invalidateQueries({ queryKey: queryKeys.recruiter.all });
       navigate(`/recruiter/requests/${placementRequest.id}`, {
         replace: true,

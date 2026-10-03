@@ -23,7 +23,6 @@ function isProfessionalComplete(candidate) {
   return Boolean(candidate.education && candidate.skills.length > 0 && candidate.workExperience);
 }
 
-/** Mirrors the server's completeness checks, to decide where a returning candidate lands. */
 function computeFurthestStep(candidate) {
   if (!isPersonalComplete(candidate)) {
     return 0;
@@ -76,12 +75,6 @@ function StepIndicator({ steps, stepIndex, maxReached, onSelect }) {
   );
 }
 
-/**
- * Talent onboarding wizard: personal info -> professional info -> documents
- * -> review, replacing the old flat single-page profile form. Each step
- * progressively saves against the existing profile/documents endpoints, so a
- * candidate who leaves mid-way keeps everything they already entered.
- */
 function TalentOnboardingWizard({ candidate }) {
   const queryClient = useQueryClient();
   const [stepIndex, setStepIndex] = useState(() => computeFurthestStep(candidate));

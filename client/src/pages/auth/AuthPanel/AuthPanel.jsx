@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import Logo from '../../../components/brand/Logo/Logo.jsx';
 import styles from './AuthPanel.module.scss';
 
-/** Shared centred card used by every authentication screen. */
 function AuthPanel({ title, subtitle, children, footer }) {
   return (
     <section className={styles.wrapper}>

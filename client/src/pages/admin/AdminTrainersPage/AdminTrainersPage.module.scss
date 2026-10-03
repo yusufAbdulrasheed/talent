@@ -1,5 +1,3 @@
-// Flat bento tiles — each stat rests directly on the canvas, not nested
-// inside a Card, matching the AdminOverviewPage summary pattern.
 .stats {
   display: grid;
   gap: var(--space-4);
@@ -45,7 +43,6 @@
   color: var(--color-text-muted);
 }
 
-// ---- Add-a-trainer form -----------------------------------------------------
 .createForm {
   display: grid;
   gap: var(--space-4);
@@ -65,7 +62,6 @@
   align-items: flex-end;
 }
 
-// ---- Table cells ------------------------------------------------------------
 .nameCell {
   display: flex;
   align-items: center;

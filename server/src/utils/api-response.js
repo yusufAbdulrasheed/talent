@@ -1,10 +1,3 @@
-/**
- * Standard success envelope for every endpoint:
- *   { success: true, message?: string, data?: object }
- *
- * Failures are shaped by the error middleware as:
- *   { success: false, message: string, details?: array }
- */
 export function sendSuccess(response, { status = 200, data, message } = {}) {
   const body = { success: true };
 

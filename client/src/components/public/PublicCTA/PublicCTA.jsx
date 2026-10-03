@@ -1,7 +1,6 @@
 import Button from '../../ui/Button/Button.jsx';
 import styles from './PublicCTA.module.scss';
 
-/** Closing call-to-action band shared by the marketing pages. */
 function PublicCTA({ title, lead, primary, secondary }) {
   return (
     <section className={styles.cta}>

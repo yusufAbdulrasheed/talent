@@ -2,7 +2,6 @@
   @include visually-hidden;
 }
 
-// ---- Journey card ------------------------------------------------------------
 
 .journeyCard {
   @include surface-card;
@@ -108,7 +107,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-// Horizontal stepper that wraps into a two-column grid on narrow screens.
 .steps {
   display: grid;
   gap: var(--space-4) var(--space-2);
@@ -128,7 +126,6 @@
   gap: var(--space-2);
   text-align: center;
 
-  // Dotted connector to the next step.
   @include from(sm) {
     &:not(:last-child)::after {
       content: '';
@@ -192,7 +189,6 @@
   }
 }
 
-// ---- Next action panel ---------------------------------------------------------
 
 .nextPanel {
   display: flex;
@@ -242,7 +238,6 @@
   margin-top: var(--space-3);
 }
 
-// ---- Action cards --------------------------------------------------------------
 
 .actionGrid {
   display: grid;
@@ -325,7 +320,6 @@
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
-// The photo bleeds off the right edge and fades into the card.
 .actionImage {
   flex: 0 0 40%;
   width: 40%;
@@ -336,7 +330,6 @@
   transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-// ---- Savings ---------------------------------------------------------------------
 
 .savingsRow {
   display: flex;
@@ -361,7 +354,6 @@
   color: var(--color-accent);
 }
 
-// ---- Visibility banner -------------------------------------------------------------
 
 .banner {
   position: relative;
@@ -430,7 +422,6 @@
   }
 }
 
-// ---- Benefits strip --------------------------------------------------------------------
 
 .benefits {
   display: grid;

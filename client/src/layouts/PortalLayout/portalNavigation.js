@@ -15,10 +15,6 @@ import {
 } from 'lucide-react';
 import { USER_ROLES } from '../../auth/roles.js';
 
-/**
- * Sidebar links per role. Every path here must have a matching route in
- * AppRoutes.jsx, and a matching API guard on the server.
- */
 export const PORTAL_NAVIGATION = {
   [USER_ROLES.TALENT]: [
     { to: '/talent', label: 'Overview', end: true, icon: LayoutDashboard },
@@ -49,7 +45,6 @@ export const PORTAL_NAVIGATION = {
   ],
 };
 
-/** Sidebar brand subtitle per role — mirrors the "Admin Console" treatment. */
 export const PORTAL_SUBTITLE = {
   [USER_ROLES.TALENT]: 'Talent Console',
   [USER_ROLES.RECRUITER]: 'Recruiter Console',
@@ -57,10 +52,6 @@ export const PORTAL_SUBTITLE = {
   [USER_ROLES.ADMIN]: 'Admin Console',
 };
 
-/**
- * Where the top-bar search submits to, as a real query — never a decorative
- * no-op. Roles with no searchable list of their own get no search box.
- */
 export const PORTAL_SEARCH = {
   [USER_ROLES.RECRUITER]: { to: '/recruiter/talent-pool', param: 'search', placeholder: 'Search the talent pool…' },
   [USER_ROLES.ADMIN]: { to: '/admin/candidates', param: 'search', placeholder: 'Search candidates…' },

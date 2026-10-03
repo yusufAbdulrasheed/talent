@@ -45,8 +45,6 @@ export const listPayments = asyncHandler(async (request, response) => {
     query,
     page,
     limit,
-    // The raw provider payload stays out of list responses; it is large and
-    // only useful when investigating a single transaction.
     select: '-providerPayload',
     populate: [
       { path: 'candidate', select: 'referenceNumber' },

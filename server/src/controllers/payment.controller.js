@@ -7,12 +7,6 @@ import RecruiterCompany from '../models/recruiter-company.model.js';
 import { activateTier, applyLazyExpiry, getOrCreateSubscription } from '../services/recruiter-subscription.service.js';
 import { notifyUser } from '../services/notification.service.js';
 
-/**
- * Settles a confirmed recruiter-subscription payment: marks the `Payment`
- * row successful and activates the purchased tier. Idempotent against
- * Paystack's at-least-once webhook delivery — a reference already marked
- * `success` is a no-op.
- */
 async function handleChargeSuccess(reference) {
   const payment = await Payment.findOne({ reference });
 
@@ -20,7 +14,6 @@ async function handleChargeSuccess(reference) {
     return;
   }
 
-  // Never trust the webhook payload alone — re-verify server-side.
   const verified = await verifyPaystackTransaction(reference);
   if (verified.status !== 'success') {
     return;
@@ -40,8 +33,6 @@ async function handleChargeSuccess(reference) {
   activateTier(subscription, payment.subscriptionTier);
   await subscription.save();
 
-  // Best effort: the subscription is already active, so a notify failure
-  // must not surface as a failed webhook (Paystack would only retry it).
   try {
     const company = await RecruiterCompany.findById(payment.recruiterCompany);
     if (company) {
@@ -57,10 +48,6 @@ async function handleChargeSuccess(reference) {
   }
 }
 
-/**
- * Paystack webhook endpoint. It is mounted with a raw body parser in app.js so
- * the HMAC signature can be verified against the exact bytes Paystack sent.
- */
 export const paystackWebhook = asyncHandler(async (request, response) => {
   const signature = request.headers['x-paystack-signature'];
 

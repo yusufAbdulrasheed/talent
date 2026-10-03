@@ -4,10 +4,6 @@ import Spinner from '../../ui/Spinner/Spinner.jsx';
 import { getErrorMessage } from '../../../api/http.js';
 import styles from './QueryBoundary.module.scss';
 
-/**
- * Renders the loading and failure states of a TanStack Query result so pages
- * only have to describe the success case.
- */
 function QueryBoundary({ query, loadingLabel = 'Loading', children }) {
   if (query.isPending) {
     return (

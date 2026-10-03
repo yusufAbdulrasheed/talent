@@ -30,28 +30,21 @@ function createLimiter({ limit, message }) {
     limit,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
-    // The limiter keeps in-process state, so without this one test file would
-    // exhaust the budget for every test that follows it.
     skip: () => environment.NODE_ENV === 'test',
     message: { success: false, message },
   });
 }
 
-// Guards credential stuffing. Sized so that a handful of people sharing one
-// office or mobile-carrier NAT do not lock each other out.
 const credentialsLimiter = createLimiter({
   limit: 30,
   message: 'Too many authentication attempts. Please try again later.',
 });
 
-// Account-recovery routes each send an email, so they are budgeted separately
-// and more tightly: the abuse here is using us to spam a third party.
 const recoveryLimiter = createLimiter({
   limit: 12,
   message: 'Too many account recovery attempts. Please try again later.',
 });
 
-// Refresh runs on every page load, so it needs a far higher ceiling.
 const refreshLimiter = createLimiter({
   limit: 120,
   message: 'Too many session refresh attempts. Please try again later.',

@@ -26,7 +26,6 @@ export function formatDateTime(value) {
   );
 }
 
-/** Formats a date for an <input type="date"> value. */
 export function toDateInputValue(value) {
   if (!value) {
     return '';
@@ -35,7 +34,6 @@ export function toDateInputValue(value) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
-/** "React, Node.js" -> ["React", "Node.js"], dropping blanks and duplicates. */
 export function parseList(value) {
   const items = value
     .split(',')

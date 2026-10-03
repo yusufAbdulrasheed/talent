@@ -51,8 +51,6 @@
   width: 100%;
 }
 
-// Each variant restates `color` on hover: Button renders as an <a> for link
-// buttons, and the global `a:hover` colour rule would otherwise win.
 .primary {
   background: var(--gradient-primary);
   color: #ffffff;

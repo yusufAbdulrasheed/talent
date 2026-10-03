@@ -16,7 +16,6 @@ import InfoCard from '../../../components/public/InfoCard/InfoCard.jsx';
 import PhotoPanel from '../../../components/public/PhotoPanel/PhotoPanel.jsx';
 import styles from './TrainingPage.module.scss';
 
-// Copy is placeholder until programme details are confirmed with the client.
 const PROGRAMMES = [
   {
     icon: Code2,

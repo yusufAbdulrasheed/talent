@@ -6,8 +6,6 @@ export async function registerAccount(payload) {
 }
 
 export async function login(credentials) {
-  // A 401 here means "wrong password", not "expired session" — refreshing
-  // would be pointless and would clobber a valid session in another tab.
   const { data } = await http.post('/auth/login', credentials, { skipAuthRefresh: true });
   return data.data;
 }

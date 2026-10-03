@@ -2,9 +2,6 @@ import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_URL || '/api/v1';
 
-// The access token lives in memory only. Persisting it to localStorage would
-// expose it to any XSS on the page; the httpOnly refresh cookie is what
-// survives a reload, and `bootstrapSession` trades it for a fresh access token.
 let accessToken = null;
 
 export function setAccessToken(token) {
@@ -17,8 +14,6 @@ export function getAccessToken() {
 
 export const http = axios.create({ baseURL, withCredentials: true });
 
-// A bare client for the refresh call itself, so a failing refresh can never
-// re-enter the interceptor below and recurse.
 const refreshClient = axios.create({ baseURL, withCredentials: true });
 
 let sessionExpiredHandler = () => {};
@@ -29,12 +24,6 @@ export function setSessionExpiredHandler(handler) {
 
 let refreshRequest = null;
 
-/**
- * Exchanges the refresh cookie for a new access token. Concurrent callers
- * share one in-flight request so a burst of 401s triggers a single refresh.
- *
- * @returns {Promise<object>} the refreshed user
- */
 export function refreshSession() {
   if (!refreshRequest) {
     refreshRequest = refreshClient
@@ -80,10 +69,6 @@ http.interceptors.response.use(null, async (error) => {
   return http(config);
 });
 
-/**
- * Pulls the human-readable message out of an API error, falling back to
- * something usable for network failures and unexpected shapes.
- */
 export function getErrorMessage(error, fallback = 'Something went wrong. Please try again.') {
   return error?.response?.data?.message || error?.message || fallback;
 }

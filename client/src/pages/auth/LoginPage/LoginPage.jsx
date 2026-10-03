@@ -19,7 +19,6 @@ function LoginPage() {
   const loginMutation = useMutation({
     mutationFn: signIn,
     onSuccess: (user) => {
-      // Prefer the page the guard bounced them off, falling back to the portal.
       const intended = location.state?.from?.pathname;
       navigate(intended ?? getRoleHomePath(user.role), { replace: true });
     },

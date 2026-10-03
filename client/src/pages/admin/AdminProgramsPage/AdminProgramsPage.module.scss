@@ -1,4 +1,3 @@
-// ---- Two-column bento layout: programmes + assignments, announcements ----
 
 .layout {
   display: grid;
@@ -47,7 +46,6 @@
   font-weight: var(--weight-semibold);
 }
 
-// ---- Programme card grid ---------------------------------------------------
 
 .programGrid {
   display: grid;
@@ -127,7 +125,6 @@
   margin-left: auto;
 }
 
-// ---- Shared form bits (create programme / create assignment) --------------
 
 .form {
   display: flex;
@@ -172,7 +169,6 @@
   }
 }
 
-// ---- Announcements side panel ----------------------------------------------
 
 .announcementList {
   display: flex;

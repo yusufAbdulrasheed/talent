@@ -74,8 +74,6 @@ function AdminTrainersPage() {
   const fieldError = (field) =>
     createMutation.error?.response?.data?.details?.find((detail) => detail.field === field)?.message;
 
-  // Stat tiles are derived from the currently loaded page of trainers — a
-  // real snapshot, not a separate aggregate call.
   const trainers = trainersQuery.data?.trainers ?? [];
   const pagination = trainersQuery.data?.pagination;
   const activeCount = trainers.filter((trainer) => trainer.isActive).length;

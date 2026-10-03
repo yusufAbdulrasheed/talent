@@ -21,7 +21,6 @@ function VerifyEmailPage() {
 
   const verifyMutation = useMutation({
     mutationFn: verifyEmail,
-    // Pull the updated isEmailVerified flag so the portal banner disappears.
     onSuccess: () => {
       if (isAuthenticated) {
         refreshUser().catch(() => {});
@@ -31,8 +30,6 @@ function VerifyEmailPage() {
 
   const resendMutation = useMutation({ mutationFn: resendVerification });
 
-  // Verification consumes the token, so it must fire exactly once even though
-  // StrictMode mounts this effect twice in development.
   const { mutate: runVerification } = verifyMutation;
   useEffect(() => {
     if (!token || hasVerified.current) {

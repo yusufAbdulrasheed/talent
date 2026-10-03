@@ -1,15 +1,4 @@
-// Global design tokens — Sultan Magnate Consulting.
-//
-// "Building Systems. Sustaining Legacies." The look is bright and airy: a
-// deep-navy chrome (public header/hero, portal sidebar) frames light lavender
-// canvases, white cards with soft blue-tinted shadows, and a royal-blue →
-// violet gradient on every primary action. Gold survives as a quiet premium
-// accent (locked tiers, the logo slash) rather than a navigation colour.
-// Every component reads these variables — never a literal colour, spacing,
-// radius, or shadow value.
 :root {
-  // Brand ramp — royal blue with a violet lean. 500/600 are the working
-  // accents; the light end doubles as tinted surfaces and icon wells.
   --color-brand-50: #f1f2ff;
   --color-brand-100: #e4e6ff;
   --color-brand-200: #cdd0ff;
@@ -23,19 +12,15 @@
 
   --color-royal: #3538f0;
 
-  // Gold — the secondary brand colour (#CC9933), used sparingly for premium
-  // / locked markers. `-strong` is legible as text on white.
   --color-gold: #cc9933;
   --color-gold-soft: #fbf3e2;
   --color-gold-strong: #a9791d;
   --color-gold-on-dark: #e6c079;
   --color-on-gold: #26190a;
 
-  // Extended accents — gradients, data visualisation.
   --color-violet: #7b3cf5;
   --color-indigo: #3000a2;
 
-  // Signature gradients.
   --gradient-primary: linear-gradient(135deg, #3538f0 0%, #5a3bf4 60%, #7b3cf5 100%);
   --gradient-primary-hover: linear-gradient(135deg, #2a2de0 0%, #4c2fe6 60%, #6c2fe8 100%);
   --gradient-text: linear-gradient(100deg, #4b3ff5 0%, #8a4cf7 100%);
@@ -43,7 +28,6 @@
   --gradient-banner: linear-gradient(110deg, #1d1f9e 0%, #3538f0 45%, #7b3cf5 100%);
   --gradient-soft: linear-gradient(135deg, #eef0ff 0%, #f5efff 100%);
 
-  // Neutral ramp — cool slate with a faint navy undertone.
   --color-neutral-0: #ffffff;
   --color-neutral-50: #f6f7fd;
   --color-neutral-100: #eff0f9;
@@ -56,14 +40,12 @@
   --color-neutral-800: #252a45;
   --color-neutral-900: #0f1437;
 
-  // Ink ramp — house navy for the portal sidebar and marketing chrome.
   --color-ink-900: #070b33;
   --color-ink-800: #0c1552;
   --color-ink-700: #16206a;
   --color-ink-600: #25307f;
   --color-ink-border: rgba(160, 170, 255, 0.16);
 
-  // Status
   --color-success: #0f9f6e;
   --color-success-surface: #e4f7ef;
   --color-warning: #c96a05;
@@ -73,7 +55,6 @@
   --color-info: #3538f0;
   --color-info-surface: #eceeff;
 
-  // Semantic aliases — prefer these in component styles
   --color-text: var(--color-neutral-900);
   --color-text-muted: var(--color-neutral-600);
   --color-text-subtle: var(--color-neutral-500);
@@ -88,19 +69,16 @@
   --color-accent: var(--color-royal);
   --color-accent-hover: var(--color-brand-700);
   --color-accent-soft: var(--color-brand-50);
-  --color-accent-contrast: #b9bdff; // legible blue on navy surfaces
+  --color-accent-contrast: #b9bdff;
 
-  // On-dark semantic aliases — text and panels layered on the ink ramp
   --color-on-ink: #f1f2ff;
   --color-on-ink-muted: #aab0dc;
   --color-ink-surface: var(--color-ink-800);
   --color-ink-surface-raised: var(--color-ink-700);
 
-  // Premium / locked marker. Gold, deepened so it reads as text on white.
   --color-role-accent: var(--color-gold-strong);
   --color-role-accent-contrast: #ffffff;
 
-  // Spacing — 4px base
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -111,8 +89,6 @@
   --space-8: 4rem;
   --space-9: 6rem;
 
-  // Typography — Plus Jakarta Sans: geometric, friendly, crisp at display
-  // sizes. Manrope / Inter remain as metrics-close fallbacks.
   --font-sans: 'Plus Jakarta Sans', 'Manrope', 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue',
     Arial, sans-serif;
   --font-heading: var(--font-sans);
@@ -137,14 +113,12 @@
   --weight-bold: 700;
   --weight-extrabold: 800;
 
-  // Radii — generous and soft.
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
   --radius-xl: 24px;
   --radius-full: 999px;
 
-  // Elevation — blue-tinted ambient shadows; cards float gently on the canvas.
   --shadow-sm: 0 1px 2px rgba(22, 28, 90, 0.05);
   --shadow-md: 0 1px 2px rgba(22, 28, 90, 0.04), 0 10px 30px -12px rgba(38, 44, 140, 0.12);
   --shadow-lg: 0 2px 6px rgba(22, 28, 90, 0.05), 0 24px 48px -18px rgba(38, 44, 140, 0.22);
@@ -152,18 +126,14 @@
   --shadow-glow: 0 8px 20px -6px rgba(59, 63, 245, 0.45);
   --focus-ring-glow: 0 0 0 4px rgba(59, 63, 245, 0.14);
 
-  // Layout
   --container-width: 1200px;
   --header-height: 4.5rem;
   --sidebar-width: 16.5rem;
-  // Icon-only rail width when the sidebar is collapsed — see PortalLayout.
   --sidebar-width-collapsed: 5rem;
 
-  // Motion
   --transition-fast: 140ms ease;
   --transition-base: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
 
-  // Stacking order
   --z-header: 100;
   --z-sidebar: 90;
   --z-dropdown: 200;

@@ -18,7 +18,6 @@ const ROLE = {
   location: 'Lagos',
 };
 
-// The free (junior) plan unlocks entry and junior candidates only.
 const createJuniorCandidate = (overrides = {}) =>
   createCandidate({ overrides: { experienceLevel: 'junior', ...overrides } });
 

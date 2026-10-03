@@ -23,9 +23,6 @@
   }
 }
 
-// Job description / notes on the left, a compact status + summary panel
-// pinned on the right — recruiters only ever view their own requests here,
-// so there is no admin-style actions panel.
 .layout {
   display: grid;
   gap: var(--space-5);
@@ -107,7 +104,6 @@
   }
 }
 
-// Preserves the line breaks the recruiter typed into the textarea.
 .body {
   white-space: pre-wrap;
 }

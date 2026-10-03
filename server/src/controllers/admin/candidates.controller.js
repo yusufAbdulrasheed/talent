@@ -7,8 +7,6 @@ import { sendSuccess } from '../../utils/api-response.js';
 import { escapeRegex, paginate } from '../../utils/pagination.js';
 import { sendCandidateDecisionEmail } from '../../services/notification.service.js';
 
-// A candidate is only reviewable once their profile and required documents
-// are complete (status has left `draft`).
 const REVIEWABLE_STATUSES = [
   CANDIDATE_STATUSES.SUBMITTED,
   CANDIDATE_STATUSES.UNDER_REVIEW,
@@ -16,10 +14,6 @@ const REVIEWABLE_STATUSES = [
   CANDIDATE_STATUSES.REJECTED,
 ];
 
-/**
- * Administrators see identifying data — that is the point of the review
- * screen. This is the one serializer that may expose it.
- */
 function serializeForAdmin(candidate) {
   const user = candidate.user;
 
@@ -62,9 +56,6 @@ export const listCandidates = asyncHandler(async (request, response) => {
     query.$or = [{ referenceNumber: pattern }, { location: pattern }, { jobTitle: pattern }, { skills: pattern }];
   }
 
-  // A dedicated filter alongside the general search above, so "job title" is
-  // a first-class way to narrow the list, not just one of several things the
-  // search box happens to match.
   if (jobTitle) {
     query.jobTitle = new RegExp(escapeRegex(jobTitle), 'i');
   }
@@ -130,8 +121,6 @@ export const updateCandidateStatus = asyncHandler(async (request, response) => {
     throw new AppError('Candidate not found.', 404);
   }
 
-  // Approving someone who has not finished onboarding would put them in the
-  // talent pool with an incomplete profile.
   if (!REVIEWABLE_STATUSES.includes(candidate.status)) {
     throw new AppError(
       'This candidate cannot be reviewed yet. Their profile or required documents are not yet complete.',
@@ -148,8 +137,6 @@ export const updateCandidateStatus = asyncHandler(async (request, response) => {
 
   await candidate.save();
 
-  // Best effort: the decision is already recorded, so a mail failure must not
-  // surface as a failed status change.
   if (status === CANDIDATE_STATUSES.APPROVED || status === CANDIDATE_STATUSES.REJECTED) {
     try {
       await sendCandidateDecisionEmail(candidate, status, note);

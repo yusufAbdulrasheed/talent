@@ -29,8 +29,6 @@ function toFormState(company) {
   return Object.fromEntries(FIELDS.map((field) => [field, company[field] ?? '']));
 }
 
-// The company name is fixed at registration and never sent. The CAC number is
-// sent only while it is still empty: once recorded, the API refuses changes.
 const LOCKED_FIELDS = new Set(['companyName', 'cacNumber']);
 
 function toPayload(form, company) {
@@ -47,7 +45,6 @@ function toPayload(form, company) {
 
     const value = form[field].trim();
 
-    // Empty values are omitted; the API rejects blanks against its own rules.
     if (value) {
       payload[field] = value;
     }

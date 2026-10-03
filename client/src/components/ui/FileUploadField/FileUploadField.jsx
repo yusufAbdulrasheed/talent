@@ -11,10 +11,6 @@ function isImageUrl(url) {
   return /\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url) || url.includes('/image/upload/');
 }
 
-/**
- * Labelled upload control. Sends the chosen file to Cloudinary via the API and
- * reports the stored URL through `onChange`.
- */
 function FileUploadField({
   label,
   hint,

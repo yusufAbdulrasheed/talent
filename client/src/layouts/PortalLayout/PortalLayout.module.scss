@@ -1,6 +1,3 @@
-// Portal shell: a deep-navy sidebar framing a bright lavender canvas. The
-// sidebar re-maps the semantic tokens with `ink-scope` so anything rendered
-// inside it stays legible on navy; the main column uses the light defaults.
 
 .shell {
   display: flex;
@@ -29,7 +26,6 @@
   }
 }
 
-// ---- Sidebar --------------------------------------------------------------
 
 .sidebar {
   @include ink-scope;
@@ -51,7 +47,6 @@
   }
 }
 
-// Layered navy waves across the lower sidebar — the signature flourish.
 .sidebarWave {
   display: none;
 
@@ -100,7 +95,6 @@
   white-space: nowrap;
 }
 
-// The one control that collapses/expands the sidebar, at every breakpoint.
 .collapseToggle {
   display: grid;
   flex: none;
@@ -119,8 +113,6 @@
   }
 }
 
-// Visible only to assistive technology — the icon alone carries the control
-// visually, but it still needs a real accessible name.
 .srOnly {
   @include visually-hidden;
 }
@@ -279,12 +271,6 @@
   }
 }
 
-// ---- Collapsed state --------------------------------------------------------
-// One toggle, every breakpoint: below `md` the sidebar is an inline strip under
-// the brand bar, so "collapsed" hides that strip outright; at `md` and up it is
-// a fixed rail, so "collapsed" shrinks it to an icon-only width instead. Labels
-// are kept in the DOM and only visually hidden, so a screen reader still gets
-// them — only sighted users lose the text.
 
 .shell.collapsed {
   .nav {
@@ -339,7 +325,6 @@
   }
 }
 
-// ---- Main column ------------------------------------------------------------
 
 .main {
   display: flex;

@@ -18,8 +18,6 @@ export function errorHandler(error, _request, response, _next) {
 
   const statusCode = error.statusCode || 500;
 
-  // Unexpected failures are logged in full but reported generically, so
-  // internal details never reach the client.
   if (statusCode >= 500 && environment.NODE_ENV !== 'test') {
     console.error('Unhandled API error:', error);
   }

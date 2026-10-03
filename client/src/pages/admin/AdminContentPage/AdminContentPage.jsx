@@ -51,8 +51,6 @@ const CONTENT_TYPE_ICONS = {
   faq: HelpCircle,
 };
 
-// The type filter is real, existing navigation (it drives the ?type= search
-// param below) — this just renders it as pills instead of a <select>.
 const TYPE_TABS = [
   { value: '', label: 'All content', icon: Filter },
   ...CONTENT_TYPES.map((item) => ({ ...item, icon: CONTENT_TYPE_ICONS[item.value] })),
@@ -72,7 +70,6 @@ function typeLabel(value) {
   return CONTENT_TYPES.find((type) => type.value === value)?.label ?? value;
 }
 
-/** One content item, styled as a surface-card row. */
 function ContentItem({ item, onTogglePublish, isToggling, onDelete, isDeleting }) {
   const icon = CONTENT_TYPE_ICONS[item.type] ?? FileText;
   const Icon = icon;

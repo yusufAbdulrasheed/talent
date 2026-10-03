@@ -15,10 +15,6 @@ const SINGLE_SLOTS = [
   { type: 'national_id', label: 'National ID', hint: 'A valid government-issued ID.' },
 ];
 
-// The server stamps `uploadedAt` onto every saved document; the request
-// schema is strict and doesn't accept it back. An untouched document that
-// was already on the candidate (loaded with `uploadedAt` included) must have
-// it stripped before being resent alongside whatever slot actually changed.
 function toPayloadDocument({ type, url, publicId, originalName, mimeType, size }) {
   return { type, url, publicId, originalName, mimeType, size };
 }
@@ -35,18 +31,8 @@ function DocumentsStep({ candidate, onSaved, onNext, onBack }) {
     candidate.documents.filter((document) => document.type === 'certificate'),
   );
 
-  // Two uploads can resolve close together (e.g. picked back to back before
-  // either network call returns). Reading singleDocs/certificates straight
-  // from the closure would race — whichever resolves second overwrites the
-  // other using a stale snapshot. These refs are updated synchronously
-  // before each persist, so every write always builds on the latest state.
   const singleDocsRef = useRef(singleDocs);
   const certificatesRef = useRef(certificates);
-  // PUT /talent/documents replaces the whole array, so two of these in
-  // flight at once could also land out of order over the network and have
-  // the earlier one "win". Chaining onto this ref keeps only one request
-  // in flight, always built from the latest refs once its predecessor
-  // settles — later edits naturally coalesce instead of racing.
   const saveChainRef = useRef(Promise.resolve());
 
   const saveMutation = useMutation({

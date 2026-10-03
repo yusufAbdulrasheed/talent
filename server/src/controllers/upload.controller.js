@@ -5,7 +5,6 @@ import { asyncHandler } from '../utils/async-handler.js';
 import { sendSuccess } from '../utils/api-response.js';
 import { uploadBuffer } from '../services/upload.service.js';
 
-// Where an upload is allowed to land, and which role may write there.
 const FOLDERS = {
   content: [USER_ROLES.ADMIN],
   gallery: [USER_ROLES.ADMIN],

@@ -1,8 +1,6 @@
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Stubbed at the transport boundary so the token that would reach the user's
-// inbox can be read back and exercised for real.
 vi.mock('../services/email.service.js', () => ({ sendEmail: vi.fn(async () => {}) }));
 
 const { sendEmail } = await import('../services/email.service.js');
@@ -27,7 +25,6 @@ function refreshCookie(response) {
   return response.headers['set-cookie']?.find((cookie) => cookie.startsWith('refreshToken='));
 }
 
-/** Pulls the token out of the link in the most recently sent email. */
 function tokenFromLastEmail() {
   const message = sendEmail.mock.calls.at(-1)?.[0];
 
@@ -137,7 +134,6 @@ describe('login', () => {
 
     const cookie = refreshCookie(response);
     expect(cookie).toContain('HttpOnly');
-    // The token must not be readable by scripts, and must not be in the body.
     expect(response.body.data).not.toHaveProperty('refreshToken');
   });
 
@@ -153,7 +149,6 @@ describe('login', () => {
 
     expect(wrongPassword.status).toBe(401);
     expect(unknownEmail.status).toBe(401);
-    // Identical wording, so login cannot be used to enumerate accounts.
     expect(wrongPassword.body.message).toBe(unknownEmail.body.message);
   });
 
@@ -180,7 +175,6 @@ describe('session lifecycle', () => {
     const refreshed = await request(app).post('/api/v1/auth/refresh').set('Cookie', firstCookie);
     expect(refreshed.status).toBe(200);
 
-    // Replaying the consumed token must fail: rotation is the whole point.
     const replay = await request(app).post('/api/v1/auth/refresh').set('Cookie', firstCookie);
     expect(replay.status).toBe(401);
   });
@@ -208,10 +202,6 @@ describe('email verification and password reset', () => {
   it('verifies an email with the token from the email and refuses to reuse it', async () => {
     const register = await request(app).post('/api/v1/auth/register').send(talentPayload);
     const userId = register.body.data.user.id;
-    // Email verification is disabled for now (SKIP_EMAIL_VERIFICATION), so
-    // registration itself no longer sends a verification email — force the
-    // account unverified and request one explicitly to still exercise the
-    // verify/replay mechanics end to end.
     await User.updateOne({ _id: userId }, { isEmailVerified: false });
     await request(app).post('/api/v1/auth/resend-verification').send({ email: talentPayload.email });
     const token = tokenFromLastEmail();
@@ -220,7 +210,6 @@ describe('email verification and password reset', () => {
     expect(verified.status).toBe(200);
     expect((await User.findById(userId)).isEmailVerified).toBe(true);
 
-    // Single use: the token is consumed, so a replay must fail.
     const replay = await request(app).post('/api/v1/auth/verify-email').send({ token });
     expect(replay.status).toBe(400);
   });
@@ -239,10 +228,6 @@ describe('email verification and password reset', () => {
 
   it('rejects an unknown verification token', async () => {
     const register = await request(app).post('/api/v1/auth/register').send(talentPayload);
-    // Email verification is disabled for now (SKIP_EMAIL_VERIFICATION), so
-    // registration already leaves the account verified; force it back to
-    // unverified here so this test still isolates "an unknown token doesn't
-    // verify" from that unrelated default.
     await User.updateOne({ _id: register.body.data.user.id }, { isEmailVerified: false });
 
     const response = await request(app)
@@ -268,7 +253,6 @@ describe('email verification and password reset', () => {
       .send({ token, password: 'brandnewpassword' });
     expect(reset.status).toBe(200);
 
-    // The old password no longer works, the new one does.
     const oldPassword = await request(app)
       .post('/api/v1/auth/login')
       .send({ email: user.email, password: TEST_PASSWORD });
@@ -279,7 +263,6 @@ describe('email verification and password reset', () => {
       .send({ email: user.email, password: 'brandnewpassword' });
     expect(newPassword.status).toBe(200);
 
-    // A session opened before the reset must not outlive it.
     const staleSession = await request(app).post('/api/v1/auth/refresh').set('Cookie', oldCookie);
     expect(staleSession.status).toBe(401);
   });
@@ -319,7 +302,6 @@ describe('email verification and password reset', () => {
       .send({ token, password: 'newpassword123' });
 
     expect(response.status).toBe(400);
-    // The password must be unchanged: the old one still works.
     const login = await request(app)
       .post('/api/v1/auth/login')
       .send({ email: user.email, password: TEST_PASSWORD });

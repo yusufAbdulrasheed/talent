@@ -6,10 +6,6 @@ export const CANDIDATE_STATUSES = Object.freeze({
   REJECTED: 'rejected',
 });
 
-/**
- * How each status is presented: a short label, the tone of its badge, and a
- * plain explanation of where the candidate stands.
- */
 export const CANDIDATE_STATUS_DETAILS = Object.freeze({
   [CANDIDATE_STATUSES.DRAFT]: {
     label: 'Draft',

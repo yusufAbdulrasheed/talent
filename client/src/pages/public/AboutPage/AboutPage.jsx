@@ -7,7 +7,6 @@ import PublicCTA from '../../../components/public/PublicCTA/PublicCTA.jsx';
 import InfoCard from '../../../components/public/InfoCard/InfoCard.jsx';
 import styles from './AboutPage.module.scss';
 
-// Copy is placeholder until the client signs off on messaging.
 const VALUES = [
   {
     icon: ShieldCheck,
@@ -38,7 +37,6 @@ const STATS = [
   { value: '95%', label: 'Placement rate' },
 ];
 
-// Decorative faces from the community we train and place.
 const COMMUNITY = [
   PHOTOS.womanYellowBlazer,
   PHOTOS.manTraditionalCap,

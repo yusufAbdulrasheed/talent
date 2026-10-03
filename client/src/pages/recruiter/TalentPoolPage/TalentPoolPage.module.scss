@@ -2,7 +2,6 @@
   @include visually-hidden;
 }
 
-// ---- Hero: title, search bar, filters + promo card ---------------------------------
 
 .hero {
   display: grid;
@@ -159,7 +158,6 @@
   color: var(--color-text-muted);
 }
 
-// ---- Level tabs: All / Junior / Intermediate / Senior -----------------------
 
 .levelTabs {
   display: flex;
@@ -221,7 +219,6 @@
   text-align: center;
 }
 
-// ---- Results card grid ------------------------------------------------------
 
 .resultsBar {
   display: flex;
@@ -258,8 +255,6 @@
   }
 }
 
-// Mirrors the dashboard "Recommended talent" card: big round avatar with the
-// badges stacked top-right, identity, meta, skills, then two actions.
 .card {
   @include surface-card;
   @include hover-lift;
@@ -286,7 +281,6 @@
   margin-bottom: var(--space-1);
 }
 
-// Neutral gradient avatar — recruiters never see a candidate's photo.
 .avatar {
   display: grid;
   flex: none;
@@ -355,8 +349,6 @@
   letter-spacing: -0.01em;
 }
 
-// The headline attribute on the card — what the talent is presenting
-// themselves for. Takes the accent treatment `.education` used to carry alone.
 .jobTitle {
   @include line-clamp(2);
 
@@ -444,15 +436,12 @@
   padding-top: var(--space-3);
 }
 
-// The "Select" toggle once the talent is picked. The `button.` qualifier
-// outranks the Button component's secondary variant.
 button.selectActive {
   border-color: var(--color-accent);
   background: var(--color-accent-soft);
   color: var(--color-accent);
 }
 
-// ---- Floating selection bar ---------------------------------------------------
 
 .selectionBar {
   position: fixed;
@@ -502,9 +491,6 @@ button.selectActive {
   }
 }
 
-// ---- Locked levels (above the recruiter's plan) -------------------------------
-// Locked talent is never listed, only counted. The gold accent comes from
-// --color-role-accent so it stays legible on both the light and dark shells.
 
 .lockedNotice {
   display: flex;

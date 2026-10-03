@@ -16,7 +16,6 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         loadPaths: [stylesPath],
-        // Output-free mixins and breakpoints, available in every stylesheet.
         additionalData: '@use "core" as *;\n',
       },
     },
@@ -29,8 +28,6 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    // Proxying keeps the browser same-origin in development, so the httpOnly
-    // refresh cookie is sent without any CORS or SameSite special-casing.
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

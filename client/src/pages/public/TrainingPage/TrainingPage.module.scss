@@ -108,7 +108,6 @@
   color: var(--color-on-ink);
 }
 
-// Text beside a decorative photo.
 .split {
   display: grid;
   gap: var(--space-7);
@@ -119,8 +118,6 @@
   }
 }
 
-// Full-bleed photo across the top of each programme card; the icon badge
-// overlaps its bottom edge.
 .programmePhoto {
   width: calc(100% + 2 * var(--space-6));
   max-width: none;

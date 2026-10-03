@@ -24,7 +24,6 @@ function login({ email, password }) {
   return request(app).post('/api/v1/auth/login').send({ email, password });
 }
 
-/** Signs in as a seeded recruiter on `tier` and returns their view of the whole talent pool. */
 async function talentPoolFor(seeded, tier) {
   const recruiter = seeded.recruiters.find((candidate) => candidate.tier === tier);
   const session = await login({ email: recruiter.email, password: seeded.password });
@@ -52,8 +51,6 @@ async function adminGet(url) {
 describe('demo data seeder', () => {
   let seeded;
 
-  // The shared setup empties every collection after each test, so each test
-  // gets a freshly seeded database.
   beforeEach(async () => {
     seeded = await seedDemoData({ accountsFile: null });
   });
@@ -92,7 +89,6 @@ describe('demo data seeder', () => {
       expect(approvedAtLevel).toHaveLength(4);
     }
 
-    // Approved candidates carry a review note; ones nobody has opened yet do not.
     for (const candidate of withStatus(CANDIDATE_STATUSES.APPROVED)) {
       expect(candidate.adminReview.note).toContain('categorised as');
     }
@@ -133,9 +129,7 @@ describe('demo data seeder', () => {
       expect(payment.purpose).toBe('recruiter_subscription');
       expect(payment.status).toBe('success');
       expect(payment.subscriptionTier).toBe(subscription.tier);
-      // Kobo, like the real checkout: the plan price × 100.
       expect(payment.amount).toBe(getTierPriceNgn(payment.subscriptionTier) * 100);
-      // The plan runs for 30 days from the payment.
       expect(Math.abs(subscription.tierExpiresAt.getTime() - (payment.paidAt.getTime() + 30 * DAY_MS))).toBeLessThan(1_000);
     }
   });
@@ -151,7 +145,6 @@ describe('demo data seeder', () => {
     expect(countFor('fulfilled')).toBe(2);
     expect(countFor('closed')).toBe(2);
 
-    // Explicit dates are honoured, so the admin lists are not one identical instant.
     expect(requests.some((placementRequest) => placementRequest.createdAt.getTime() < Date.now() - 30 * DAY_MS)).toBe(true);
   });
 
@@ -167,7 +160,6 @@ describe('demo data seeder', () => {
   });
 
   it('gives every account a working login with the shared demo password', async () => {
-    // One per experience level and one per plan keeps this fast (each login is a real bcrypt compare).
     const sampleTalents = LEVELS.map((level) => seeded.talents.find((talent) => talent.experienceLevel === level));
     const sampleRecruiters = ['junior', 'intermediate', 'senior'].map((tier) =>
       seeded.recruiters.find((recruiter) => recruiter.tier === tier),
@@ -187,8 +179,6 @@ describe('demo data seeder', () => {
   });
 
   it('lists exactly the talent each recruiter plan unlocks and counts the rest by tier', async () => {
-    // 16 approved talents, four per level: the Junior tier is entry + junior (8),
-    // Intermediate is mid (4) and Senior is senior (4).
     const tierTotals = { junior: 8, intermediate: 4, senior: 4 };
     const expectedListed = { junior: 8, intermediate: 12, senior: 16 };
     const unlockedTiers = {
@@ -283,7 +273,6 @@ describe('demo data seeder', () => {
       expect(group.every((item) => item.created === false)).toBe(true);
     }
 
-    // Existing accounts keep their reference numbers; no new ones are consumed.
     expect(rerun.talents.map((talent) => talent.referenceNumber)).toEqual(
       seeded.talents.map((talent) => talent.referenceNumber),
     );
@@ -311,8 +300,6 @@ describe('demo data seeder', () => {
   });
 
   it('backfills jobTitle onto talents that were seeded before that field existed', async () => {
-    // Simulates the real gap: these accounts existed already, from before
-    // jobTitle was added to the seed data, so it was never set.
     await Candidate.updateMany({}, { $unset: { jobTitle: '' } });
     expect(await Candidate.countDocuments({ jobTitle: { $exists: true } })).toBe(0);
 
@@ -323,7 +310,6 @@ describe('demo data seeder', () => {
 
     const candidates = await Candidate.find({});
     expect(candidates.every((candidate) => candidate.jobTitle)).toBe(true);
-    // Nothing else about the record changed — same count, same references.
     expect(candidates).toHaveLength(20);
     expect(candidates.map((candidate) => candidate.referenceNumber).sort()).toEqual(
       seeded.talents.map((talent) => talent.referenceNumber).sort(),
@@ -331,11 +317,6 @@ describe('demo data seeder', () => {
   });
 
   it('re-activates a paid recruiter\'s subscription if real time has pushed it past its 30-day window', async () => {
-    // This is exactly what happens if the seeder isn't re-run for a few
-    // weeks: the lazily-expiring subscription genuinely lapses back to
-    // junior — correct behaviour for the app, but it must not stay that way
-    // for a recruiter the seed data says should be on a paid tier, or the
-    // seeded placement requests for them stop making sense.
     const senior = seeded.recruiters.find((recruiter) => recruiter.tier === 'senior');
     await RecruiterSubscription.updateOne(
       { recruiterCompany: senior.companyId },
@@ -350,7 +331,6 @@ describe('demo data seeder', () => {
     expect(restored.tier).toBe('senior');
     expect(restored.tierExpiresAt.getTime()).toBeGreaterThan(Date.now());
 
-    // And the placement requests that depend on senior-tier access still seed cleanly.
     expect(await PlacementRequest.countDocuments({})).toBe(16);
   });
 
@@ -382,7 +362,6 @@ describe('demo data seeder', () => {
     const accountsFile = path.join(directory, 'demo-accounts.md');
 
     try {
-      // A re-run also proves the sheet is complete for accounts that already exist.
       await seedDemoData({ accountsFile });
       const sheet = await readFile(accountsFile, 'utf8');
 
@@ -392,7 +371,6 @@ describe('demo data seeder', () => {
         expect(sheet).toContain(account.email);
       }
 
-      // A real column, not just the word appearing somewhere else on the page.
       expect(sheet).toContain('| Name | Job title | Email | Reference | Status | Location | Availability |');
 
       for (const talent of seeded.talents) {

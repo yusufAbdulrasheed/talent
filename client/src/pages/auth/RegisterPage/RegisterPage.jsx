@@ -10,8 +10,6 @@ import { useAuth } from '../../../auth/useAuth.js';
 import { USER_ROLES, getRoleHomePath } from '../../../auth/roles.js';
 import styles from './RegisterPage.module.scss';
 
-// Trainer and administrator accounts are created by an administrator, never
-// through public registration — the API rejects them too.
 const REGISTRABLE_ROLES = [
   { value: USER_ROLES.TALENT, label: 'Talent', hint: 'Train with us and join the talent pool.' },
   { value: USER_ROLES.RECRUITER, label: 'Recruiter', hint: 'Hire from our pool of approved candidates.' },
@@ -52,7 +50,6 @@ function RegisterPage() {
     event.preventDefault();
 
     const { companyName, ...account } = form;
-    // The API rejects unknown keys, so companyName is only sent for recruiters.
     registerMutation.mutate(isRecruiter ? { ...account, companyName } : account);
   };
 

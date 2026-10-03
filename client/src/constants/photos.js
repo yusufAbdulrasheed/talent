@@ -1,21 +1,11 @@
-/**
- * Curated stock photography (Unsplash, free licence) used across the
- * marketing site and portal decoration. Every ID here was checked to load
- * and to show what its name says; swap an ID to change a photo everywhere.
- *
- * These are decorative. They never stand in for a real candidate: talent in
- * the recruiter pool stays anonymous and is never given a photo.
- */
 const UNSPLASH = 'https://images.unsplash.com/photo-';
 
-/** Builds a cropped, compressed Unsplash URL for the given width (and optional height). */
 export function photoUrl(id, width = 800, height) {
   const size = height ? `&w=${width}&h=${height}` : `&w=${width}`;
   return `${UNSPLASH}${id}?auto=format&fit=crop${size}&q=80`;
 }
 
 export const PHOTOS = Object.freeze({
-  // Portraits — women
   womanOfficeGlasses: '1573497161161-c3e73707e25c',
   womanYellowBlazer: '1611432579402-7037e3e2c1e4',
   womanBraidsConfident: '1573496799515-eebbb63814f2',
@@ -26,7 +16,6 @@ export const PHOTOS = Object.freeze({
   womanGlassesOutdoor: '1507152832244-10d45c7eda57',
   womanAfro: '1531727991582-cfd25ce79613',
 
-  // Portraits — men
   manBlueSuit: '1616805765352-beedbad46b2a',
   manBeret: '1531384441138-2736e62e0919',
   manTraditionalCap: '1533108344127-a586d2b02479',
@@ -36,7 +25,6 @@ export const PHOTOS = Object.freeze({
   manSmiling: '1522529599102-193c0d76b5b6',
   manNurse: '1622253692010-333f2da6031d',
 
-  // Scenes — work, training, hiring
   techPairServerRoom: '1573164713988-8665fc963095',
   womanCoding: '1531482615713-2afd69097998',
   meetingTwoWomen: '1573496267526-08a69e46a409',
@@ -52,7 +40,6 @@ export const PHOTOS = Object.freeze({
   conferenceTable: '1573496130407-57329f01f769',
 });
 
-/** A handful of faces for avatar stacks ("Joined by 2,400+ candidates"). */
 export const AVATAR_FACES = [
   PHOTOS.womanAfricanPrint,
   PHOTOS.manBlueSuit,
@@ -71,10 +58,6 @@ const FALLBACK_SCENES = [
   PHOTOS.teamMeeting,
 ];
 
-/**
- * A stable stand-in scene for content published without its own image, so a
- * given post or event always gets the same photo.
- */
 export function fallbackScene(key = '') {
   let hash = 0;
   for (const char of String(key)) {
