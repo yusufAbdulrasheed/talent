@@ -28,12 +28,11 @@
   grid-template-columns: 1fr;
   counter-reset: step;
 
+  // Two columns, not four: at `lg` this grid lives in the narrower half of
+  // .split below, and four columns there crammed each card into ~170px,
+  // wrapping every line of text and leaving the cards jagged heights.
   @include from(md) {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  @include from(lg) {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
 
