@@ -42,6 +42,11 @@ function PortalLayout() {
     }
   }, [isCollapsed]);
 
+  useEffect(() => {
+    document.documentElement.classList.add('portal-active');
+    return () => document.documentElement.classList.remove('portal-active');
+  }, []);
+
   const handleSignOut = async () => {
     setIsSigningOut(true);
     await signOut();

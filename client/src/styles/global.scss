@@ -125,3 +125,12 @@ input[type='search']::-webkit-search-cancel-button {
   min-height: 100vh;
   flex-direction: column;
 }
+
+html.portal-active {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
