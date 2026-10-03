@@ -10,6 +10,9 @@ Target architecture, matching the SRS recommendation:
 | File storage | Cloudinary |
 | Email | Brevo, SendGrid, or Mailgun (SMTP) |
 
+Alternatively, the whole app can deploy as a single Netlify site with the API
+as a Netlify Function — see [section 6](#6-alternative-single-site-deploy-on-netlify-functions).
+
 ---
 
 ## 1. Backend environment
@@ -146,7 +149,49 @@ transaction fees.
 
 ---
 
-## 6. Known gaps at handover
+## 6. Alternative: single-site deploy on Netlify Functions
+
+Instead of hosting `client/` and `server/` on two separate services (section 3),
+the whole app can deploy as one Netlify site: the frontend as a static build,
+and the Express API wrapped as a Netlify Function at `server/netlify/functions/api.js`
+(via `serverless-http`). `netlify.toml` at the repo root already wires this up —
+build command, publish directory, the function's bundling, and the redirects
+that route `/api/*` to the function and everything else to `index.html`.
+
+Local development is unaffected: `npm run dev` still runs `server/src/server.js`
+directly. The function is only used once deployed to Netlify.
+
+**Setup**
+
+1. Create a Netlify site from this repo. Build settings come from `netlify.toml`
+   automatically — nothing to configure in the UI beyond environment variables.
+2. Set the same backend variables as section 1 (`MONGODB_URI`, `JWT_ACCESS_SECRET`,
+   `JWT_REFRESH_SECRET`, `PAYSTACK_SECRET_KEY`, `TRAINING_FEE_NGN`, the Resend and
+   Cloudinary variables, etc.) on the Netlify site, via the dashboard or
+   `netlify env:set`.
+3. Set `CLIENT_URL` and `PAYSTACK_CALLBACK_URL` to the site's own Netlify URL
+   (or custom domain) — frontend and API are the same origin here.
+4. Leave `VITE_API_URL` **unset**. The client's default (`/api/v1`) is already
+   same-origin through the `/api/*` redirect, exactly like the Vite dev proxy —
+   so the refresh cookie needs no cross-origin/SameSite handling, unlike the
+   two-host setup in section 3.
+5. Register the Paystack webhook at
+   `https://<your-site>/api/v1/payments/paystack/webhook` — same path as before,
+   now served by the function.
+6. Seed the administrator by running `npm run seed:admin` from a machine with
+   the same `MONGODB_URI`, exactly as in section 3.
+
+**Known limitation: rate limiting is best-effort here.** `express-rate-limit`
+keeps its counters in memory. A Netlify Function's memory does not persist
+reliably across invocations — a cold start resets it, and concurrent warm
+instances (if any) don't share state. The limiter still runs and still deters
+casual abuse, but it is not the hard per-IP ceiling it is on a long-lived
+server. If that matters for production, back it with a shared store (e.g.
+`rate-limit-redis` against a hosted Redis) — not implemented here.
+
+---
+
+## 7. Known gaps at handover
 
 - Document upload is not built — Cloudinary is chosen but not integrated.
 - Eight public marketing pages are routed placeholders pending branding and copy.

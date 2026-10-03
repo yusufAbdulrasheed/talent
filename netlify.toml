@@ -1,0 +1,40 @@
+[build]
+  command = "npm run build"
+  publish = "client/dist"
+
+[functions]
+  directory = "server/netlify/functions"
+  node_bundler = "esbuild"
+  # These depend on native bindings or dynamic requires that esbuild can't
+  # safely bundle; Netlify installs them into the function from node_modules
+  # instead. (Per Netlify's documented pattern for wrapping an existing
+  # Express app — see https://docs.netlify.com/functions/lambda-compatibility/.)
+  external_node_modules = [
+    "express",
+    "mongoose",
+    "serverless-http",
+    "cors",
+    "helmet",
+    "morgan",
+    "cookie-parser",
+    "multer",
+    "jsonwebtoken",
+    "bcryptjs",
+    "express-rate-limit",
+    "resend",
+    "zod",
+    "cloudinary",
+    "dotenv",
+  ]
+
+# The API must be matched before the SPA catch-all below.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
