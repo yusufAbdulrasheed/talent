@@ -161,6 +161,15 @@ that route `/api/*` to the function and everything else to `index.html`.
 Local development is unaffected: `npm run dev` still runs `server/src/server.js`
 directly. The function is only used once deployed to Netlify.
 
+Netlify's build-time secrets scanner flags any repo string matching the
+configured value of a site env var — including plain config values like
+`TRAINING_FEE_NGN` (a number) or `CLIENT_URL` (a public URL), which also
+appear as zod defaults, test fixtures, or docs examples. `netlify.toml`
+already lists these under `SECRETS_SCAN_OMIT_KEYS` so the build doesn't fail
+on them; real secrets (JWT/Paystack/Mongo/Cloudinary/Resend keys) are still
+scanned. If a future env var trips the same false positive, add its name to
+that list rather than disabling the scan.
+
 **Setup**
 
 1. Create a Netlify site from this repo. Build settings come from `netlify.toml`
