@@ -5,6 +5,11 @@
   flex-direction: column;
   gap: var(--space-5);
   padding: var(--space-5);
+  // Without this, a flex/grid item won't shrink below its content's
+  // intrinsic width — a wide child (e.g. a DataTable with non-wrapping
+  // cells) then drags this card, and every ancestor up to the page, wider
+  // than the viewport instead of letting the child scroll internally.
+  min-width: 0;
 
   @include from(md) {
     padding: var(--space-6);

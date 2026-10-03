@@ -47,6 +47,10 @@
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-text-muted);
+  // At narrow widths the 2-column stat grid leaves little room; a single
+  // long word (e.g. "programmes") can be wider than that, so let it break
+  // instead of overflowing the card.
+  overflow-wrap: break-word;
 }
 
 .value {
@@ -55,9 +59,10 @@
   letter-spacing: -0.03em;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  // Wrap rather than ellipsis-truncate: on an interactive card (icon + arrow
+  // eat extra width) a long formatted currency value could otherwise lose
+  // digits silently — a wrapped number is still readable, a hidden one isn't.
+  overflow-wrap: break-word;
 }
 
 .hint {
