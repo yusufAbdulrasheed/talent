@@ -1,10 +1,13 @@
 import crypto from 'node:crypto';
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+import serverless from 'serverless-http';
 import { describe, expect, it, vi } from 'vitest';
 import environment from '../config/env.js';
 
 vi.mock('../services/email.service.js', () => ({ sendEmail: vi.fn(async () => {}) }));
 
-const { handler } = await import('../../netlify/functions/api.js');
+const { handler, resolveClientIp } = await import('../../netlify/functions/api.js');
 const Payment = (await import('../models/payment.model.js')).default;
 
 function buildEvent({ httpMethod, path, headers = {}, body = '', isBase64Encoded = false }) {
@@ -91,5 +94,78 @@ describe('netlify function handler', () => {
 
     expect(response.statusCode).toBe(401);
     expect(JSON.parse(response.body).success).toBe(false);
+  });
+});
+
+describe('resolveClientIp', () => {
+  it('prefers x-nf-client-connection-ip, Netlify\'s own reliable client-IP header', () => {
+    const headers = { 'x-nf-client-connection-ip': '203.0.113.7', 'x-forwarded-for': '198.51.100.1' };
+    expect(resolveClientIp(headers)).toBe('203.0.113.7');
+  });
+
+  it('falls back to the first entry of x-forwarded-for when Netlify\'s header is absent', () => {
+    expect(resolveClientIp({ 'x-forwarded-for': '198.51.100.1, 10.0.0.5' })).toBe('198.51.100.1');
+  });
+
+  it('is case-insensitive about header names', () => {
+    expect(resolveClientIp({ 'X-NF-Client-Connection-IP': '203.0.113.7' })).toBe('203.0.113.7');
+  });
+
+  it('returns undefined when neither header is present', () => {
+    expect(resolveClientIp({})).toBeUndefined();
+  });
+});
+
+describe('express-rate-limit against the real Netlify event shape', () => {
+  // auth.routes.js skips its rate limiters entirely when NODE_ENV === 'test'
+  // (so the full handler tests above never exercise this code path at all),
+  // which is exactly how this bug shipped twice in production undetected.
+  // This reproduces it directly: a real (non-skipped) limiter, fed the exact
+  // event shape Netlify actually sends — requestContext.identity.sourceIp
+  // absent, only the x-nf-client-connection-ip header present.
+  function buildMiniHandler() {
+    const miniApp = express();
+    // Matches auth.routes.js's createLimiter() exactly: the fatal crash is
+    // specific to standardHeaders: 'draft-8' (its getPartitionKey hashes the
+    // key), not the initial IP validation warning, which alone is harmless.
+    miniApp.use(rateLimit({ windowMs: 1000, limit: 100, standardHeaders: 'draft-8', legacyHeaders: false }));
+    miniApp.get('/ping', (request, response) => response.json({ ip: request.ip }));
+    return serverless(miniApp);
+  }
+
+  function buildRawNetlifyEvent(headers) {
+    return {
+      httpMethod: 'GET',
+      path: '/ping',
+      headers,
+      multiValueHeaders: {},
+      queryStringParameters: null,
+      multiValueQueryStringParameters: null,
+      body: '',
+      isBase64Encoded: false,
+      requestContext: { identity: {} },
+    };
+  }
+
+  it('crashes on the unpatched event — documents the exact failure the user hit in production', async () => {
+    const miniHandler = buildMiniHandler();
+    const event = buildRawNetlifyEvent({});
+
+    const response = await miniHandler(event, {});
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toMatch(/getPartitionKey/);
+  });
+
+  it('resolves correctly once api.js\'s fix injects sourceIp from x-nf-client-connection-ip', async () => {
+    const miniHandler = buildMiniHandler();
+    const event = buildRawNetlifyEvent({ 'x-nf-client-connection-ip': '203.0.113.7' });
+
+    event.requestContext.identity.sourceIp = resolveClientIp(event.headers);
+
+    const response = await miniHandler(event, {});
+
+    expect(response.statusCode).toBe(200);
+    expect(JSON.parse(response.body).ip).toBe('203.0.113.7');
   });
 });

@@ -178,13 +178,17 @@ that list rather than disabling the scan.
    `JWT_REFRESH_SECRET`, `PAYSTACK_SECRET_KEY`, `TRAINING_FEE_NGN`, the Resend and
    Cloudinary variables, etc.) on the Netlify site, via the dashboard or
    `netlify env:set`.
-3. **Set `TRUST_PROXY_HOPS=1`.** Without it every rate-limited route (login,
-   register, refresh, password reset) 500s: Netlify's function event doesn't
-   reliably populate the field `serverless-http` uses for the synthetic
-   request's socket address, so with trust proxy off `request.ip` comes out
-   `undefined` and `express-rate-limit` throws rather than keying everyone
-   into one bucket. Trust proxy makes Express resolve the client IP from the
-   `x-forwarded-for` header instead, which Netlify does set.
+3. No proxy config needed for rate limiting — `api.js` already handles it.
+   Netlify's function event doesn't populate the field `serverless-http` uses
+   for the synthetic request's socket address, so `request.ip` would
+   otherwise come out `undefined` and `express-rate-limit` throws rather than
+   keying everyone into one bucket (it crashes hardest under
+   `standardHeaders: 'draft-8'`, which hashes the key). `api.js` resolves the
+   real client IP from `x-nf-client-connection-ip` — Netlify's own reliable
+   header for this, falling back to `x-forwarded-for` — and injects it into
+   `event.requestContext.identity.sourceIp` before handing off to
+   `serverless-http`. Covered by `server/src/netlify/api-handler.test.js`,
+   including a reproduction of the exact crash this prevents.
 4. Set `CLIENT_URL` and `PAYSTACK_CALLBACK_URL` to the site's own Netlify URL
    (or custom domain) — frontend and API are the same origin here.
 5. Leave `VITE_API_URL` **unset**. The client's default (`/api/v1`) is already
