@@ -178,6 +178,10 @@ function PublicLayout() {
             <p>
               &copy; {new Date().getFullYear()} Sultan Magnate Consulting Limited &nbsp;&middot;&nbsp;
               RC B292964. All rights reserved.
+
+              <br/>
+                Developed by Startechone Nigeria Limited
+              
             </p>
             <ul className={styles.footerBarLinks}>
               <li>
