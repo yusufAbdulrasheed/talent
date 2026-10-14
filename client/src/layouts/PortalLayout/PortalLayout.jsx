@@ -73,9 +73,9 @@ function PortalLayout() {
         <div className={styles.brandBlock}>
           <div className={styles.brandRow}>
             {isCollapsed ? (
-              <LogoMark tone="light" size={32} title="Sultan Magnate Consulting" />
+              <LogoMark tone="color" size={32} title="Sultan Magnate Consulting" />
             ) : (
-              <Logo variant="lockup" tone="light" size={38} tagline />
+              <Logo variant="lockup" tone="color" size={64} tagline />
             )}
             <button
               type="button"

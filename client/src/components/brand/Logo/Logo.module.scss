@@ -1,14 +1,22 @@
+// --logo-size = height of the mark. Every measurement below is a ratio of it,
+// taken from the supplied artwork (mark height = 186 units).
+//
+// Fonts (load once, e.g. in your app entry):
+//   import '@fontsource/inter-tight/600.css';
+//   import '@fontsource/figtree/500-italic.css';
+
 .logo {
   display: inline-flex;
   flex-direction: column;
-  gap: calc(var(--logo-size) * 0.18);
+  align-items: flex-start;
+  gap: calc(var(--logo-size) * 0.097);
   color: inherit;
 }
 
 .lockup {
   display: inline-flex;
   align-items: center;
-  gap: calc(var(--logo-size) * 0.3);
+  gap: calc(var(--logo-size) * 0.288);
 
   svg {
     flex: none;
@@ -18,22 +26,34 @@
 .wordmark {
   display: flex;
   flex-direction: column;
-  font-family: var(--font-heading);
-  font-weight: var(--weight-extrabold);
-  font-size: calc(var(--logo-size) * 0.34);
-  line-height: 0.98;
-  letter-spacing: 0.03em;
+  // optical nudge so the three lines sit on the mark's centre like the artwork
+  margin-bottom: calc(var(--logo-size) * 0.042);
+  font-family: var(--logo-font-wordmark, 'Inter Tight', 'Helvetica Neue', Arial, sans-serif);
+  font-weight: 600;
+  font-size: calc(var(--logo-size) * 0.265);
+  line-height: 1.045;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .tagline {
-  font-family: var(--font-heading);
+  margin-left: calc(var(--logo-size) * -0.012);
+  font-family: var(--logo-font-tagline, 'Figtree', 'Helvetica Neue', Arial, sans-serif);
   font-style: italic;
-  font-weight: var(--weight-medium);
-  font-size: calc(var(--logo-size) * 0.26);
-  letter-spacing: 0.01em;
+  font-weight: 500;
+  font-size: calc(var(--logo-size) * 0.175);
+  line-height: 1;
+  letter-spacing: 0;
   white-space: nowrap;
+}
+
+.color {
+  color: var(--logo-wordmark, #1f1f62);
+
+  .tagline {
+    color: var(--logo-tagline, #2b2b2b);
+  }
 }
 
 .light {
@@ -45,9 +65,9 @@
 }
 
 .dark {
-  color: var(--color-ink-800);
+  color: #0c1552;
 
   .tagline {
-    color: var(--color-accent);
+    color: #0c1552;
   }
 }

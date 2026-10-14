@@ -1,41 +1,38 @@
 import styles from './Logo.module.scss';
 
-const MARK_VIEWBOX = '0 0 380 385';
-const MARK_TOP = 'M75 65 L190 0 L340 85 L340 160 L300 185 L247 155 L293 128 L293 118 L190 62 L130 95 Z';
-const MARK_BAR = 'M45 79 L380 275 L335 305 L0 109 Z';
-const MARK_BOTTOM = 'M305 320 L190 385 L40 300 L40 225 L80 200 L133 230 L87 257 L87 267 L190 323 L250 290 Z';
+// Geometry traced from the supplied brand artwork (point-symmetric navy frame + gold bar).
+const MARK_VIEWBOX = '0 0 158.3 186';
+const MARK_ASPECT = 158.3 / 186; // width / height
+const MARK_TOP =
+  'M71.5 0 L139.3 39.3 L139.3 77 L118.5 90 L94 75.5 L120 58.5 L71.5 30 L44.8 47 L19.5 32.5 Z';
+const MARK_BOTTOM =
+  'M71.5 186 L3.7 146.7 L3.7 109 L24.5 96 L49 110.5 L23 127.5 L71.5 156 L98.2 139 L123.5 153.5 Z';
+const MARK_BAR = 'M0 37.5 L158.3 129 L134.3 144.5 L0 66.8 Z';
 
 const TONES = {
-  color: 'url(#sm-logo-gradient)',
-  light: '#ffffff',
-  dark: '#0c1552',
+  color: { frame: '#191874', bar: '#d8ab41' },
+  light: { frame: '#ffffff', bar: '#d8ab41' },
+  dark: { frame: '#0c1552', bar: '#0c1552' },
 };
 
+// `size` is the height of the mark in px; the width follows the artwork's proportions.
 export function LogoMark({ tone = 'color', size = 32, title, className }) {
-  const fill = TONES[tone] ?? TONES.color;
+  const { frame, bar } = TONES[tone] ?? TONES.color;
 
   return (
     <svg
       className={className}
       viewBox={MARK_VIEWBOX}
-      width={size}
+      width={size * MARK_ASPECT}
       height={size}
       role={title ? 'img' : undefined}
       aria-label={title || undefined}
       aria-hidden={title ? undefined : true}
       focusable="false"
     >
-      {tone === 'color' ? (
-        <defs>
-          <linearGradient id="sm-logo-gradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#3b3ff5" />
-            <stop offset="1" stopColor="#1a1d8a" />
-          </linearGradient>
-        </defs>
-      ) : null}
-      <path d={MARK_TOP} fill={fill} />
-      <path d={MARK_BAR} fill={fill} />
-      <path d={MARK_BOTTOM} fill={fill} />
+      <path d={MARK_TOP} fill={frame} />
+      <path d={MARK_BOTTOM} fill={frame} />
+      <path d={MARK_BAR} fill={bar} />
     </svg>
   );
 }
@@ -45,7 +42,7 @@ function Logo({ variant = 'mark', tone = 'color', size = 32, tagline = false, cl
     return <LogoMark tone={tone} size={size} title="Sultan Magnate Consulting" className={className} />;
   }
 
-  const toneClass = tone === 'light' ? styles.light : styles.dark;
+  const toneClass = styles[tone] ?? styles.color;
 
   return (
     <span className={`${styles.logo} ${toneClass} ${className}`} style={{ '--logo-size': `${size}px` }}>
@@ -57,7 +54,7 @@ function Logo({ variant = 'mark', tone = 'color', size = 32, tagline = false, cl
           <span aria-hidden="true">Consulting</span>
         </span>
       </span>
-      {tagline ? <span className={styles.tagline}>Building Systems. Sustaining Legacies.</span> : null}
+      {tagline ? <span className={styles.tagline}>Building Systems. Sustaining Legacies</span> : null}
     </span>
   );
 }

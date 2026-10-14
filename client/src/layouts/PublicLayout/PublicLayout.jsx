@@ -70,7 +70,7 @@ function PublicLayout() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link to="/" className={styles.brand} onClick={closeMenu} aria-label="Sultan Magnate Consulting home">
-            <Logo variant="lockup" tone="light" size={34} />
+            <Logo variant="lockup" tone="color" size={34} />
           </Link>
 
           <button
@@ -139,7 +139,7 @@ function PublicLayout() {
         <div className={styles.footerInner}>
           <div className={styles.footerBrandCol}>
             <Link to="/" className={styles.footerBrand} aria-label="Sultan Magnate Consulting home">
-              <Logo variant="lockup" tone="light" size={46} tagline />
+              <Logo variant="lockup" tone="color" size={46} tagline />
             </Link>
             <p className={styles.footerBlurb}>
               Sultan Magnate Consulting trains job-ready
