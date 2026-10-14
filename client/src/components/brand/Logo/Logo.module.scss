@@ -1,9 +1,4 @@
-// --logo-size = height of the mark. Every measurement below is a ratio of it,
-// taken from the supplied artwork (mark height = 186 units).
-//
-// Fonts (load once, e.g. in your app entry):
-//   import '@fontsource/inter-tight/600.css';
-//   import '@fontsource/figtree/500-italic.css';
+
 
 .logo {
   display: inline-flex;
@@ -52,7 +47,7 @@
   color: var(--logo-wordmark, #ffffff);
 
   .tagline {
-    color: var(--logo-tagline, #2b2b2b);
+    color: var(--logo-tagline, #ffffff);
   }
 }
 
